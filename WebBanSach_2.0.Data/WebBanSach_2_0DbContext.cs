@@ -8,7 +8,7 @@ using WebBanSach_2_0.Models;
 
 namespace WebBanSach_2_0.Data
 {
-    class WebBanSach_2_0DbContext : DbContext
+    public class WebBanSach_2_0DbContext : DbContext
     {
         public WebBanSach_2_0DbContext() : base("WebBanSach_2_0")
         {
