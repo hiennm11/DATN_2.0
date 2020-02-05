@@ -180,6 +180,16 @@
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebBanSach_2.0.Data\WebBanSach_2_0.Data.csproj">
+      <Project>{b05f3dce-8d15-4d99-bdd5-aecc1eaa8c88}</Project>
+      <Name>WebBanSach_2_0.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebBanSach_2.0.Model\WebBanSach_2_0.Model.csproj">
+      <Project>{e7023f39-5dbf-4445-a577-2bf11cc16011}</Project>
+      <Name>WebBanSach_2_0.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
