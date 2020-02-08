@@ -7,18 +7,18 @@ namespace WebBanSach_2_0.Data.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.0")]
-    public sealed partial class WebBS2ver1 : IMigrationMetadata
+    public sealed partial class WBSver2 : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(WebBS2ver1));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(WBSver2));
         
         string IMigrationMetadata.Id
         {
-            get { return "202002050815532_WebBS2-ver-1"; }
+            get { return "202002070128560_WBS-ver2"; }
         }
         
         string IMigrationMetadata.Source
         {
-            get { return null; }
+            get { return Resources.GetString("Source"); }
         }
         
         string IMigrationMetadata.Target

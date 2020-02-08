@@ -52,20 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\AbstractProps.cs" />
-    <Compile Include="Models\BinhLuan.cs" />
-    <Compile Include="Models\ChiTietDonBan.cs" />
-    <Compile Include="Models\ChiTietDonNhap.cs" />
-    <Compile Include="Models\ChucVu.cs" />
-    <Compile Include="Models\DonHangBan.cs" />
-    <Compile Include="Models\DonHangNhap.cs" />
-    <Compile Include="Models\KhachHang.cs" />
-    <Compile Include="Models\LoaiSach.cs" />
-    <Compile Include="Models\NhaCungCap.cs" />
-    <Compile Include="Models\NhanVien.cs" />
-    <Compile Include="Models\NhaXuatBan.cs" />
-    <Compile Include="Models\Sach.cs" />
-    <Compile Include="Models\TacGia.cs" />
-    <Compile Include="Models\ThamGia.cs" />
+    <Compile Include="Models\Author.cs" />
+    <Compile Include="Models\AuthorDetail.cs" />
+    <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\Comment.cs" />
+    <Compile Include="Models\Error.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderDetail.cs" />
+    <Compile Include="Models\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

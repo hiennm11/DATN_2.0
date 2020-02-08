@@ -11,8 +11,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
     {
         T Add(T entity);
         void Update(T entity);
-        T Delete(int id);
-        T Delete(T entity);
+        T ShiftDelete(int id);
 
         IEnumerable<T> GetAll(string[] includes = null);
         T GetSingleByID(int id);

@@ -8,24 +8,15 @@ using System.Threading.Tasks;
 
 namespace WebBanSach_2_0.Data.Infrastructure
 {
-    public abstract class RepositoryBase<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IRepository<T> where T : class
     {
-        private WebBanSach_2_0DbContext _dbContext;
-        private readonly IDbSet<T> _dbSet;
-        protected IDbFactory DbFactory
+        protected WebBanSach_2_0DbContext _dbContext;
+        protected readonly IDbSet<T> _dbSet;
+      
+        public GenericRepository(WebBanSach_2_0DbContext dbContext)
         {
-            get;
-            private set;
-        }
-        protected WebBanSach_2_0DbContext dbContext
-        {
-            get { return dbContext ?? (_dbContext = DbFactory.Init()); }
-        }
-
-        public RepositoryBase(IDbFactory dbFactory)
-        {
-            this.DbFactory = dbFactory;
-            this._dbSet = dbContext.Set<T>();
+            _dbContext = dbContext;
+            _dbSet = _dbContext.Set<T>();
         }
         public T Add(T entity)
         {
@@ -36,13 +27,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
         {
             return _dbSet.Count(where);
         }
-
-        public T Delete(int id)
-        {
-            var entity = _dbSet.Find(id);
-            return _dbSet.Remove(entity);
-        }
-
+        
         public IEnumerable<T> GetAll(string[] includes = null)
         {
             if (includes != null && includes.Count() > 0)
@@ -56,7 +41,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
             return _dbContext.Set<T>().AsQueryable();
         }
 
-        public virtual T GetSingleByID(int id)
+        public T GetSingleByID(int id)
         {
             return _dbSet.Find(id);
         }
@@ -67,8 +52,9 @@ namespace WebBanSach_2_0.Data.Infrastructure
             _dbContext.Entry(entity).State = EntityState.Modified;
         }
 
-        public T Delete(T entity)
+        public T ShiftDelete(int id)
         {
+            var entity = _dbSet.Find(id);
             return _dbSet.Remove(entity);
         }
     }
