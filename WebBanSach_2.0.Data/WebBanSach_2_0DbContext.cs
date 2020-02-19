@@ -12,7 +12,7 @@ namespace WebBanSach_2_0.Data
     {
         public WebBanSach_2_0DbContext() : base("Data Source=.;Initial Catalog=WebBanSach2DB;Integrated Security=True;MultipleActiveResultSets=True")
         {
-            this.Configuration.LazyLoadingEnabled = false;
+            
         }
 
         public WebBanSach_2_0DbContext Create()
@@ -20,14 +20,14 @@ namespace WebBanSach_2_0.Data
             return new WebBanSach_2_0DbContext();
         }
 
-        public DbSet<Author> Authors { get; set; }
         public DbSet<AuthorDetail> AuthorDetails { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
-
+        public DbSet<ProductAuthor> ProductAuthors { get; set; }
         public DbSet<Error> Errors { get; set; }
 
+        
     }
 }

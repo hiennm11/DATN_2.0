@@ -1,0 +1,212 @@
+﻿@model WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<WebBanSach_2_0.Web.Models.ProductVM>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item">Manage</li>
+    <li class="breadcrumb-item active">Tables</li>
+</ol>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Book Lists
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8 col-md-4">
+                <button id="btnCreate" class="btn btn-info" role="button">Create Book</button>
+            </div>
+            <div class="col-sm-8 col-md-4">
+                @Html.DropDownList("Category", (IEnumerable<SelectListItem>)ViewBag.CateList, new { @class = "form-control" })
+            </div>
+            <div class="col-sm-8 col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Search</span>
+                    </div>
+                    <input type="text" class="form-control" id="searchDetail">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Purchase</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Price</th>
+                        <th>Purchase</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+                <tbody id="dataTableBody">
+                    @*Html.Partial("_ProductTablePV", Model.Items)*@
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <!-- pager -->
+                    <div class="paginationCustom" id="paged">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Modal-->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="far fa-edit"></i>
+                Create or Edit
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="createForm" method="post" enctype="multipart/form-data" onsubmit="return SaveProduct(this)">
+                @*@Html.AntiForgeryToken()*@
+                <div class="modal-body" id="modal-body">
+                    <div class="form-horizontal row">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                        @Html.Hidden("ID")
+                        @Html.Hidden("Purchase")
+                        @Html.Hidden("Star")
+                        @Html.Hidden("UpdateBy")
+                        @Html.Hidden("CreateBy")
+                        @Html.Hidden("CreateDate")
+                        @Html.Hidden("UpdatedDate")
+
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.Label("Name", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="col-md-10">
+                                    @Html.Editor("Name", new { htmlAttributes = new { @class = "form-control", @required = "required" } })
+                                    @Html.ValidationMessage("Name", "", new { @class = "text-danger" })
+                                    <div class="text-danger">@ViewBag.ErrorMessage</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("CateID", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="col-md-10">
+                                    @Html.DropDownList("CateID", (IEnumerable<SelectListItem>)ViewBag.CateList, new { @class = "form-control", @required = "required" })
+                                    @Html.ValidationMessage("CateID", "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="col-md-10">
+                                    @Html.Editor("Description", new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessage("Description", "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.Label("Price", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="col-md-10">
+                                    @Html.Editor("Price", new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessage("Price", "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-5" for="Status">
+                                    <input type="checkbox" id="Status" name="Status" value="true">
+                                    Status
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <img id="productImg" src="" style="border:solid;height:350px;width:100%" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <input type="file" id="file" name="file" class="form-control-file border" accept="image/*">
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" class="btn btn-success" id="saveData" value="Save" />"
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm())
+            {
+
+                <div class="modal-body" id="modal-body">
+
+                    @Html.AntiForgeryToken()
+                    <input data-val="true" type="number" name="id" id="modelID" value="0" hidden />
+                    <p><h4>Are you sure to delete <span class="text-danger" id="modelName"></span> ?</h4></p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger" id="deleteDetail">Delete</button>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts {
+    @Scripts.Render("~/bundles/admin/extensions/product-admin")
+}

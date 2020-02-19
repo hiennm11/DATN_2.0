@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item">Manage</li>
+    <li class="breadcrumb-item active">Tables</li>
+</ol>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Category Lists
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8 col-md-4">
+                <button id="btnCreate" class="btn btn-info" role="button">Create Author</button>
+            </div>
+
+            <div class="col-sm-8 col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Search</span>
+                    </div>
+                    <input type="text" class="form-control" id="searchDetail">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Created Date</th>
+                        <th>Updated Date</th>
+                        <th>Created By</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Created Date</th>
+                        <th>Updated Date</th>
+                        <th>Created By</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+                <tbody id="dataTableBody">
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <!-- pager -->
+                    <div class="paginationCustom" id="paged">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm())
+            {
+
+                <div class="modal-body" id="modal-body">
+
+                    @Html.AntiForgeryToken()
+                    <input data-val="true" type="number" name="id" id="modelID" value="0" hidden />
+                    <p><h4>Are you sure to delete <span class="text-danger" id="modelName"></span> ?</h4></p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger" id="deleteDetail">Delete</button>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Create Modal-->
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <i class="far fa-edit"></i>
+                    Create or Edit
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form role="form" id="createForm">
+                @Html.AntiForgeryToken()
+                <div class="modal-body" id="modal-body">
+                    <div class="form-horizontal">
+                        <input data-val="true" data-val-number="The field ID must be a number." data-val-required="The ID field is required." id="ID" name="ID" type="hidden" value="0">
+                        <input id="pageNumber" type="hidden" value="0">
+
+                        <div class="form-group">
+                            <label class="control-label col-md-5" for="CategoryName">CategoryName</label>
+                            <div class="col-md-10">
+                                <input class="form-control text-box single-line" id="CategoryName" name="CategoryName" type="text" value="" required="required">
+                                <span class="field-validation-valid text-danger" data-valmsg-for="CategoryName" data-valmsg-replace="true"></span>
+                                <div class="text-danger"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-5" for="Description">Description</label>
+                            <div class="col-md-10">
+                                <input class="form-control text-box single-line" id="Description" name="Description" type="text" value="">
+                                <span class="field-validation-valid text-danger" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-5" for="Status">
+                                <input type="checkbox" id="Status" name="Status" value="true">
+                                Active
+                            </label>
+                           
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-success" id="saveData" value="Save">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts {
+    @Scripts.Render("~/bundles/admin/extensions/cate-admin")
+}

@@ -1,0 +1,20 @@
+120 món súp bổ dưỡng cho trẻ em & người bệnh với một số món ăn như:
+<strong>1. Các món súp cho trẻ em:</strong>
+Súp phô mai – bí đỏ – cá hồi
+Súp tôm – gà – bí đỏ
+Súp bắp non – trứng gà
+Súp bắp non – thịt ức gà
+Súp bắp – khoai tây
+Súp bắp – thịt heo
+Súp trứng – cải bó xôi
+…
+<strong>2. Các món súp cho người bệnh:</strong>
+Súp bóng cá
+Súp thịt bò – rau củ
+Súp tôm chua cay
+Súp cà chua – thịt gà
+Súp sò điệp
+Súp gà – bắp non
+Súp tôm viên – cải thảo
+Súp đậu hũ – thịt viên
+…

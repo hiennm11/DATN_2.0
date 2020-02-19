@@ -1,0 +1,46 @@
+<strong>Linux All-in-One For Dummies</strong> giải thích mọi thứ bạn cần để bắt đầu và chạy với hệ điều hành Linux phổ biến. Được viết trong phong cách thân thiện và dễ tiếp cận, cuốn sách lý tưởng cho người mới dùng Linux và người đã có một ít kinh nghiệm với hệ điều hành này, cũng như bất kỳ ai đang học chứng chỉ Linux cấp độ 1. Bốn phần bên trong sách bao gồm các vấn đề cơ bản của Linux, làm sao để tương tác với nó, các vấn đề về mạng, dịch vụ Internet, quản trị, bảo mật, kịch bản scripting và chứng chỉ cấp 1.
+Bao gồm tất cả mọi thứ người mới bắt đầu cần biết để thâm nhập vào thế giới khổng lồ của Linux, <strong>Linux All-in-One For Dummies, 5th Edition</strong> là tài nguyên và tài liệu tham khảo cuối cùng cho các chuyên gia tham vọng.<br>Tất cả những gì bạn cần để khởi đầu thu bé lại vừa bằng một quyển sách. Thật là tuyệt vời!
+<strong>Table of Contents</strong>
+Introduction 1
+<strong>Book I: Getting Started with Linux 7</strong>
+Chapter 1: Introducing Linux 9
+Chapter 2: Installing Linux 29
+Chapter 3: Troubleshooting and Configuring Linux 37
+Chapter 4: Trying Out Linux 57
+<strong>Book II: Linux Desktops 67</strong>
+Chapter 1: GNOME, Unity, Cinnamon, and MATE 69
+Chapter 2: The KDE Desktop 79
+Chapter 3: Commanding the Shell 89
+Chapter 4: Navigating the Linux File System 109
+Chapter 5: Introducing Linux Applications 127
+Chapter 6: Using Text Editors 139
+<strong>Book III: Networking 151</strong>
+Chapter 1: Connecting to the Internet 153
+Chapter 2: Setting Up a Local Area Network 167
+Chapter 3: Going Wireless 179
+Chapter 4: Managing the Network 189
+<strong>Book IV: The Internet 203</strong>
+Chapter 1: Browsing the Web 205
+Chapter 2: Reading Newsgroups and RSS Feeds 217
+Chapter 3: Using FTP 231
+Chapter 4: Hosting Internet Services 241
+Chapter 5: Managing Mail and News Servers 257
+Chapter 6: Managing DNS 279
+<strong>Book V: Administration 299</strong>
+Chapter 1: Introducing Basic System Administration 301
+Chapter 2: Managing Users and Groups 337
+Chapter 3: Managing File Systems 351
+Chapter 4: Working with Samba and NFS 373
+<strong>Book VI: Security 381</strong>
+Chapter 1: Introducing Linux Security 383
+Chapter 2: Securing Linux 399
+Chapter 3: Computer Security Audits and Vulnerability Testing Types 429
+<strong>Book VII: Scripting 443</strong>
+Chapter 1: Introductory Shell Scripting 445
+Chapter 2: Advanced Shell Scripting 457
+Chapter 3: Programming in Linux 465
+<strong>Book VIII: Linux Certification 489</strong>
+Chapter 1: Studying for the Linux Essentials Certification Exam 491
+Chapter 2: Studying for the CompTIA Linux+ Powered by LPI Certification Exams 501
+Chapter 3: Other Linux Certifications 517
+ 

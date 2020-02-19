@@ -8,10 +8,10 @@ using WebBanSach_2_0.Model.Models;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IRepository<Product>
     {
         Product GetProductByNameID(string nameId);
-        IEnumerable<Product> GetAllPaging(int page, int pageSize);
+        IEnumerable<Product> GetAllPaging(int page, int pageSize, out int totalRow);
         void Delete(int id);
     }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
@@ -32,9 +32,11 @@ namespace WebBanSach_2_0.Data.Repositories
             return _dbContext.Products.FirstOrDefault(n => n.NameID == nameId);
         }
 
-        public IEnumerable<Product> GetAllPaging(int page, int pageSize)
+        public IEnumerable<Product> GetAllPaging(int page, int pageSize,out int totalRow)
         {
-            return _dbContext.Products.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+            var list = _dbContext.Products.OrderBy(c => c.Name).Skip((page - 1) * pageSize).Take(pageSize);
+            totalRow = list.Count();
+            return list;
         }
         
     }

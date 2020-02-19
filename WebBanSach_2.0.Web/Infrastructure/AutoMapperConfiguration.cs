@@ -9,7 +9,8 @@ namespace WebBanSach_2_0.Web.Infrastructure
         public static MapperConfiguration config = new MapperConfiguration(cfg => {
             cfg.CreateMap<Category, CategoryVM>();
             cfg.CreateMap<Product, ProductVM>();
-            });
+            cfg.CreateMap<AuthorDetail, AuthorDetailVM>();
+        });
 
         public static IMapper map = new Mapper(config);
     }

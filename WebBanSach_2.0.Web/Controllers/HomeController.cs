@@ -17,13 +17,10 @@ namespace WebBanSach_2._0.Web.Controllers
        
         public ActionResult Index()
         {
-            var cate = _unitOfWork.Category.GetAll().ToList();
-            var pro = _unitOfWork.Product.GetAllPaging(1, 20);
+            var cate = _unitOfWork.Category.GetAll().ToList();          
             
             var category = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
-            var product = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(pro);
-
-            ViewBag.Product = product.ToList();
+                 
             ViewBag.Cate = category.ToList();
 
             return View();

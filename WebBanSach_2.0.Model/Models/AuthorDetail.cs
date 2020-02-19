@@ -10,7 +10,7 @@ using WebBanSach_2_0.Model.Abstract;
 namespace WebBanSach_2_0.Model.Models
 {
     public class AuthorDetail : AbstractProps
-    {
+    {       
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
@@ -18,6 +18,6 @@ namespace WebBanSach_2_0.Model.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-
+        public virtual ICollection<ProductAuthor> ProductAuthors { get; set; }
     }
 }

@@ -1,0 +1,4 @@
+Nếu bạn là người đam mê tin học, nếu bạn là người muốn khám phá về lập trình, hẳn bạn phải biết đến một cuốn sách tin học rất nổi tiếng ở Việt Nam trong nhiều năm trở lại đây. Từ những học sinh không chuyên đến những thành viên đội tuyển thi quốc tế tin học, có lẽ không một ai chưa từng học qua cuốn sách được biên soạn bởi một thầy giáo trẻ những đầy tài năng của trường Đại học Sư phạm Hà Nội, thầy Lê Minh Hoàng.<br><br><strong>Mục lục:</strong><br><br>PHẦN 1 – BÀI TOÁN LIỆT KÊ<br> 
+<br>PHẦN 2 – CẤU TRÚC DỮ LIỆU VÀ GIẢI THUẬT<br> 
+<br>PHẦN 3 – QUY HOẠCH ĐỘNG<br> 
+<br>PHẦN 4 – CÁC THUẬN TOÁN TRÊN ĐỒ THỊ<br> 

@@ -1,0 +1,14 @@
+<strong>Tóm tắt:</strong>
+<strong>Phần 1: Công trình vượt qua sông lớn và vừa</strong>
+hương 1: Khái niệm chung về công trình vượt qua sông lớn và vừa
+Chương 2: Tính toán thủy văn trong thiết kế cầu
+Chương 3: Xác định khẩn độ cần và xói chung dưới cầu
+Chương 4: Xác định xói cục bộ trụ cầu và biện pháp chống xói cục bộ
+Chương 5: Tính toán thủy lực cầu vượt sông
+Chương 6: Thiết kế các công trình trong khu vực cầu vượt sông
+Chương 7: Khảo sát đo đạt thủy văn tại vị trí cầu vượt sông
+<strong>Phần 2: Công trình vượt qua sông nhỏ</strong>
+Chương 8: Khái niệm chung về công trình vượt qua sông nhỏ
+Chương 9: Xác định lưu lượng từ lưu vực nhỏ
+Chương 10: Tính toán các công trình vượt qua sông nhỏ
+<strong>Phần phụ lục</strong>

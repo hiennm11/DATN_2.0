@@ -11,7 +11,8 @@ namespace WebBanSach_2_0.Data.Infrastructure
     {
         ICategoryRepository Category { get; }
         IProductRepository Product { get; }
-        IAuthorRepository Author { get; }
+        IAuthorDetailRepository AuthorDetail { get; }
+        IProductAuthorRepository ProductAuthor { get; }
         void Save();
     }
     public class UnitOfWork : IUnitOfWork
@@ -23,14 +24,14 @@ namespace WebBanSach_2_0.Data.Infrastructure
             _dbContext = dbContext;
             Category = new CategoryRepository(_dbContext);
             Product = new ProductRepository(_dbContext);
-            Author = new AuthorRepository(_dbContext);
+            AuthorDetail = new AuthorDetailRepository(_dbContext);
+            ProductAuthor = new ProductAuthorRepository(_dbContext);
         }
 
         public ICategoryRepository Category { get; private set; }
-
         public IProductRepository Product { get; private set; }
-
-        public IAuthorRepository Author { get; private set; }
+        public IAuthorDetailRepository AuthorDetail { get; private set; }
+        public IProductAuthorRepository ProductAuthor { get; set; }
 
         public void Save()
         {

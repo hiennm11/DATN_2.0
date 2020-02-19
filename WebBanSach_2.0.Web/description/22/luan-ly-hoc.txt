@@ -1,0 +1,1 @@
+Logic hình thức còn được biết đến trong toán học như là logic ký hiệu là ngành khoa học nằm trong miền giao thoa giữa toán học và triết học tự nhiên. Logic hình thức sử dụng ký hiệu hình thức và các phép toán đại số cùng với các nguyên tắc nhất định về giá trị chân lý để nhằm xác định tính đúng đắn của các lập luận.
