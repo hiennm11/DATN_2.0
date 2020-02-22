@@ -78,13 +78,23 @@
     <Compile Include="Migrations\202002130822521_big-update-dbv3.designer.cs">
       <DependentUpon>202002130822521_big-update-dbv3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002201227095_add-Identity.cs" />
+    <Compile Include="Migrations\202002201227095_add-Identity.designer.cs">
+      <DependentUpon>202002201227095_add-Identity.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002210313294_edit-dob-Identity.cs" />
+    <Compile Include="Migrations\202002210313294_edit-dob-Identity.designer.cs">
+      <DependentUpon>202002210313294_edit-dob-Identity.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\GenericRepository.cs" />
     <Compile Include="Infrastructure\UnitOfWork.cs" />
+    <Compile Include="Repositories\ApplicationUserRepository.cs" />
     <Compile Include="Repositories\AuthorDetailRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\ErrorRepository.cs" />
+    <Compile Include="Repositories\IdentityRoleRepository.cs" />
     <Compile Include="Repositories\ProductAuthorRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="WebBanSach_2_0DbContext.cs" />
@@ -114,6 +124,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002130822521_big-update-dbv3.resx">
       <DependentUpon>202002130822521_big-update-dbv3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002201227095_add-Identity.resx">
+      <DependentUpon>202002201227095_add-Identity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002210313294_edit-dob-Identity.resx">
+      <DependentUpon>202002210313294_edit-dob-Identity.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

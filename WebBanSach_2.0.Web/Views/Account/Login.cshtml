@@ -1,0 +1,77 @@
+﻿@using WebBanSach_2_0.Web.Models
+@model LoginViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>DATN Admin - Login</title>
+
+    @Styles.Render("~/bundles/admin/css")
+    @Scripts.Render("~/bundles/jquery")
+
+</head>
+
+<body class="bg-dark">
+
+    <div class="container">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header">Login</div>
+            <div class="card-body">
+                @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="form-label-group">
+                            <input type="email" name="Email" id="inputEmail" class="form-control" placeholder="Email" required="required" autofocus="autofocus">
+                            <label for="inputEmail">Email</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label-group">
+                            <input type="password" name="Password" id="inputPassword" class="form-control" placeholder="Password" required="required">
+                            <label for="inputPassword">Password</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                @Html.CheckBox("RememberMe")
+                                @Html.Label("Remember Password ?")
+                            </label>
+                        </div>
+                    </div>
+                    <input type="submit" value="Đăng nhập" class="btn btn-primary btn-block" />
+                }
+
+            <div class="text-center">
+                @*<a class="d-block small mt-3" href="register.html">Register an Account</a>
+                <a class="d-block small" href="forgot-password.html">Forgot Password?</a>*@
+                <a class="d-block small" href="/">Về trang chủ</a>
+
+            </div>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+</body>
+
+</html>
+
+
+

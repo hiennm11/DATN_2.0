@@ -46,6 +46,11 @@ namespace WebBanSach_2_0.Data.Infrastructure
             return _dbSet.Find(id);
         }
 
+        public T GetSingleByStringID(string id)
+        {
+            return _dbSet.Find(id);
+        }
+
         public void Update(T entity)
         {
             _dbSet.Attach(entity);

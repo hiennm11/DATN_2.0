@@ -15,6 +15,7 @@ using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class ProductController : Controller
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());

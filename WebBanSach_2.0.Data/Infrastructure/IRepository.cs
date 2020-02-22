@@ -15,6 +15,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
 
         IEnumerable<T> GetAll(string[] includes = null);
         T GetSingleByID(int id);
+        T GetSingleByStringID(string id);
         int Count(Expression<Func<T, bool>> where);
 
     }

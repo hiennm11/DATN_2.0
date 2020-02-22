@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
         // GET: Admin/Dashboard

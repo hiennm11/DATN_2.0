@@ -12,6 +12,7 @@ using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
             UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());

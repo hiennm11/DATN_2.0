@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -8,18 +9,13 @@ using WebBanSach_2_0.Model.Models;
 
 namespace WebBanSach_2_0.Data
 {
-    public class WebBanSach_2_0DbContext : DbContext
+    public class WebBanSach_2_0DbContext : IdentityDbContext<ApplicationUser>
     {
         public WebBanSach_2_0DbContext() : base("Data Source=.;Initial Catalog=WebBanSach2DB;Integrated Security=True;MultipleActiveResultSets=True")
         {
             
         }
-
-        public WebBanSach_2_0DbContext Create()
-        {
-            return new WebBanSach_2_0DbContext();
-        }
-
+     
         public DbSet<AuthorDetail> AuthorDetails { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
@@ -28,6 +24,10 @@ namespace WebBanSach_2_0.Data
         public DbSet<ProductAuthor> ProductAuthors { get; set; }
         public DbSet<Error> Errors { get; set; }
 
-        
+        public static WebBanSach_2_0DbContext Create()
+        {
+            return new WebBanSach_2_0DbContext();
+        }
+
     }
 }

@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\AbstractProps.cs" />
+    <Compile Include="Models\ApplicationUser.cs" />
     <Compile Include="Models\AuthorDetail.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Models\Comment.cs" />
