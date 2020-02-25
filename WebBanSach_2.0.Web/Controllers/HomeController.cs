@@ -7,6 +7,7 @@ using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Models;
 using WebBanSach_2_0.Web.Infrastructure;
 using WebBanSach_2_0.Web.Models;
+using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers
 {
@@ -14,31 +15,83 @@ namespace WebBanSach_2._0.Web.Controllers
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
 
-       
-        public ActionResult Index(string cateID)
+        [Route("")]
+        [Route("~/")]
+        public ActionResult Index(string cateID = null, string search = null,int page = 1)
         {
-            var temp = _unitOfWork.Product.GetAll().Take(20);
-            var newTemp = _unitOfWork.Product.GetNewProduct().Take(20);
-            var hotTemp = _unitOfWork.Product.GetHotProduct().Take(20);
+            var dataTemp = _unitOfWork.Product.GetAll();
+            var newTemp = _unitOfWork.Product.GetNewProduct().Take(18);
+            var hotTemp = _unitOfWork.Product.GetHotProduct().Take(18);
 
+            if (search != null && search != "")
+            {
+                string searchc = EntityExtensions.convertToUnSign(search);
+                cateID = null;
+                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.ToLower().Contains(searchc));
+            }
             if (cateID != null && cateID != "")
             {
-                temp = _unitOfWork.Product.GetByCategory(cateID).Take(20);
+                search = null;
+                dataTemp = _unitOfWork.Product.GetByCategory(cateID);
             }
-            var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp);
+
             var newProduct = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
             var hotProduct = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
 
-            ViewBag.ProductList = list.ToList();
+            var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
+            var pager = new Pager(data.Count(), page, 18);
+            var viewModel = new IndexViewModel<ProductVM>()
+            {
+                Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Pager = pager
+            };
+                     
             ViewBag.NewProduct = newProduct.ToList();
             ViewBag.HotProduct = hotProduct.ToList();
+            ViewBag.ProductList = viewModel;
+            ViewBag.CategoryID = cateID;
+            ViewBag.SearchString = search;
 
             return View();
         }     
-        
+
+        public JsonResult GetPaggedData(int page, string cateID , string search)
+        {
+            var dataTemp = _unitOfWork.Product.GetAll();
+            if (search != null && search != "")
+            {
+                string searchc = EntityExtensions.convertToUnSign(search);
+                cateID = null;
+                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.ToLower().Contains(searchc));
+            }
+            if(cateID != null && cateID != "")
+            {
+                search = null;
+                dataTemp = _unitOfWork.Product.GetByCategory(cateID);
+            }
+            var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
+            var pager = new Pager(data.Count(), page, 18);
+            var viewModel = new IndexViewModel<ProductVM>()
+            {
+                Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Pager = pager
+            };
+
+            return Json(new {data = viewModel, status = true}, JsonRequestBehavior.AllowGet);
+        }
+
+
         public ActionResult Detail(string nameID)
         {
-            return View();
+            var item = _unitOfWork.Product.GetProductByNameID(nameID);
+            var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description).Take(6);
+            var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp);
+            var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item);
+            ViewBag.CategoryName = item.Categories.CategoryName;
+            ViewBag.CateNameID = item.Categories.Description;
+            ViewBag.RelatedList = list.ToList();
+
+            return View(product);
         }
        
         #region childView

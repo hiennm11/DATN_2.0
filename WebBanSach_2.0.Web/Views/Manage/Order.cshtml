@@ -1,0 +1,46 @@
+﻿@model IEnumerable<WebBanSach_2_0.Web.Models.OrderVM>
+@{
+    ViewBag.Title = "Xem đơn hàng";
+}
+
+<h2>@ViewBag.Title.</h2>
+<hr />
+
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <td>#</td>
+                <td>Ngày đặt hàng</td>
+                <td>Địa chỉ nhận</td>
+                <td>Điện thoại</td>
+                <td>Hình thức thanh toán</td>
+                <td>Trạng thái</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>1</td>
+                        <td>@item.CreatedDate</td>
+                        <td>@item.CustomerAddress</td>
+                        <td>@item.CustomerMobile</td>
+                        <td>@item.PaymentMethod</td>
+                        <td>@item.Status</td>
+                        <td></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr class="text-center">
+                    <td colspan="6" class="text-danger">Bạn chưa đặt đơn hàng nào</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

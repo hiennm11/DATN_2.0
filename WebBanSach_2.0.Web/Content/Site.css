@@ -3,6 +3,11 @@
     padding-bottom: 20px;
 }
 
+.detail__intro-infor, .detail__infor table {
+    background: #f3f4f7;
+}
+
+
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
@@ -16,11 +21,13 @@
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
+/* Set width on the form input elements since they're 100% wide by default input,*/
+select {
     max-width: 280px;
+}
+
+body a:hover {
+    cursor:pointer;
 }
 
 .navbar .dropdown-menu .form-control {
@@ -33,16 +40,16 @@ textarea {
     overflow-x: hidden;
 }
 
-.dropdown:hover > .dropdown-menu {
+.menu-dropdown:hover > .dropdown-menu {
     display: block;
 }
 
-.dropdown > .dropdown-toggle:active {
+.menu-dropdown > .dropdown-toggle:active {
     /*Without this, clicking will make it sticky*/
     pointer-events: none;
 }
 
-.card {
+.item-card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     max-width: 300px;
     margin: auto;
@@ -50,28 +57,73 @@ textarea {
     font-family: arial;
 }
 
-.price {
+.item-card > .price {
     color: grey;
     font-size: 22px;
 }
 
-.card h6 {
+.item-card h6 {
     margin-bottom: 10px;
     height: 35px;
 }
 
-.card button {
-    border: none;
-    outline: 0;
-    padding: 12px;
-    color: white;
-    background-color: #0094ff;
-    text-align: center;
+    .item-card .add-to-cart {
+        border: none;
+        outline: 0;
+        padding: 12px;
+        color: white;
+        background-color: #0094ff;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .item-card .add-to-cart:hover {
+        opacity: 0.7;
+    }
+
+
+
+
+.detail__intro-img-wrap {
+    border: 1px solid #e1e1e1;
+    padding: 5px 10px;
+}
+    .detail__intro-img-wrap img {
+        height: 282px;
+    }
+
+.detail__intro-infor {
+    padding: 29px 20px;
+}
+    .detail__intro-infor h1 {
+        margin-bottom: 15px;
+    }
+
+#back2Top {
+    width: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    z-index: 999;
+    display: none;
     cursor: pointer;
-    width: 100%;
-    font-size: 18px;
+    -moz-transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    transform: rotate(270deg);
+    position: fixed;
+    bottom: 50px;
+    right: 0;
+    background-color: #DDD;
+    color: #555;
+    text-align: center;
+    font-size: 30px;
+    text-decoration: none;
 }
 
-    .card button:hover {
-        opacity: 0.7;
+    #back2Top:hover {
+        background-color: #DDF;
+        color: #000;
     }

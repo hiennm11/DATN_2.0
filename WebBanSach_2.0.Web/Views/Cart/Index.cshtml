@@ -1,0 +1,128 @@
+﻿
+@{
+    ViewBag.Title = "Giỏ hàng";
+    var cart = (List<WebBanSach_2_0.Web.Models.CartItem>)ViewBag.Cart;
+    var totalPrice = ViewBag.Total;
+    var user = System.Web.HttpContext.Current.User.Identity.Name;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Trang chủ </a></li>
+        <li class="breadcrumb-item active" aria-current="page">Giỏ hàng </li>
+    </ol>
+</nav>
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col">Sản phẩm</th>
+                            <th scope="col">Tình trạng</th>
+                            <th scope="col" class="text-center">Số lượng</th>
+                            <th scope="col" class="text-right">Đơn giá</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (cart != null && cart.Count() > 0)
+                        {
+                            foreach (var item in cart)
+                            {
+                                <tr>
+                                    <td><img src="@item.Product.Image" style="width:100px;height:auto" /> </td>
+                                    <td>@item.Product.Name</td>
+                                    <td>@(item.Product.Status == true ? "Còn hàng" : "Hết hàng")</td>
+                                    <td><input class="form-control cart-item-quantity" type="number" data-nameid="@item.Product.NameID" value="@item.Quantity" /></td>
+                                    <td class="text-right">@totalPrice vnđ</td>
+                                    <td class="text-right"><button class="btn btn-sm btn-danger delete-btn" data-id="@item.Product.NameID"><i class="fa fa-trash"></i></button></td>
+                                </tr>
+                            }
+
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>Sub-Total</td>
+                                <td class="text-right">@(totalPrice).đ</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>Shipping</td>
+                                <td class="text-right">50,000.đ</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Total</strong></td>
+                                <td class="text-right"><strong>@(String.Format("{0:0,0}", totalPrice + 50000))đ</strong></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr><td colspan="6"></td></tr>
+                            <tr><td colspan="6"></td></tr>
+                            <tr><td colspan="6" class="text-center"><span class="text-center text-danger">Giỏ hàng của bạn không có sản phẩm nào.</span></td></tr>
+                            <tr><td colspan="6"></td></tr>
+                            <tr><td colspan="6"></td></tr>
+                            <tr></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col mb-2">
+            <div class="row">
+                <div class="col-sm-12  col-md-6">
+                    <a class="btn btn-block btn-light" href="/">Continue Shopping</a>
+                </div>
+                <div class="col-sm-12 col-md-6 text-right">
+                    @if (cart != null && cart.Count > 0)
+                    {
+                        <a class="btn btn-lg btn-block btn-success text-uppercase" href="@Url.Action("Checkout", new { @user = user })">Checkout</a>
+                    }
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal fade" style="display: none;">
+    <div class="modal-dialog modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="icon-box">
+                    <i class="material-icons"></i>
+                </div>
+                <h4 class="modal-title">Are you sure?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            @using (Html.BeginForm("Delete", "Cart"))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    @Html.Hidden("deleteId")
+                    <p>Do you really want to delete these records? This process cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section homeScript{
+    @Scripts.Render("~/bundles/app-js.js")
+}

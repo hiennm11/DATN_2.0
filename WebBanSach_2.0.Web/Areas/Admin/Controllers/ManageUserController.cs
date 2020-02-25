@@ -16,7 +16,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/ManageUser
         public ActionResult Index()
         {
-            var list = _unitOfWork.ApplicationUser.GetAll();
+            var list = _unitOfWork.ApplicationUser.GetAll().Where(m => m.Id != "ad3b7c5f-fbae-4c8a-a1ea-bc7f89db2860");
             return View(list);
         }
 

@@ -11,56 +11,70 @@
 
 }
 
-<div class="row">
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">User</li>
+    <li class="breadcrumb-item active">Tables</li>
+</ol>
 
-    <div class="col-sm-6">
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        @ViewBag.Title
+    </div>
+    <div class="card-body">
+        <div class="row">
 
-        <h2>@ViewBag.Title</h2>
+            <div class="col-sm-6">
 
-        <hr />
+                @Html.ActionLink("Tạo role", "Create", null, new { @class = "btn btn-primary" })
 
-        @Html.ActionLink("Tạo role", "Create", null, new { @class = "btn btn-primary" })
+                <br /><br />
 
-        <br /><br />
+                <table class="table table-bordered">
 
-        <table class="table table-bordered">
+                    <thead>
 
-            <thead>
+                        <tr>
 
-                <tr>
+                            <th>ID</th>
 
-                    <th>ID</th>
+                            <th>Tên quyền</th>
 
-                    <th>Tên quyền</th>
+                            <th>Thao tác</th>
 
-                    <th>Thao tác</th>
+                        </tr>
 
-                </tr>
+                    </thead>
 
-            </thead>
+                    <tbody>
 
-            <tbody>
+                        @foreach (var item in Model)
 
-                @foreach (var item in Model)
+                        {
 
-                {
+                            <tr>
 
-                    <tr>
+                                <td>@item.Id</td>
 
-                        <td>@item.Id</td>
+                                <td>@item.Name</td>
 
-                        <td>@item.Name</td>
+                                <td>@Html.ActionLink("Xóa", "Delete", new { id = item.Id })</td>
 
-                        <td>@Html.ActionLink("Xóa", "Delete", new { id = item.Id })</td>
+                            </tr>
 
-                    </tr>
+                        }
 
-                }
+                    </tbody>
 
-            </tbody>
+                </table>
 
-        </table>
+            </div>
 
+        </div>
     </div>
 
 </div>

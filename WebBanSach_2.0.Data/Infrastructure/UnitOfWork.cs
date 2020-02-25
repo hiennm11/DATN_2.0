@@ -15,6 +15,8 @@ namespace WebBanSach_2_0.Data.Infrastructure
         IProductAuthorRepository ProductAuthor { get; }
         IIdentityRoleRepository IdentityRole { get; }
         IApplicationUserRepository ApplicationUser { get; }
+        IOrderRepository OrderRepository { get; }
+        IOrderDetailRepository OrderDetailRepository { get; }
         
         void Save();
     }
@@ -31,6 +33,8 @@ namespace WebBanSach_2_0.Data.Infrastructure
             ProductAuthor = new ProductAuthorRepository(_dbContext);
             IdentityRole = new IdentityRoleRepository(_dbContext);
             ApplicationUser = new ApplicationUserRepository(_dbContext);
+            OrderRepository = new OrderRepository(_dbContext);
+            OrderDetailRepository = new OrderDetailRepository(_dbContext);
         }
 
         public ICategoryRepository Category { get; private set; }
@@ -39,6 +43,8 @@ namespace WebBanSach_2_0.Data.Infrastructure
         public IProductAuthorRepository ProductAuthor { get; private set; }
         public IIdentityRoleRepository IdentityRole { get; private set; }
         public IApplicationUserRepository ApplicationUser { get; private set; }
+        public IOrderRepository OrderRepository { get; private set; }
+        public IOrderDetailRepository OrderDetailRepository { get; private set; }
 
         public void Save()
         {

@@ -16,54 +16,33 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/ManageRole
         public ActionResult Index()
         {
-            var model = _unitOfWork.IdentityRole.GetAll();
+            var model = _unitOfWork.IdentityRole.GetAll().Where(m => m.Id != "ad");
             return View(model);
         }
 
         public ViewResult Create()
-
         {
-
             return View();
-
         }
 
         [HttpPost]
-
         [ValidateAntiForgeryToken]
-
         public ActionResult Create(IdentityRole role)
-
         {
-
             try
-
             {
-
                 if (ModelState.IsValid)
-
                 {
-
                     _unitOfWork.IdentityRole.Add(role);
-
                     _unitOfWork.Save();
-
                 }
-
                 return RedirectToAction("Index");
-
             }
-
             catch (Exception ex)
-
             {
-
                 ModelState.AddModelError("", ex.Message);
-
             }
-
             return View(role);
-
         }
     }
 }

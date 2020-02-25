@@ -12,6 +12,7 @@ namespace WebBanSach_2_0.Data.Repositories
     public interface IApplicationUserRepository : IRepository<ApplicationUser> 
     {
         void Delete(string id);
+        ApplicationUser GetUserByUserName(string name);
     }
     public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicationUserRepository
     {
@@ -23,6 +24,11 @@ namespace WebBanSach_2_0.Data.Repositories
         {
             var model = _dbContext.Users.Find(id);
             _dbContext.Users.Remove(model);
+        }
+
+        public ApplicationUser GetUserByUserName(string name)
+        {
+            return _dbContext.Users.FirstOrDefault(m => m.UserName.Equals(name));
         }
     }
 }

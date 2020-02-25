@@ -12,6 +12,29 @@ namespace WebBanSach_2._0.Web
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.MapRoute(
+                name: "Cart",
+                url: "gio-hang",
+                defaults: new { controller = "Cart", action = "Index", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+               name: "Checkout",
+               url: "gio-hang/check-out",
+               defaults: new { controller = "Cart", action = "Checkout", id = UrlParameter.Optional }
+           );
+
+            routes.MapRoute(
+                name: "Register",
+                url: "dang-ky",
+                defaults: new { controller = "Account", action = "Register", id = UrlParameter.Optional }
+            );
+
+            routes.MapRoute(
+                name: "Login",
+                url: "dang-nhap",
+                defaults: new { controller = "Account", action = "Login", id = UrlParameter.Optional }
+            );
 
             routes.MapRoute(
                 name: "Cate",

@@ -95,6 +95,8 @@
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\ErrorRepository.cs" />
     <Compile Include="Repositories\IdentityRoleRepository.cs" />
+    <Compile Include="Repositories\OrderDetailRepository.cs" />
+    <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductAuthorRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="WebBanSach_2_0DbContext.cs" />

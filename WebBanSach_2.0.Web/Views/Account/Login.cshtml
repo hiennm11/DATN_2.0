@@ -31,6 +31,7 @@
                 @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
                     @Html.AntiForgeryToken()
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
                     <div class="form-group">
                         <div class="form-label-group">
                             <input type="email" name="Email" id="inputEmail" class="form-control" placeholder="Email" required="required" autofocus="autofocus">
@@ -54,12 +55,12 @@
                     <input type="submit" value="Đăng nhập" class="btn btn-primary btn-block" />
                 }
 
-            <div class="text-center">
-                @*<a class="d-block small mt-3" href="register.html">Register an Account</a>
-                <a class="d-block small" href="forgot-password.html">Forgot Password?</a>*@
-                <a class="d-block small" href="/">Về trang chủ</a>
+                <div class="text-center">
+                    @*<a class="d-block small mt-3" href="register.html">Register an Account</a>
+            <a class="d-block small" href="forgot-password.html">Forgot Password?</a>*@
+                    <a class="d-block small" href="/">Về trang chủ</a>
 
-            </div>
+                </div>
             </div>
         </div>
     </div>

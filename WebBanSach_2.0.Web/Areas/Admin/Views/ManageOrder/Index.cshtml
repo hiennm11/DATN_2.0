@@ -1,0 +1,90 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+
+    var orderList = (WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<WebBanSach_2_0.Web.Models.OrderVM>)ViewBag.OrderModel;
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Hóa đơn</li>
+</ol>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Quản lý hóa đơn
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8 col-md-4">
+            </div>
+
+            <div class="col-sm-8 col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Tìm kiếm</span>
+                    </div>
+                    <input type="text" class="form-control" id="searchDetail">
+                </div>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Khách hàng</th>
+                    <th>Địa chỉ</th>
+                    <th>SĐT</th>
+                    <th>Ngày đặt</th>
+                    <th>Hình thức thanh toán</th>
+                    <th>Trạng thái</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in orderList.Items)
+                {
+                    <tr>
+                        <td>@item.CustomerName</td>
+                        <td>@item.CustomerAddress</td>
+                        <td>@item.CustomerMobile</td>
+                        <td>@item.CreatedDate</td>
+                        <td>@item.PaymentMethod</td>
+                        <td>@item.PaymentStatus</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <ul class="pagination" id="paged">
+            @if (orderList.Pager.CurrentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.CurrentPage - 1 })"> Previous</a></li>
+            }
+            @for (int i = orderList.Pager.StartPage; i <= orderList.Pager.EndPage; i++)
+            {
+                if (i == orderList.Pager.CurrentPage)
+                {
+                    <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                }
+            }
+            @if (orderList.Pager.CurrentPage < orderList.Pager.TotalPages)
+            {
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.CurrentPage + 1 })"> Next</a></li>
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.TotalPages })"> Last</a></li>
+            }
+        </ul>
+
+    </div>
+</div>
+
+
+

@@ -7,21 +7,21 @@
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item">Manage</li>
-    <li class="breadcrumb-item active">Tables</li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Sản phẩm</li>
 </ol>
 
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
-        Book Lists
+        Quản lý sản phẩm
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <button id="btnCreate" class="btn btn-info" role="button">Create Book</button>
+                <button id="btnCreate" class="btn btn-info" role="button">Tạo mới</button>
             </div>
             <div class="col-sm-8 col-md-4">
                 @Html.DropDownList("Category", (IEnumerable<SelectListItem>)ViewBag.CateList, new { @class = "form-control" })
@@ -29,7 +29,7 @@
             <div class="col-sm-8 col-md-4">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Search</span>
+                        <span class="input-group-text">Tìm kiếm</span>
                     </div>
                     <input type="text" class="form-control" id="searchDetail">
                 </div>
@@ -40,25 +40,25 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Image</th>
-                        <th>Price</th>
-                        <th>Purchase</th>
-                        <th>Status</th>
+                        <th>Sản phẩm</th>
+                        <th>Thể loại</th>
+                        <th>Mô tả</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Lượng mua</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Description</th>
-                        <th>Image</th>
-                        <th>Price</th>
-                        <th>Purchase</th>
-                        <th>Status</th>
+                        <th>Sản phẩm</th>
+                        <th>Thể loại</th>
+                        <th>Mô tả</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Lượng mua</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </tfoot>

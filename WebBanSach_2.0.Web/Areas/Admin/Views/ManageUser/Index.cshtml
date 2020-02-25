@@ -7,68 +7,78 @@
 
     ViewBag.Title = "Quản lý thành viên";
 
-     Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
 
 }
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item">User</li>
+    <li class="breadcrumb-item active">Tables</li>
+</ol>
 
-<div class="row">
-
-    <div class="col-sm-12">
-
-        <h2>@ViewBag.Title</h2>
-
-        <hr />
-
-        <table class="table table-borderer">
-
-            <thead>
-
-                <tr>
-
-                    <th>Họ tên</th>
-
-                    <th>Email</th>
-
-                    <th>Địa chỉ</th>
-
-                    <th></th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                @foreach (var item in Model)
-
-                {
-
-                    <tr>
-
-                        <td>@item.FullName</td>
-
-                        <td>@item.Email</td>
-
-                        <td>@item.Address</td>
-
-                        <td>
-
-                            @Html.ActionLink("Sửa thông tin", "Edit", new { Id = item.Id }, null) |
-
-                            @Html.ActionLink("Sửa quyền", "EditRole", new { Id = item.Id }, null) |
-
-                            @Html.ActionLink("Xóa", "Delete", new { Id = item.Id }, null)
-
-                        </td>
-
-                    </tr>
-
-                }
-
-            </tbody>
-
-        </table>
-
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        @ViewBag.Title
     </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-12">                
+                <table class="table table-borderer">
 
+                    <thead>
+
+                        <tr>
+
+                            <th>Họ tên</th>
+
+                            <th>Email</th>
+
+                            <th>Địa chỉ</th>
+
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+
+                        {
+
+                            <tr>
+
+                                <td>@item.FullName</td>
+
+                                <td>@item.Email</td>
+
+                                <td>@item.Address</td>
+
+                                <td>
+
+                                    @Html.ActionLink("Sửa thông tin", "Edit", new { Id = item.Id }, null) |
+
+                                    @Html.ActionLink("Sửa quyền", "EditRole", new { Id = item.Id }, null) |
+
+                                    @Html.ActionLink("Xóa", "Delete", new { Id = item.Id }, null)
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    </div>
 </div>

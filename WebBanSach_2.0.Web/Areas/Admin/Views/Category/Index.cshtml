@@ -7,27 +7,27 @@
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item">Manage</li>
-    <li class="breadcrumb-item active">Tables</li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Thể loại</li>
 </ol>
 
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
-        Category Lists
+        Danh sách danh mục sản phẩm
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <button id="btnCreate" class="btn btn-info" role="button">Create Author</button>
+                <button id="btnCreate" class="btn btn-info" role="button">Thêm mới 1 thể loại</button>
             </div>
 
             <div class="col-sm-8 col-md-4">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Search</span>
+                        <span class="input-group-text">Tìm kiếm</span>
                     </div>
                     <input type="text" class="form-control" id="searchDetail">
                 </div>
@@ -38,21 +38,21 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Category Name</th>
-                        <th>Created Date</th>
-                        <th>Updated Date</th>
-                        <th>Created By</th>
-                        <th>Status</th>
+                        <th>Thể loại</th>
+                        <th>Ngày khỏi tạo</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Bởi</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Category Name</th>
-                        <th>Created Date</th>
-                        <th>Updated Date</th>
-                        <th>Created By</th>
-                        <th>Status</th>
+                        <th>Thể loại</th>
+                        <th>Ngày khỏi tạo</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Bởi</th>
+                        <th>Trạng thái</th>
                         <th></th>
                     </tr>
                 </tfoot>
@@ -93,12 +93,12 @@
 
                     @Html.AntiForgeryToken()
                     <input data-val="true" type="number" name="id" id="modelID" value="0" hidden />
-                    <p><h4>Are you sure to delete <span class="text-danger" id="modelName"></span> ?</h4></p>
+                    <p><h4>Bạn có chắc là muốn xóa <span class="text-danger" id="modelName"></span> ?</h4></p>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger" id="deleteDetail">Delete</button>
+                    <button type="submit" class="btn btn-danger" id="deleteDetail">Xóa</button>
 
                 </div>
             }
@@ -125,7 +125,7 @@
                         <input id="pageNumber" type="hidden" value="0">
 
                         <div class="form-group">
-                            <label class="control-label col-md-5" for="CategoryName">CategoryName</label>
+                            <label class="control-label col-md-5" for="CategoryName">Thể loại</label>
                             <div class="col-md-10">
                                 <input class="form-control text-box single-line" id="CategoryName" name="CategoryName" type="text" value="" required="required">
                                 <span class="field-validation-valid text-danger" data-valmsg-for="CategoryName" data-valmsg-replace="true"></span>
@@ -134,7 +134,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-5" for="Description">Description</label>
+                            <label class="control-label col-md-5" for="Description">Mô tả</label>
                             <div class="col-md-10">
                                 <input class="form-control text-box single-line" id="Description" name="Description" type="text" value="">
                                 <span class="field-validation-valid text-danger" data-valmsg-for="Description" data-valmsg-replace="true"></span>

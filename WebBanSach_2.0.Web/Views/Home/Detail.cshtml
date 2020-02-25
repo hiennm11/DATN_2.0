@@ -1,7 +1,177 @@
-﻿
+﻿@model WebBanSach_2_0.Web.Models.ProductVM
 @{
-    ViewBag.Title = "Detail";
-}
+    ViewBag.Title = Model.Name;
+    var relatedList = (List<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.RelatedList;
+    var cate = (string)ViewBag.CategoryName;
+    var cateID = (string)ViewBag.CateNameID;
+    List<string> fileContents = new List<string>();
+    if(Model.Description != null)
+    {
+        //Read file description
+        System.IO.StreamReader file = new System.IO.StreamReader(Server.MapPath(Model.Description));
+        fileContents = new List<string>();
+        while (file.ReadLine() != null)
+        {
+            fileContents.Add(file.ReadLine());
+        }
 
-<h2>Detail</h2>
+        file.Close();
+    }
+    
+}
+@*@section homeScript{
+    @Scripts.Render("~/bundles/app-js.js")
+}*@
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="/san-pham/@cateID" class="cate-link" data-id="@cateID">@cate</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+    </ol>
+</nav>
+<div class="detail__infor">
+    <div class="detail__intro">
+        <div class="container">
+            <div class="detail__intro-content">
+                <div class="row">
+                    <div class="col-md-3 col-sm-4 detail__intro-img padding-right-0">
+                        <div class="detail__intro-img-wrap text-center">
+                            <img src="@Model.Image" alt="@Model.Name">
+                        </div>
+                    </div>
+                    <div class="col-md-9 col-sm-8 padding-left-0">
+                        <div class="detail__intro-infor">
+                            <h1 class="font-weight-normal font-size-24 font_secondary color-dark">@Model.Name</h1>
+                            <div class="detail__intro-detail">
+                                <div class="row">
+                                    <div class="detail__intro-action col-md-6 full-xs">
+                                        <div class="rating">
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        </div>
+
+                                        <div class="alert alert-info" role="alert">
+                                            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Bạn có thể chọn mua sách hoặc đọc online.
+                                        </div>
+
+                                        <div class="detail__intro-form">
+                                            <form action="#" method="post">
+                                                <div class="form-action">
+
+                                                    <a href="@Url.Action("AddToCart","Cart",new { @nameID = Model.NameID })" rel="nofollow" class="btn font_secondary" style="width: 180px; float: left; margin-right: 10px;    background-color: #1d7eb6; color: #fff;">
+                                                        <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua sách
+                                                    </a>
+                                                    <a href="#" target="_blank" type="button" class="btn btn-warning btn-md"><i class="fas fa-book-open" aria-hidden="true"></i> Đọc Online</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="detail__intro-support col-md-6 full-xs">
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Tác giả</th>
+                                                    <td><a href="#">Tac gia</a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Thể loại</th>
+                                                    <td><a href="/san-pham/@cateID" class="cate-link" data-id="@cateID">@cate </a></td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Số Trang</th>
+                                                    <td>345</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br />
+<br />
+
+<div class="card" id="description-card">
+    <h5 class="card-header h5">Giới thiệu sách</h5>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        @if (fileContents != null)
+        {
+            foreach (var item in fileContents)
+            {
+                <p class="card-text">@item</p>
+            }
+        }
+    </div>
+</div>
+<br />
+<br />
+
+<div class="related">
+    <nav class="navbar-nav bg-transparent"><h4>Sách cùng chủ đề: </h4></nav>
+    <div class="row related-item">
+        @foreach (var item in relatedList)
+        {
+            <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                <div class="card item-card">
+                    <a href="/chi-tiet/@item.NameID"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
+                    @if (item.Name.Length > 25)
+                    {
+                        <a href="/chi-tiet/@item.NameID">
+                            <h6>
+                                @item.Name.Substring(0, 25) ...
+                            </h6>
+                        </a>
+                    }
+
+                    else
+                    { <a href="/chi-tiet/@item.NameID">
+                            <h6>@item.Name</h6>
+                        </a>}
+
+                    <p class="price">@item.Price</p>
+                    <p><a class="add-to-cart" href="@Url.Action("AddToCart","Cart",new { @nameID = item.NameID })">Add to Cart</a></p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<br />
+<br />
+
+<div class="cmt-box">
+    <div class="cmt-detail">
+        <form>
+            <div class="rating-box">
+                <span>Đánh giá của bạn: </span>
+                <span class="rating">
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                </span>
+            </div>
+            <br />
+            <div class="cmt-box">
+                <textarea style="width: 100%;height: 150px;"></textarea>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Bình luận" />
+        </form>
+    </div>
+    <div class="cmt-list">
+
+    </div>
+</div>
+
 

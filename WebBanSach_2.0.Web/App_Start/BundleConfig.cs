@@ -10,7 +10,8 @@ namespace WebBanSach_2._0.Web
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/jquery.unobtrusive-ajax.min.js"));
+                        "~/Scripts/jquery.unobtrusive-ajax.min.js",
+                        "~/Scripts/jquery.toast.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -25,7 +26,9 @@ namespace WebBanSach_2._0.Web
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/fontawesome-free/css/all.min.css",
+                      "~/Content/jquery.toast.css"));
 
             //Admin style n script
             bundles.Add(new StyleBundle("~/bundles/admin/css").Include(
@@ -53,6 +56,9 @@ namespace WebBanSach_2._0.Web
                 "~/Areas/Admin/Content/js/authord-admin.js"));
             bundles.Add(new ScriptBundle("~/bundles/admin/extensions/authors-admin").Include(
                 "~/Areas/Admin/Content/js/authors-admin.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/app-js.js").Include(
+                "~/Scripts/app.js"));
 
         }
     }

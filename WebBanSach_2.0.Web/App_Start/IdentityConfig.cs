@@ -36,7 +36,7 @@ namespace WebBanSach_2_0.Web.App_Start
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
+                RequireNonLetterOrDigit = false,
                 RequireDigit = false,
                 RequireLowercase = true,
                 RequireUppercase = false,

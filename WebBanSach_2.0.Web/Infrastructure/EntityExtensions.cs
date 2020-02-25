@@ -68,6 +68,22 @@ namespace WebBanSach_2_0.Web.Infrastructure
             return author;
         }
 
+        public static Order CreateOrder(ClientViewModel model)
+        {
+            Order obj = new Order()
+            {
+                CustomerName = model.FullName,
+                CustomerAddress = model.Address,
+                CustomerMobile = model.PhoneNumber,
+                CustomerEmail = model.Email,
+                PaymentMethod = model.PaymentMethod,
+                PaymentStatus = "",
+                CreatedDate = DateTime.Now,
+                Status = true
+            };
+            return obj;
+        }
+
         public static void UpdateCategory(this Category categories, CategoryVM categoryVm)
         {
             categories.ID = categoryVm.ID;

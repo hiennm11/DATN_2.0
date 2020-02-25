@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
@@ -71,6 +72,10 @@ namespace WebBanSach_2_0.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                if (Request.IsAjaxRequest())
+                {
+                    return PartialView("_Login", model);
+                }
                 return View(model);
             }
 
@@ -88,7 +93,11 @@ namespace WebBanSach_2_0.Web.Controllers
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                    if (Request.IsAjaxRequest())
+                    {
+                        return PartialView("_Login", model);
+                    }
+                    return RedirectToAction("Index","Home");
             }
         }
 
@@ -109,10 +118,12 @@ namespace WebBanSach_2_0.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Dob = model.Dob, FullName = model.FullName, Address = model.Address, PhoneNumber = model.PhoneNumber };
+                user.Roles.Add(new IdentityUserRole() { UserId = user.Id, RoleId = "client" });
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
