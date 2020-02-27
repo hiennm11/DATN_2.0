@@ -27,9 +27,9 @@ namespace WebBanSach_2_0.Model.Models
         public string CreatedBy { get; set; }
 
         public string PaymentMethod { get; set; }
-        public string PaymentStatus { get; set; }
-
-        public bool Status { get; set; }
+        public bool PaymentStatus { get; set; }
+        public int Status { get; set; }
+        
 
         public virtual IEnumerable<OrderDetail> OrderDetails { get; set; }
 

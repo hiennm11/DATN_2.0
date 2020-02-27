@@ -20,7 +20,9 @@ namespace WebBanSach_2_0.Model.Models
         public double Price { get; set; }
         public int Purchase { get; set; }
         public double Star { get; set; }
-        public string NameID { get; set; }      
+        public string NameID { get; set; }
+        public string Link { get; set; }
+
         public virtual Category Categories { get; set; }
 
         public virtual ICollection<ProductAuthor> ProductAuthors { get; set; }

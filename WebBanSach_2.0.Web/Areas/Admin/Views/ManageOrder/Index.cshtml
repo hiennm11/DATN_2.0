@@ -48,14 +48,33 @@
             <tbody>
                 @foreach (var item in orderList.Items)
                 {
-                    <tr>
-                        <td>@item.CustomerName</td>
-                        <td>@item.CustomerAddress</td>
-                        <td>@item.CustomerMobile</td>
-                        <td>@item.CreatedDate</td>
-                        <td>@item.PaymentMethod</td>
-                        <td>@item.PaymentStatus</td>
-                    </tr>
+                <tr>
+                    <td>@item.CustomerName</td>
+                    <td>@item.CustomerAddress</td>
+                    <td>@item.CustomerMobile</td>
+                    <td>@item.CreatedDate</td>
+                    <td>@item.PaymentMethod</td>
+                    <td class="item-status">
+                        @switch (item.Status)
+                        {
+                            case 1:<span>Đang giao hàng</span>; break;
+                            case 2: <span class="text-success">Đã hoàn thành</span>; break;
+                            default: <span class="text-danger">Đã hủy</span>;
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.ID">
+                            <i class="fas fa-check-circle"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-order-detail btn-sm" data-id="@item.ID">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.ID">
+                            <i class="fas fa-times-circle"></i>
+                        </button>
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -86,5 +105,59 @@
     </div>
 </div>
 
+<!-- The Modal -->
+<div class="modal fade" id="order-detail-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chi tiết hóa đơn</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col"> </th>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Giá bán</th>
+                                <th scope="col" class="text-center">Số lượng</th>
+                                <th scope="col" class="text-right">Đơn giá</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-detail-dataTable">
+                            <tr>
+                                <td><img src="" style="width:100px;height:auto" /> </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="text-right">vnđ</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 
+@section scripts {
+    @Scripts.Render("~/bundles/admin/extensions/order-admin")
+}

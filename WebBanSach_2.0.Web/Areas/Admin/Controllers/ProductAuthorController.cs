@@ -16,13 +16,20 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
         // GET: Admin/ProductAuthor
-        public ActionResult Index()
+        public ActionResult Index(int page = 1)
         {
             var list = _unitOfWork.ProductAuthor.GetAll().GroupBy(m => m.Product.Name, m => m.Author.Name);
             IEnumerable<Product> products = _unitOfWork.Product.GetAll();
+            var pager = new Pager(list.Count(), page);
+            var viewModel = new IndexViewModel<IGrouping<string,string>>()
+            {
+                Items = list.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Pager = new Pager(list.Count(), page)
+            };
             ViewBag.ProductIds = new SelectList(products, "ID", "Name");
             ViewBag.Authors = _unitOfWork.AuthorDetail.GetAll();
-            return View(list);
+            ViewBag.List = viewModel;
+            return View();
         }
 
         public JsonResult GetPaggedData(int page = 1)

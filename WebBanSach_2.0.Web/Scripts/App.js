@@ -21,23 +21,7 @@ $(window).scroll(function () {
 });
  /*Scroll to top when arrow up clicked END*/
 
-function createEvents() {
-    //$("#search-text").off('change').on('change', function () {
-    //    ajaxData(1, "", $("#search-text").val());
-    //});
-
-    //$(".cate-item").off('click').on('click', function () {
-    //    $("#search-text").val("");
-    //    var id = $(this).data('id');
-    //    ajaxData(1, id, "");
-    //});
-
-    //$(".cate-link").off('click').on('click', function () {
-
-    //    var id = $(this).data('id');
-    //    ajaxData(1, id, "");
-    //});
-
+function createEvents() {    
     $(".delete-btn").off('click').on('click', function () {
         $("#deleteId").val($(this).data('id'));
         $("#deleteModal").modal('show');
@@ -50,12 +34,65 @@ function createEvents() {
 
     $(".cart-item-quantity").off('change').on('change', function () {
         var id = $(this).data("nameid");
-        addToCart(id);
+        var quan = $(this).val();
+        UpdateCart(id, quan);
+    });
+
+    $(".cart-item-quantity").off('keypress').on('keypress', function () {
+        return isNumberKey(event);
+    });
+
+    $(".btn-order-detail").off('click').on('click', function () {
+        var id = $(this).data("id");
+        GetOrderDetail(id);
+        $("#order-detail-modal").modal('show');
+    });
+}
+
+function isNumberKey(evt) {
+    var charCode = (evt.which) ? evt.which : event.keyCode;
+    return !(charCode > 31 && (charCode < 48 || charCode > 57));
+}
+
+function GetOrderDetail(id) {
+    $.ajax({
+        url: "/Manage/GetOrderDetail",
+        type: "post",
+        dataType: "json",
+        data: { id: id },
+        success: function (response) {
+            if (response.status == true) {
+                $("#order-detail-dataTable").empty();
+                var data = response.data;
+                var rowData = "";
+                for (let i = 0; i < data.length; i++) {
+                    rowData += `
+                            <tr>
+                                <td><img src="${data[i].Product.Image}" style="width:100px;height:auto" /> </td>
+                                <td>${data[i].Product.Name}</td>
+                                <td>${data[i].Product.Price.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                <td>${data[i].Quantity}</td>
+                                <td class="text-right">${(data[i].Product.Price * data[i].Quantity).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                            </tr>
+                    `;
+                }
+
+                rowData += `<tr>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Tạm tính:</strong> ${response.total.toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                                <td><strong>Phí ship:</strong> 50,000.đ</td>
+                                <td><strong>Tổng:</strong> ${(response.total + 50000).toLocaleString('vi', { style: 'currency', currency: 'VND' })}</td>
+                            </tr>`;
+                $("#order-detail-dataTable").append(rowData);
+            }
+        }
     });
 }
 
 function addToCart(id) {
-    var quantity = $("#cart-quantity").html();    
+    var quantity = $("#cart-quantity").html(); 
+    $("#cart-quantity").empty();
     $.ajax({
         url: "/Cart/AddToCart",
         type: "post",
@@ -75,9 +112,27 @@ function addToCart(id) {
                     loader: false,
                     loaderBg: '#9EC600',
                 });
-                console.log(response.cart);
-                $("#cart-quantity").empty();
+               
                 $("#cart-quantity").html(response.cart.length);
+                
+            }
+        }
+    });
+}
+
+function UpdateCart(nameid, quantity) {
+    $("#sub-total").empty();
+    //$("#item-total").empty();
+    $("#grand-total").empty();
+    $.ajax({
+        url: "/Cart/UpdateCart",
+        type: "post",
+        data: { nameID: nameid, quantity: quantity },
+        success: function (response) {
+            if (response.status == true) {
+                $("#sub-total").html(response.total.toLocaleString('vi', { style: 'currency', currency: 'VND' }));
+                //$("#item-total").empty();
+                $("#grand-total").html((response.total + 50000).toLocaleString('vi', { style: 'currency', currency: 'VND' }));
             }
         }
     });

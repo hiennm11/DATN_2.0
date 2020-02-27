@@ -10,6 +10,7 @@ namespace WebBanSach_2._0.Web
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
+                        "~/Scripts/umd/popper.min.js",
                         "~/Scripts/jquery.unobtrusive-ajax.min.js",
                         "~/Scripts/jquery.toast.js"));
 
@@ -56,6 +57,8 @@ namespace WebBanSach_2._0.Web
                 "~/Areas/Admin/Content/js/authord-admin.js"));
             bundles.Add(new ScriptBundle("~/bundles/admin/extensions/authors-admin").Include(
                 "~/Areas/Admin/Content/js/authors-admin.js"));
+            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/order-admin").Include(
+                "~/Areas/Admin/Content/js/order-admin.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app-js.js").Include(
                 "~/Scripts/app.js"));

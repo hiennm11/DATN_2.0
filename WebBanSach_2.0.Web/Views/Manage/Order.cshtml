@@ -31,7 +31,11 @@
                         <td>@item.CustomerMobile</td>
                         <td>@item.PaymentMethod</td>
                         <td>@item.Status</td>
-                        <td></td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-order-detail" data-id="@item.ID">
+                                Chi tiết
+                            </button>
+                        </td>
                     </tr>
                 }
             }
@@ -43,4 +47,61 @@
             }
         </tbody>
     </table>
+
 </div>
+
+<!-- The Modal -->
+<div class="modal fade" id="order-detail-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chi tiết hóa đơn</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col"> </th>
+                                <th scope="col">Sản phẩm</th>
+                                <th scope="col">Giá bán</th>
+                                <th scope="col" class="text-center">Số lượng</th>
+                                <th scope="col" class="text-right">Đơn giá</th>
+                                <th> </th>
+                            </tr>
+                        </thead>
+                        <tbody id="order-detail-dataTable">
+                            <tr>
+                                <td><img src="" style="width:100px;height:auto" /> </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="text-right">vnđ</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section homeScript{
+    @Scripts.Render("~/bundles/app-js.js")
+}

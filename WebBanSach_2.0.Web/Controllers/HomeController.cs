@@ -87,6 +87,9 @@ namespace WebBanSach_2._0.Web.Controllers
             var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description).Take(6);
             var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp);
             var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item);
+            var author = item.ProductAuthors.FirstOrDefault(m => m.ProductID == item.ID);
+
+            ViewBag.Author = author.Author.Name;
             ViewBag.CategoryName = item.Categories.CategoryName;
             ViewBag.CateNameID = item.Categories.Description;
             ViewBag.RelatedList = list.ToList();

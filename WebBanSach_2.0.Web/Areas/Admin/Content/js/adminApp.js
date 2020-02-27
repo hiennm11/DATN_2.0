@@ -1,28 +1,28 @@
 ﻿
 
 //Paging temlpate
-function PaggingTemplate(pager, search) {
+function PaggingTemplate(pager, search, cate) {
     var template = "";
   
     var info = "<p>" + pager.CurrentPage + " of " + pager.TotalPages + " pages</p>"
     if (pager.CurrentPage > 1) {
-        template += `<a href="#" onclick="ajaxData(1,'${search})'">First</a>
-                     <a href="#" onclick="ajaxData(${pager.CurrentPage - 1},'${search}')"> Previous</a >`
+        template += `<a href="#" onclick="ajaxData(1,'${search}','${cate}')">First</a>
+                     <a href="#" onclick="ajaxData(${pager.CurrentPage - 1},'${search}','${cate}')"> Previous</a >`
     }
     
     var numberingLoop = "";
     for (var i = pager.StartPage; i <= pager.EndPage; i++) {
         if (i == pager.CurrentPage) {
-            numberingLoop = numberingLoop + `<a class="active" onclick="ajaxData(${i},'${search}')" href="#">${i}</a>`;
+            numberingLoop = numberingLoop + `<a class="active" onclick="ajaxData(${i},'${search}','${cate}')" href="#">${i}</a>`;
         }
         else {
-            numberingLoop = numberingLoop + `<a onclick="ajaxData(${i},'${search}')" href="#">${i}</a>`;
+            numberingLoop = numberingLoop + `<a onclick="ajaxData(${i},'${search}','${cate}')" href="#">${i}</a>`;
         }       
     }
     template = template + numberingLoop
     if (pager.CurrentPage < pager.TotalPages) {
-        template += `<a href="#" onclick="ajaxData(${pager.CurrentPage + 1},'${search}')"> Next</a >
-                     <a href="#" onclick="ajaxData(${pager.TotalPages},'${search}')"> Last</a >`
+        template += `<a href="#" onclick="ajaxData(${pager.CurrentPage + 1},'${search}','${cate}')"> Next</a >
+                     <a href="#" onclick="ajaxData(${pager.TotalPages},'${search}','${cate}')"> Last</a >`
     }
 
     $("#paged").append(template);

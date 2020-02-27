@@ -68,30 +68,46 @@ namespace WebBanSach_2_0.Web.Controllers
 
         public ActionResult AddToCart(string nameID)
         {
+            bool status = false;
             var currentCart = Session[cartSession] as List<CartItem>;
             List<CartItem> cart = new List<CartItem>();
             var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(_unitOfWork.Product.GetProductByNameID(nameID));
-
-            if (currentCart == null || currentCart.Count == 0)
+            if(product != null)
             {
-                cart.Add(new CartItem { Product = product, Quantity = 1 });
-            }
-            else
-            {
-                cart = Session[cartSession] as List<CartItem>;
-                int index = isExist(nameID);
-                if (index != -1)
-                {
-                    cart[index].Quantity++;
-                }
-                else
+                if (currentCart == null || currentCart.Count == 0)
                 {
                     cart.Add(new CartItem { Product = product, Quantity = 1 });
                 }
+                else
+                {
+                    cart = Session[cartSession] as List<CartItem>;
+                    int index = isExist(nameID);
+                    if (index != -1)
+                    {
+                        cart[index].Quantity++;
+                    }
+                    else
+                    {
+                        cart.Add(new CartItem { Product = product, Quantity = 1 });
+                    }
+                    status = true;
+                }
+
             }
 
             Session[cartSession] = cart;
-            return Json(new {cart = Session[cartSession], status = true });
+            return Json(new {cart = Session[cartSession], status = status });
+        }
+
+        public ActionResult UpdateCart(string nameID, int quantity)
+        {
+            var cart = Session[cartSession] as List<CartItem>;
+            int index = isExist(nameID);
+            cart[index].Quantity = quantity;
+
+            var total = cart.Sum(m => m.Product.Price * m.Quantity);
+
+            return Json(new { cart = cart,total = total , status = true });
         }
 
         [HttpPost]

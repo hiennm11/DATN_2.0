@@ -20,20 +20,27 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
         // GET: Admin/Product
-        public ActionResult Index(int? page)
-        {           
-            ViewBag.CateList = new SelectList(_unitOfWork.Category.GetAll(), "ID", "CategoryName");
-           
+        [Route("Product")]
+        public ActionResult Index()
+        {
+            
+            //ViewBag.CateList = new SelectList(_unitOfWork.Category.GetAll(), "ID", "CategoryName");
+            ViewBag.CateList = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(_unitOfWork.Category.GetAll().Where(m => m.Status == true));
+
             return View();
         }
                    
-        public JsonResult GetPaggedData(int page = 1, string search = null)
+        public JsonResult GetPaggedData(int page = 1, string search = null, int cate = 0)
         {
             var dataTemp = _unitOfWork.Product.GetAll();
 
             if (search != null && search != "")
             {
                 dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.Contains(EntityExtensions.convertToUnSign(search)));
+            }
+            if (cate > 0)
+            {
+                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.CateID == cate);
             }
 
             var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
@@ -68,19 +75,18 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
                     productDB.Image = (imgDir ?? imgTemp);
 
-                    if (productDB.Name != product.Name)
-                    {
-                        productDB.UpdateProduct(product);
+                    productDB.UpdateProduct(product);
+                    
+                    //Change image location
+                    string oldPath = Server.MapPath(imgTemp);
+                    string newPath = Path.Combine(Server.MapPath("/img/" + product.CateID),
+                        productDB.NameID + Path.GetExtension(imgTemp));
 
-                        string oldPath = Server.MapPath(imgTemp);
-                        string newPath = Path.Combine(Server.MapPath("/img/" + product.CateID),
-                            productDB.NameID + Path.GetExtension(imgTemp));
+                    System.IO.File.Move(oldPath, newPath);
 
-                        System.IO.File.Move(oldPath, newPath);
-
-                        productDB.Image = String.Concat("/img/", productDB.CateID, "/",
-                            productDB.NameID + Path.GetExtension(imgTemp));
-                    }
+                    productDB.Image = String.Concat("/img/", productDB.CateID, "/",
+                        productDB.NameID + Path.GetExtension(imgTemp));
+                    
                 }
 
                 else

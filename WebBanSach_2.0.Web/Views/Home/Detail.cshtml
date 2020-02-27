@@ -4,6 +4,7 @@
     var relatedList = (List<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.RelatedList;
     var cate = (string)ViewBag.CategoryName;
     var cateID = (string)ViewBag.CateNameID;
+    var author = (string)ViewBag.Author;
     List<string> fileContents = new List<string>();
     if(Model.Description != null)
     {
@@ -19,9 +20,9 @@
     }
     
 }
-@*@section homeScript{
+@section homeScript{
     @Scripts.Render("~/bundles/app-js.js")
-}*@
+}
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -47,11 +48,12 @@
                                 <div class="row">
                                     <div class="detail__intro-action col-md-6 full-xs">
                                         <div class="rating">
-                                            <span class="fa fa-star checked"></span>
+                                            @*<span class="fa fa-star checked"></span>
                                             <span class="fa fa-star checked"></span>
                                             <span class="fa fa-star checked"></span>
                                             <span class="fa fa-star"></span>
-                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>*@
+                                            <h4 class="text-info">@(String.Format("{0:0,0}", Model.Price)).đ</h4>
                                         </div>
 
                                         <div class="alert alert-info" role="alert">
@@ -62,10 +64,13 @@
                                             <form action="#" method="post">
                                                 <div class="form-action">
 
-                                                    <a href="@Url.Action("AddToCart","Cart",new { @nameID = Model.NameID })" rel="nofollow" class="btn font_secondary" style="width: 180px; float: left; margin-right: 10px;    background-color: #1d7eb6; color: #fff;">
+                                                    <a href="#" data-nameid="@Model.NameID" rel="nofollow" class="btn font_secondary add-to-cart" style="width: 180px; float: left; margin-right: 10px;    background-color: #1d7eb6; color: #fff;">
                                                         <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua sách
                                                     </a>
-                                                    <a href="#" target="_blank" type="button" class="btn btn-warning btn-md"><i class="fas fa-book-open" aria-hidden="true"></i> Đọc Online</a>
+                                                    @if (Model.Link != null && Model.Link != "")
+                                                    {
+                                                        <a href="@Model.Link" target="_blank" type="button" class="btn btn-warning btn-md"><i class="fas fa-book-open" aria-hidden="true"></i> Đọc Online</a>
+                                                    }
                                                 </div>
                                             </form>
                                         </div>
@@ -75,7 +80,7 @@
                                             <tbody>
                                                 <tr>
                                                     <th>Tác giả</th>
-                                                    <td><a href="#">Tac gia</a></td>
+                                                    <td>@author</td>
                                                 </tr>
                                                 <tr>
                                                     <th>Thể loại</th>
@@ -139,8 +144,8 @@
                             <h6>@item.Name</h6>
                         </a>}
 
-                    <p class="price">@item.Price</p>
-                    <p><a class="add-to-cart" href="@Url.Action("AddToCart","Cart",new { @nameID = item.NameID })">Add to Cart</a></p>
+                    <p class="price">@(String.Format("{0:0,0}", Model.Price)).đ</p>
+                    <p><a class="add-to-cart" data-nameid="@item.NameID" href="#">Add to Cart</a></p>
                 </div>
             </div>
         }
@@ -149,7 +154,7 @@
 <br />
 <br />
 
-<div class="cmt-box">
+@*<div class="cmt-box">
     <div class="cmt-detail">
         <form>
             <div class="rating-box">
@@ -172,6 +177,6 @@
     <div class="cmt-list">
 
     </div>
-</div>
+</div>*@
 
 

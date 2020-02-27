@@ -7,7 +7,13 @@ function createEvent() {
     $("#createForm").validate();
 
     $("#searchDetail").off('change').on('change', function () {
+        $("#Category").val(0);
         ajaxData(1, $("#searchDetail").val());
+    }); 
+
+    $("#Category").off('change').on('change', function () {
+        $("#searchDetail").val("");
+        ajaxData(1, "", $(this).val());
     }); 
 
     $("#btnCreate").off('click').on('click', function () {
@@ -86,6 +92,7 @@ function LoadDetail(id) {
 }
 
 function SaveProduct(formData) {
+    var cur = window.location.href;
     if ($("#createForm").valid()) {
         var ajaxConfig = {
             url: "/Admin/Product/SaveDetail",
@@ -95,7 +102,7 @@ function SaveProduct(formData) {
                 if (response.status == true) {
                     alert("Save success!");
                     $("#createModal").modal('hide');
-                    window.location.href = "/Admin/Product/";
+                    window.location.assign(cur);
                 }
                 else alert(response.message);
             }
@@ -113,7 +120,7 @@ function SaveProduct(formData) {
 
 function DeleteData(data) {
     var token = $("[name='__RequestVerificationToken']").val();
-
+    var cur = window.location.href;
     $.ajax({
         url: "/Admin/Product/DeleteConfirmed",
         type: "post",
@@ -123,20 +130,21 @@ function DeleteData(data) {
             if (response.status == true) {
                 alert("Delete success!");
                 $("#deleteModal").modal('hide');
+                window.location.assign(cur);
             }
             else alert(response.message);
         }
     })
 }
 
-function ajaxData(pageNum, sstring) {
+function ajaxData(pageNum, sstring, cate) {
     $("#dataTableBody").empty();
     $("#paged").empty();
     $.ajax({
         url: "/Admin/Product/GetPaggedData",
         type: "get",
         dataType: "json",
-        data: { page: pageNum, search: sstring },
+        data: { page: pageNum, search: sstring, cate: cate },
         success: function (response) {
             var data = response.data;
             if (response.status == true) {
@@ -172,7 +180,7 @@ function ajaxData(pageNum, sstring) {
 
                 }
                 $("#dataTableBody").append(rowData);
-                PaggingTemplate(data.Pager, sstring);
+                PaggingTemplate(data.Pager, sstring, cate);
             }
 
         }

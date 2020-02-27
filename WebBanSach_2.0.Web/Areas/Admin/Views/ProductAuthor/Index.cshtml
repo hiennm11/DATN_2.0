@@ -3,31 +3,33 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+    var orderList = (WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<IGrouping<string, string>>)ViewBag.List;
+
 }
 
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
-        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item">Manage</li>
-    <li class="breadcrumb-item active">Tables</li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Tác giả</li>
 </ol>
 
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
-        ProductAuthor Lists
+        Danh sách
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <button id="btnCreate" class="btn btn-info" role="button">Create Author</button>
+                <button id="btnCreate" class="btn btn-info" role="button">Tạo mới</button>
             </div>
 
             <div class="col-sm-8 col-md-4">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">Search</span>
+                        <span class="input-group-text">Tìm kiếm</span>
                     </div>
                     <input type="text" class="form-control">
                 </div>
@@ -38,20 +40,20 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Author</th>
+                        <th>Tác phẩm</th>
+                        <th>Tác giả</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
-                        <th>Product</th>
-                        <th>Author</th>
+                        <th>Tác phẩm</th>
+                        <th>Tác giả</th>
                         <th></th>
                     </tr>
                 </tfoot>
                 <tbody id="dataTableBody">
-                    @foreach (var item in Model)
+                    @foreach (var item in orderList.Items)
                     {
                         <tr>
                             <td>
@@ -81,9 +83,30 @@
                 </div>
                 <div class="col-sm-12 col-md-7">
                     <!-- pager -->
-                    <div class="paginationCustom" id="paged">
+                    <ul class="pagination" id="paged">
+                        @if (orderList.Pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.CurrentPage - 1 })"> Previous</a></li>
+                        }
+                        @for (int i = orderList.Pager.StartPage; i <= orderList.Pager.EndPage; i++)
+                        {
+                            if (i == orderList.Pager.CurrentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                        }
+                        @if (orderList.Pager.CurrentPage < orderList.Pager.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.CurrentPage + 1 })"> Next</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = orderList.Pager.TotalPages })"> Last</a></li>
+                        }
+                    </ul>
 
-                    </div>
                 </div>
             </div>
         </div>

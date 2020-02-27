@@ -212,7 +212,19 @@ namespace WebBanSach_2_0.Web.Controllers
             return View(data);
         }
 
-
+        public JsonResult GetOrderDetail(int id)
+        {
+            var list = _unitOfWork.OrderDetailRepository.GetAll().Where(m => m.OrderID == id);           
+            List<CartItem> cart = new List<CartItem>();
+            foreach (var item in list)
+            {
+                var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item.Product);
+                CartItem cartItem = new CartItem { Product = product, Quantity = item.Quantity };
+                cart.Add(cartItem);
+            }
+            var total = cart.Sum(m => m.Product.Price * m.Quantity);
+            return Json(new { data = cart, total = total, status = true });
+        }
 
 
         #region Helpers

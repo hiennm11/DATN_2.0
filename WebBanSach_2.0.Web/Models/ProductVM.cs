@@ -18,7 +18,8 @@ namespace WebBanSach_2_0.Web.Models
         public double Price { get; set; }
         public int Purchase { get; set; }
         public double Star { get; set; }
-        public string NameID { get; set; }    
+        public string NameID { get; set; } 
+        public string Link { get; set; }
         
         public HttpPostedFileBase file { get; set; }
     }

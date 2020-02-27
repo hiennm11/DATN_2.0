@@ -1,7 +1,11 @@
 ﻿@model WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<WebBanSach_2_0.Web.Models.ProductVM>
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";    
+    
+    var catelist = (List<WebBanSach_2_0.Web.Models.CategoryVM>)ViewBag.CateList;
+    catelist.Add(new WebBanSach_2_0.Web.Models.CategoryVM { ID = 0, CategoryName = "Tất cả" });
+    var cate = new SelectList(catelist.OrderBy(m => m.ID), "ID", "CategoryName");
 }
 
 <!-- Breadcrumbs-->
@@ -24,7 +28,16 @@
                 <button id="btnCreate" class="btn btn-info" role="button">Tạo mới</button>
             </div>
             <div class="col-sm-8 col-md-4">
-                @Html.DropDownList("Category", (IEnumerable<SelectListItem>)ViewBag.CateList, new { @class = "form-control" })
+                @Html.DropDownList("Category", (IEnumerable<SelectListItem>)cate, new { @class = "form-control" })
+                @*<div class="dropdown-menu form-control">
+                    <a class="dropdown-item" href="#">Tất cả</a>
+                    @foreach (var item in catelist)
+                    {
+                        <a class="dropdown-item" href="#">@item.CategoryName</a>
+                    }
+                    <a class="dropdown-item" href="#">Link 2</a>
+
+                </div>*@
             </div>
             <div class="col-sm-8 col-md-4">
                 <div class="input-group mb-3">
@@ -63,7 +76,24 @@
                     </tr>
                 </tfoot>
                 <tbody id="dataTableBody">
-                    @*Html.Partial("_ProductTablePV", Model.Items)*@
+                    @*@foreach (var item in list.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.CateID</td>
+                            <td>Mô tả</td>
+                            <td><img src="@item.Image" style="height:100px; width:90px;border: solid" /></td>
+                            <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
+                            <td>Lượng mua</td>
+                            <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
+                            <td>
+                                <button class="btn btn-outline btn-edit" data-page="0" data-id="@item.ID"><i class="fas fa-pencil-alt" style="color: blue"></i></button>
+                                <button class="btn btn-outline-light open-delete-modal" data-id="@item.ID" data-name="@item.Name">
+                                    <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }*@                   
                 </tbody>
             </table>
             <div class="row">
@@ -75,7 +105,27 @@
                 <div class="col-sm-12 col-md-7">
                     <!-- pager -->
                     <div class="paginationCustom" id="paged">
-
+                        @*@if (list.Pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.CurrentPage - 1 })"> Previous</a></li>
+                        }
+                        @for (int i = list.Pager.StartPage; i <= list.Pager.EndPage; i++)
+                        {
+                            if (i == list.Pager.CurrentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                        }
+                        @if (list.Pager.CurrentPage < list.Pager.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.CurrentPage + 1 })"> Next</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.TotalPages })"> Last</a></li>
+                        }*@
                     </div>
                 </div>
             </div>
@@ -121,7 +171,7 @@
                             <div class="form-group">
                                 @Html.Label("CateID", htmlAttributes: new { @class = "control-label col-md-5" })
                                 <div class="col-md-10">
-                                    @Html.DropDownList("CateID", (IEnumerable<SelectListItem>)ViewBag.CateList, new { @class = "form-control", @required = "required" })
+                                    @Html.DropDownList("CateID", (IEnumerable<SelectListItem>)cate, new { @class = "form-control", @required = "required" })
                                     @Html.ValidationMessage("CateID", "", new { @class = "text-danger" })
                                 </div>
                             </div>

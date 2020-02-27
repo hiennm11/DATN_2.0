@@ -15,8 +15,8 @@ namespace WebBanSach_2_0.Web.Models
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public string PaymentMethod { get; set; }
-        public string PaymentStatus { get; set; }
-        public bool Status { get; set; }
+        public bool PaymentStatus { get; set; }
+        public int Status { get; set; }
     }
 
     public class OrderDetailVM

@@ -225,6 +225,7 @@
     <Content Include="Areas\Admin\Content\js\demo\chart-bar-demo.js" />
     <Content Include="Areas\Admin\Content\js\demo\chart-pie-demo.js" />
     <Content Include="Areas\Admin\Content\js\demo\datatables-demo.js" />
+    <Content Include="Areas\Admin\Content\js\order-admin.js" />
     <Content Include="Areas\Admin\Content\js\product-admin.js" />
     <Content Include="Areas\Admin\Content\js\sb-admin.js" />
     <Content Include="Areas\Admin\Content\js\sb-admin.min.js" />

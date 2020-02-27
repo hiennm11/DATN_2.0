@@ -86,6 +86,10 @@
     <Compile Include="Migrations\202002210313294_edit-dob-Identity.designer.cs">
       <DependentUpon>202002210313294_edit-dob-Identity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202002251249111_edit-product_order.cs" />
+    <Compile Include="Migrations\202002251249111_edit-product_order.designer.cs">
+      <DependentUpon>202002251249111_edit-product_order.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\GenericRepository.cs" />
@@ -132,6 +136,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202002210313294_edit-dob-Identity.resx">
       <DependentUpon>202002210313294_edit-dob-Identity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002251249111_edit-product_order.resx">
+      <DependentUpon>202002251249111_edit-product_order.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
