@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
@@ -14,27 +15,28 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     {
         UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
         // GET: Admin/ManageUser
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var list = _unitOfWork.ApplicationUser.GetAll().Where(m => m.Id != "ad3b7c5f-fbae-4c8a-a1ea-bc7f89db2860");
-            return View(list);
+            var list = await _unitOfWork.ApplicationUser.GetAll();
+            
+            return View(list.Where(m => m.Id != "ad3b7c5f-fbae-4c8a-a1ea-bc7f89db2860"));
         }
 
-        public ActionResult Edit(string Id)
+        public async Task<ActionResult> Edit(string Id)
         {
-            ApplicationUser model = _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
+            ApplicationUser model = await _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
 
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(ApplicationUser model)
+        public async Task<ActionResult> Edit(ApplicationUser model)
         {
             try
             {
                 _unitOfWork.ApplicationUser.Update(model);
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -44,59 +46,61 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             }
         }
 
-        public ActionResult EditRole(string Id)
+        public async Task<ActionResult> EditRole(string Id)
         {
-            ApplicationUser model = _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
-            ViewBag.RoleId = new SelectList(_unitOfWork.IdentityRole.GetAll().ToList().Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
+            ApplicationUser model = await _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
+            var list = await _unitOfWork.IdentityRole.GetAll();
+            ViewBag.RoleId = new SelectList(list.Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
             return View(model);
 
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddToRole(string UserId, string[] RoleId)
+        public async Task<ActionResult> AddToRole(string UserId, string[] RoleId)
         {
-            ApplicationUser model = _unitOfWork.ApplicationUser.GetSingleByStringID(UserId);
+            ApplicationUser model = await _unitOfWork.ApplicationUser.GetSingleByStringID(UserId);
             if (RoleId != null && RoleId.Count() > 0)
             {
                 foreach (string item in RoleId)
                 {
-                    IdentityRole role = _unitOfWork.IdentityRole.GetSingleByStringID(item);
+                    IdentityRole role = await _unitOfWork.IdentityRole.GetSingleByStringID(item);
                     model.Roles.Add(new IdentityUserRole() { UserId = UserId, RoleId = item });
                 }
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
             }
-
-            ViewBag.RoleId = new SelectList(_unitOfWork.IdentityRole.GetAll().ToList().Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
+            var list = await _unitOfWork.IdentityRole.GetAll();
+            ViewBag.RoleId = new SelectList(list.Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
             return RedirectToAction("EditRole", new { Id = UserId });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteRoleFromUser(string UserId, string RoleId)
+        public async Task<ActionResult> DeleteRoleFromUser(string UserId, string RoleId)
         {
-            ApplicationUser model = _unitOfWork.ApplicationUser.GetSingleByStringID(UserId);
+            ApplicationUser model = await _unitOfWork.ApplicationUser.GetSingleByStringID(UserId);
             model.Roles.Remove(model.Roles.Single(m => m.RoleId == RoleId));
-            _unitOfWork.Save();
-            ViewBag.RoleId = new SelectList(_unitOfWork.IdentityRole.GetAll().ToList().Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
+            await _unitOfWork.Save();
+            var list = await _unitOfWork.IdentityRole.GetAll();
+            ViewBag.RoleId = new SelectList(list.Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
             return RedirectToAction("EditRole", new { Id = UserId });
         }
-        public ActionResult Delete(string Id)
+        public async Task<ActionResult> Delete(string Id)
         {
-            var model = _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
+            var model = await _unitOfWork.ApplicationUser.GetSingleByStringID(Id);
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Delete")]
-        public ActionResult DeleteConfirmed(string Id)
+        public async Task<ActionResult> DeleteConfirmed(string Id)
         {
             ApplicationUser model = null;
             try
             {
                 _unitOfWork.ApplicationUser.Delete(Id);
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

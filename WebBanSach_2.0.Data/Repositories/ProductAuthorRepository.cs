@@ -11,6 +11,8 @@ namespace WebBanSach_2_0.Data.Repositories
     public interface IProductAuthorRepository : IRepository<ProductAuthor>
     {
         void Delete(int id);
+        IEnumerable<IGrouping<string, string>> GetGrouping();
+        IEnumerable<ProductAuthor> GetByProduct(int id);
     }
     class ProductAuthorRepository : GenericRepository<ProductAuthor>, IProductAuthorRepository
     {
@@ -25,6 +27,16 @@ namespace WebBanSach_2_0.Data.Repositories
             {
                 _dbContext.ProductAuthors.Remove(item);
             }
+        }
+
+        public IEnumerable<ProductAuthor> GetByProduct(int id)
+        {
+            return _dbContext.ProductAuthors.Where(m => m.ProductID == id);
+        }
+
+        public IEnumerable<IGrouping<string, string>> GetGrouping()
+        {
+            return _dbContext.ProductAuthors.GroupBy(m => m.Product.Name, m => m.Author.Name);
         }
     }
 }

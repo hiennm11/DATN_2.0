@@ -78,12 +78,12 @@ namespace WebBanSach_2_0.Web.Infrastructure
                 CustomerEmail = model.Email,                
                 PaymentStatus = false,
                 CreatedDate = DateTime.Now,
-                PaymentMethod = model.PaymentMethod
+                PaymentMethod = model.PaymentMethod,
+                Status = 1
             };
             if (model.PaymentMethod == "cod")
             {               
                 obj.PaymentStatus = false;
-                obj.Status = 1;
             }
             return obj;
         }

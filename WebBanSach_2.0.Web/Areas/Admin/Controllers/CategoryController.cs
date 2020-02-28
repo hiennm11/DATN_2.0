@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -23,13 +24,13 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public JsonResult GetPaggedData(int page = 1, string search = null)
+        public async Task<JsonResult> GetPaggedData(int page = 1, string search = null)
         {
-            var dataTemp = _unitOfWork.Category.GetAll();
+            var dataTemp = await _unitOfWork.Category.GetAll();
 
             if (search != null && search != "")
             {
-                dataTemp = _unitOfWork.Category.GetAll().Where(m => m.CategoryName.ToLower().Contains(search.ToLower()));
+                dataTemp = _unitOfWork.Category.GetBySearch(search);
             }
             
             var data = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(dataTemp);
@@ -42,16 +43,16 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return Json(new { data = viewModel, status = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetDetail(int id)
+        public async Task<JsonResult> GetDetail(int id)
         {
-            var dataTemp = _unitOfWork.Category.GetSingleByID(id);
+            var dataTemp = await _unitOfWork.Category.GetSingleByID(id);
             var data = AutoMapperConfiguration.map.Map<Category, CategoryVM>(dataTemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult SaveDetail(string postData)
+        public async Task<JsonResult> SaveDetail(string postData)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             var obj = serializer.Deserialize<CategoryVM>(postData);
@@ -59,7 +60,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             string message = string.Empty;
             if (obj.ID > 0)
             {
-                var data = _unitOfWork.Category.GetSingleByID(obj.ID);
+                var data = await _unitOfWork.Category.GetSingleByID(obj.ID);
                 data.UpdateCategory(obj);
                 _unitOfWork.Category.Update(data);
             }
@@ -71,7 +72,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch(Exception ex)
@@ -85,14 +86,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult DeleteConfirmed(int id)
+        public async Task<JsonResult> DeleteConfirmed(int id)
         {
             bool status;
             string message = string.Empty;
-            _unitOfWork.Category.Delete(id);
+            _unitOfWork.Category.ShiftDelete(id);
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch(Exception ex)

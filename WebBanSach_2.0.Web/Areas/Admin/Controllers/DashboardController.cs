@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data;
@@ -20,7 +21,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/Dashboard
         public ActionResult Index()
         {
-            var temp = _unitOfWork.OrderRepository.GetAll().OrderByDescending(m => m.CreatedDate).OrderBy(m => m.Status).Take(10);
+            var temp = _unitOfWork.OrderRepository.GetByDateDecending();
             var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
            
             ViewBag.OrderModel = data;

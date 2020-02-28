@@ -30,7 +30,15 @@
                         <td>@item.CustomerAddress</td>
                         <td>@item.CustomerMobile</td>
                         <td>@item.PaymentMethod</td>
-                        <td>@item.Status</td>
+                        <td>
+                            @switch (item.Status)
+                            {
+                                case 1:<span>Đang giao hàng</span>; break;
+                                case 2: <span class="text-success">Đã hoàn thành</span>; break;
+                                default: <span class="text-danger">Đã hủy</span>;
+                                    break;
+                            }
+                        </td>
                         <td>
                             <button type="button" class="btn btn-primary btn-order-detail" data-id="@item.ID">
                                 Chi tiết

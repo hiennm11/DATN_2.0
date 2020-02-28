@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
@@ -16,14 +17,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
         // GET: Admin/ProductAuthor
-        public ActionResult Index(int page = 1)
+        public async Task<ActionResult> Index(int page = 1)
         {
-            var list = _unitOfWork.ProductAuthor.GetAll().GroupBy(m => m.Product.Name, m => m.Author.Name);
-            IEnumerable<Product> products = _unitOfWork.Product.GetAll();
+            var list = _unitOfWork.ProductAuthor.GetGrouping();
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAll();
             var pager = new Pager(list.Count(), page);
             var viewModel = new IndexViewModel<IGrouping<string,string>>()
             {
-                Items = list.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+                Items =  list.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
                 Pager = new Pager(list.Count(), page)
             };
             ViewBag.ProductIds = new SelectList(products, "ID", "Name");
@@ -32,27 +33,27 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public JsonResult GetPaggedData(int page = 1)
-        {
-            var temp = _unitOfWork.ProductAuthor.GetAll();
-            var pager = new Pager(temp.Count(), page);
-            var data = new List<AuthorExtensions>();
-            foreach(var item in temp)
-            {
-                var a = EntityExtensions.CreateProductAuthor(item);
-                data.Add(a);
-            }
-            var viewModel = new IndexViewModel<AuthorExtensions>()
-            {
-                Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
-                Pager = new Pager(data.Count(), page)
-            };
-            return Json(viewModel, JsonRequestBehavior.AllowGet);
-        }       
+        //public JsonResult GetPaggedData(int page = 1)
+        //{
+        //    var temp = _unitOfWork.ProductAuthor.GetAll();
+        //    var pager = new Pager(temp.Count(), page);
+        //    var data = new List<AuthorExtensions>();
+        //    foreach(var item in temp)
+        //    {
+        //        var a = EntityExtensions.CreateProductAuthor(item);
+        //        data.Add(a);
+        //    }
+        //    var viewModel = new IndexViewModel<AuthorExtensions>()
+        //    {
+        //        Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+        //        Pager = new Pager(data.Count(), page)
+        //    };
+        //    return Json(viewModel, JsonRequestBehavior.AllowGet);
+        //}       
 
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            IEnumerable<Product> list = _unitOfWork.Product.GetAll();
+            IEnumerable<Product> list = await _unitOfWork.Product.GetAll();
             ViewBag.ProductIds = new SelectList(list,"ID","Name");
             ViewBag.Authors = _unitOfWork.AuthorDetail.GetAll();
             return View();
@@ -60,7 +61,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(int productID, int[] author)
+        public async Task<ActionResult> Create(int productID, int[] author)
         {
             bool status;
             string message = string.Empty;
@@ -73,7 +74,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 }
                 try
                 {
-                    _unitOfWork.Save();
+                    await _unitOfWork.Save();
                     status = true;
                 }
                 catch (Exception ex)
@@ -93,17 +94,17 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(string id)
+        public async Task<ActionResult> Delete(string id)
         {
             bool status;
             string message = string.Empty;
             var prod = _unitOfWork.Product.GetProductByNameID(EntityExtensions.convertToUnSign(id));
             if(prod != null)
             {
-                _unitOfWork.ProductAuthor.Delete(prod.ID);
+                _unitOfWork.ProductAuthor.ShiftDelete(prod.ID);
                 try
                 {
-                    _unitOfWork.Save();
+                    await _unitOfWork.Save();
                     status = true;
                 }
                 catch (Exception ex)
@@ -120,32 +121,32 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return Json(new { status = status, message = message });
         }
 
-        public JsonResult getProduct(string tags)
+        public JsonResult GetProduct(string tags)
         {
             string tagc = EntityExtensions.convertToUnSign(tags);
-            List<Product> li = _unitOfWork.Product.GetAll().Where(x => x.NameID.Contains(tagc)).OrderBy(x => x.Name).Take(10).ToList();
+            var li = _unitOfWork.Product.GetBySearch(tagc);
             return Json(li, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult getAuthor(string tags = null, int productID = 0)
+        public async Task<JsonResult> getAuthor(string tags = null, int productID = 0)
         {
-            List<AuthorDetail> li = new List<AuthorDetail>();
+            IEnumerable<AuthorDetail> li = null;
             if (tags != null)
             {
-                var temp = _unitOfWork.ProductAuthor.GetAll().Where(m => m.ProductID == productID);
-                li = _unitOfWork.AuthorDetail.GetAll().Where(x => x.Name.ToLower().Contains(tags)).OrderBy(x => x.Name).Take(10).ToList();
+                var temp = _unitOfWork.ProductAuthor.GetByProduct(productID);
+                li =  _unitOfWork.AuthorDetail.GetBySearchAsync(tags);
                 
                 foreach (var item in temp)
                 {                   
-                    li.RemoveAll(x => x.ID == item.AuthorID);
+                   li.ToList().RemoveAll(x => x.ID == item.AuthorID);
                 }                
             }
             else
             {
-                li = _unitOfWork.AuthorDetail.GetAll().OrderBy(x => x.Name).Take(10).ToList();
+                li = await _unitOfWork.AuthorDetail.GetAll();
             }
 
-            var result = AutoMapperConfiguration.map.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(li);
+            var result = AutoMapperConfiguration.map.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(li.Take(10));
             
             return Json(result, JsonRequestBehavior.AllowGet);
 

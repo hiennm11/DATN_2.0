@@ -14,6 +14,9 @@ namespace WebBanSach_2_0.Data.Repositories
         IEnumerable<Product> GetByCategory(string cate);
         IEnumerable<Product> GetNewProduct();
         IEnumerable<Product> GetHotProduct();
+        IEnumerable<Product> GetTrueProduct();
+        IEnumerable<Product> GetBySearch(string search);
+        IEnumerable<Product> GetByCategoryInt(int cate);
         void Delete(int id);
     }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
@@ -34,11 +37,20 @@ namespace WebBanSach_2_0.Data.Repositories
             return _dbContext.Products.FirstOrDefault(n => n.NameID == nameId);
         }
 
-      
+        public IEnumerable<Product> GetBySearch(string search)
+        {
+            var list = _dbContext.Products.Where(m => m.Name.ToLower().Contains(search.ToLower()));
+            return list;
+        }
 
         public IEnumerable<Product> GetByCategory(string cate)
         {
-            var list = _dbContext.Products.Where(c=>c.Categories.Description == cate).OrderBy(c => c.Name);
+            var list = _dbContext.Products.Where(c => c.Categories.Description == cate).OrderBy(c => c.Name);
+            return list;
+        }
+        public IEnumerable<Product> GetByCategoryInt(int cate)
+        {
+            var list = _dbContext.Products.Where(c => c.Categories.ID == cate).OrderBy(c => c.Name);
             return list;
         }
 
@@ -51,6 +63,12 @@ namespace WebBanSach_2_0.Data.Repositories
         public IEnumerable<Product> GetHotProduct()
         {
             var list = _dbContext.Products.OrderBy(c => c.UpdatedDate);
+            return list;
+        }
+
+        public IEnumerable<Product> GetTrueProduct()
+        {
+            var list = _dbContext.Products.OrderBy(c => c.Status);
             return list;
         }
     }

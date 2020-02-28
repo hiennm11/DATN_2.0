@@ -200,6 +200,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\AutoMapperConfiguration.cs" />
+    <Compile Include="Infrastructure\CustomErrorHandler.cs" />
     <Compile Include="Infrastructure\EntityExtensions.cs" />
     <Compile Include="Infrastructure\Pagination.cs" />
     <Compile Include="Models\AccountManageVM.cs" />
@@ -3720,6 +3721,7 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\Order.cshtml" />
+    <Content Include="Views\Shared\NotFound.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -22,13 +23,13 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public JsonResult GetPaggedData(int page = 1, string search = null)
+        public async Task<JsonResult> GetPaggedData(int page = 1, string search = null)
         {
-            var dataTemp = _unitOfWork.AuthorDetail.GetAll();
+            var dataTemp = await _unitOfWork.AuthorDetail.GetAll();
 
             if (search != null && search != "")
             {
-                dataTemp = _unitOfWork.AuthorDetail.GetAll().Where(m=>m.Name.ToLower().Contains(search.ToLower()));
+                dataTemp = _unitOfWork.AuthorDetail.GetBySearchAsync(search);
             }
             
             var data = AutoMapperConfiguration.map.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(dataTemp);
@@ -41,16 +42,17 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return Json(new {data = viewModel, searchstring = search, status = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetDetail(int id)
+        [OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any , VaryByParam = "id")]
+        public async Task<JsonResult> GetDetail(int id)
         {
-            var dataTemp = _unitOfWork.AuthorDetail.GetSingleByID(id);
+            var dataTemp = await _unitOfWork.AuthorDetail.GetSingleByID(id);
             var data = AutoMapperConfiguration.map.Map<AuthorDetail, AuthorDetailVM>(dataTemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult SaveDetail(string postData)
+        public async Task<JsonResult> SaveDetail(string postData)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
             var obj = serializer.Deserialize<AuthorDetailVM>(postData);
@@ -58,7 +60,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             string message = string.Empty;
             if (obj.ID > 0)
             {
-                var data = _unitOfWork.AuthorDetail.GetSingleByID(obj.ID);
+                var data = await _unitOfWork.AuthorDetail.GetSingleByID(obj.ID);
                 data.UpdateAuthorDetail(obj);
                 _unitOfWork.AuthorDetail.Update(data);
             }
@@ -70,7 +72,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch (Exception ex)
@@ -84,14 +86,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult DeleteConfirmed(int id)
+        public async Task<JsonResult> DeleteConfirmed(int id)
         {
             bool status;
             string message = string.Empty;
-            _unitOfWork.AuthorDetail.Delete(id);
+            _unitOfWork.AuthorDetail.ShiftDelete(id);
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch (Exception ex)

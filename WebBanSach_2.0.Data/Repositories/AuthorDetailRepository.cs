@@ -11,6 +11,7 @@ namespace WebBanSach_2_0.Data.Repositories
     public interface IAuthorDetailRepository : IRepository<AuthorDetail>
     {
         void Delete(int id);
+        IEnumerable<AuthorDetail> GetBySearchAsync(string nameID);
     }
     public class AuthorDetailRepository : GenericRepository<AuthorDetail>, IAuthorDetailRepository
     {
@@ -23,6 +24,12 @@ namespace WebBanSach_2_0.Data.Repositories
             var obj =_dbContext.AuthorDetails.Find(id);
             obj.Status = false;
             this.Update(obj);
+        }
+
+        public IEnumerable<AuthorDetail> GetBySearchAsync(string search)
+        {
+            var list = _dbContext.AuthorDetails.Where(m => m.Name.ToLower().Contains(search.ToLower()));
+            return list;
         }
     }
 }

@@ -27,8 +27,8 @@ namespace WebBanSach_2_0.Data.Infrastructure
         {
             return _dbSet.Count(where);
         }
-        
-        public IEnumerable<T> GetAll(string[] includes = null)
+
+        public async Task<IEnumerable<T>> GetAll(string[] includes = null)
         {
             if (includes != null && includes.Count() > 0)
             {
@@ -41,12 +41,12 @@ namespace WebBanSach_2_0.Data.Infrastructure
             return _dbContext.Set<T>().AsQueryable();
         }
 
-        public T GetSingleByID(int id)
+        public async Task<T> GetSingleByID(int id)
         {
             return _dbSet.Find(id);
         }
 
-        public T GetSingleByStringID(string id)
+        public async Task<T> GetSingleByStringID(string id)
         {
             return _dbSet.Find(id);
         }

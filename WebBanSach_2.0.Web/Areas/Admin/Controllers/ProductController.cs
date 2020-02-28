@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -25,22 +26,22 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             
             //ViewBag.CateList = new SelectList(_unitOfWork.Category.GetAll(), "ID", "CategoryName");
-            ViewBag.CateList = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(_unitOfWork.Category.GetAll().Where(m => m.Status == true));
+            ViewBag.CateList = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>( _unitOfWork.Category.GetTrueCategories());
 
             return View();
         }
-                   
-        public JsonResult GetPaggedData(int page = 1, string search = null, int cate = 0)
+
+        public async Task<JsonResult> GetPaggedData(int page = 1, string search = null, int cate = 0)
         {
-            var dataTemp = _unitOfWork.Product.GetAll();
+            var dataTemp = await _unitOfWork.Product.GetAll();
 
             if (search != null && search != "")
             {
-                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.Contains(EntityExtensions.convertToUnSign(search)));
+                dataTemp = _unitOfWork.Product.GetBySearch(search);
             }
             if (cate > 0)
             {
-                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.CateID == cate);
+                dataTemp = _unitOfWork.Product.GetByCategoryInt(cate);
             }
 
             var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
@@ -53,19 +54,19 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return Json(new { data = viewModel, status = true }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult GetDetail(int id)
+        public async Task<JsonResult> GetDetail(int id)
         {
-            var datatemp = _unitOfWork.Product.GetSingleByID(id);
+            var datatemp = await _unitOfWork.Product.GetSingleByID(id);
             var data = AutoMapperConfiguration.map.Map<Product, ProductVM>(datatemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult SaveDetail(ProductVM product)
+        public async Task<JsonResult> SaveDetail(ProductVM product)
         {
             bool status;
             string message = string.Empty;
-            var productDB = _unitOfWork.Product.GetSingleByID(product.ID);
+            var productDB = await _unitOfWork.Product.GetSingleByID(product.ID);
             if (productDB != null)
             {
                 if (product.file != null)
@@ -109,11 +110,11 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 _unitOfWork.Product.Add(newProduct);
 
             }
-            ViewBag.CateList = new SelectList(_unitOfWork.Category.GetAll(), "ID", "CategoryName");
+            ViewBag.CateList = new SelectList(await _unitOfWork.Category.GetAll(), "ID", "CategoryName");
 
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch (Exception ex)
@@ -127,14 +128,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult DeleteConfirmed(int id)
+        public async Task<JsonResult> DeleteConfirmed(int id)
         {
             bool status;
             string message = string.Empty;
             _unitOfWork.Product.ShiftDelete(id);
             try
             {
-                _unitOfWork.Save();
+                await _unitOfWork.Save();
                 status = true;
             }
             catch (Exception ex)

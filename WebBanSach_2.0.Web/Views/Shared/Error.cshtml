@@ -1,13 +1,26 @@
-﻿<!DOCTYPE html>
+﻿@{ 
+    Layout = null;
+}
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
+    @Styles.Render("~/Content/css")
+    <style>
+        #main {
+            height: 100vh;
+        }
+    </style>
     <title>Error</title>
 </head>
 <body>
-    <hgroup>
-        <h1>Error.</h1>
-        <h2>An error occurred while processing your request.</h2>
-    </hgroup>
+    <div class="d-flex justify-content-center align-items-center" id="main">
+        <h1 class="mr-3 pr-3 align-top border-right inline-block align-content-center">404</h1>
+        <div class="inline-block align-middle">
+            <h2 class="font-weight-normal lead" id="desc">The page you requested was not found.</h2>
+            <a href="/" class="btn btn-link">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>
+

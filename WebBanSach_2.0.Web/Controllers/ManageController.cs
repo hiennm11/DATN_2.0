@@ -204,19 +204,19 @@ namespace WebBanSach_2_0.Web.Controllers
 
         //
         // GET: /Manage/ChangePassword
-        public ActionResult Order()
+        public async Task<ActionResult> Order()
         {
             var user =  UserManager.FindById(User.Identity.GetUserId());
-            var temp = _unitOfWork.OrderRepository.GetAll().Where(m => m.CustomerEmail == user.UserName);
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
+            var temp = await _unitOfWork.OrderRepository.GetAll();
+            var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp.Where(m => m.CustomerEmail == user.UserName));
             return View(data);
         }
 
-        public JsonResult GetOrderDetail(int id)
+        public async Task<JsonResult> GetOrderDetail(int id)
         {
-            var list = _unitOfWork.OrderDetailRepository.GetAll().Where(m => m.OrderID == id);           
+            var list = await _unitOfWork.OrderDetailRepository.GetAll();           
             List<CartItem> cart = new List<CartItem>();
-            foreach (var item in list)
+            foreach (var item in list.Where(m => m.OrderID == id))
             {
                 var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item.Product);
                 CartItem cartItem = new CartItem { Product = product, Quantity = item.Quantity };

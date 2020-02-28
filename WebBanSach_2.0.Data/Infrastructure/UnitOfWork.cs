@@ -18,7 +18,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
         IOrderRepository OrderRepository { get; }
         IOrderDetailRepository OrderDetailRepository { get; }
         
-        void Save();
+        Task Save();
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -46,9 +46,9 @@ namespace WebBanSach_2_0.Data.Infrastructure
         public IOrderRepository OrderRepository { get; private set; }
         public IOrderDetailRepository OrderDetailRepository { get; private set; }
 
-        public void Save()
+        public async Task Save()
         {
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
         }
 
         #region Dispose

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data;
@@ -16,9 +17,9 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     {
         UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
         // GET: Admin/ManageOrder
-        public ActionResult Index(int page = 1)
+        public async Task<ActionResult> Index(int page = 1)
         {
-            var temp = _unitOfWork.OrderRepository.GetAll();
+            var temp = await _unitOfWork.OrderRepository.GetAll();
             var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
             var pager = new Pager(data.Count(), page);
 
@@ -32,17 +33,17 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return View();
         }
 
-        public ActionResult UpdateStatus(int id, int orderStatus)
+        public async Task<ActionResult> UpdateStatus(int id, int orderStatus)
         {
            bool status = false; string message = String.Empty;
-           var item = _unitOfWork.OrderRepository.GetSingleByID(id);
+           var item = await _unitOfWork.OrderRepository.GetSingleByID(id);
             if(item != null)
             {
                 item.Status = orderStatus;
                 _unitOfWork.OrderRepository.Update(item);
                 try
                 {
-                    _unitOfWork.Save();
+                    await _unitOfWork.Save();
                     status = true;
                 }
                 catch (Exception ex)

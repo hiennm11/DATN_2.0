@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
@@ -11,23 +12,24 @@ using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers
 {
+    [HandleError]
     public class HomeController : Controller
     {
         private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
 
         [Route("")]
-        [Route("~/")]
-        public ActionResult Index(string cateID = null, string search = null,int page = 1)
+        [Route("~/")]        
+        public async Task<ActionResult> Index(string cateID = null, string search = null,int page = 1)
         {
-            var dataTemp = _unitOfWork.Product.GetAll();
-            var newTemp = _unitOfWork.Product.GetNewProduct().Take(18);
-            var hotTemp = _unitOfWork.Product.GetHotProduct().Take(18);
+            var dataTemp = await _unitOfWork.Product.GetAll();
+            var newTemp = _unitOfWork.Product.GetNewProduct();
+            var hotTemp = _unitOfWork.Product.GetHotProduct();
 
             if (search != null && search != "")
             {
                 string searchc = EntityExtensions.convertToUnSign(search);
                 cateID = null;
-                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.ToLower().Contains(searchc));
+                dataTemp = _unitOfWork.Product.GetBySearch(searchc);
             }
             if (cateID != null && cateID != "")
             {
@@ -46,46 +48,22 @@ namespace WebBanSach_2._0.Web.Controllers
                 Pager = pager
             };
                      
-            ViewBag.NewProduct = newProduct.ToList();
-            ViewBag.HotProduct = hotProduct.ToList();
+            ViewBag.NewProduct = newProduct.Take(18).ToList();
+            ViewBag.HotProduct = hotProduct.Take(18).ToList();
             ViewBag.ProductList = viewModel;
             ViewBag.CategoryID = cateID;
             ViewBag.SearchString = search;
 
             return View();
-        }     
-
-        public JsonResult GetPaggedData(int page, string cateID , string search)
-        {
-            var dataTemp = _unitOfWork.Product.GetAll();
-            if (search != null && search != "")
-            {
-                string searchc = EntityExtensions.convertToUnSign(search);
-                cateID = null;
-                dataTemp = _unitOfWork.Product.GetAll().Where(m => m.NameID.ToLower().Contains(searchc));
-            }
-            if(cateID != null && cateID != "")
-            {
-                search = null;
-                dataTemp = _unitOfWork.Product.GetByCategory(cateID);
-            }
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
-            var pager = new Pager(data.Count(), page, 18);
-            var viewModel = new IndexViewModel<ProductVM>()
-            {
-                Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
-                Pager = pager
-            };
-
-            return Json(new {data = viewModel, status = true}, JsonRequestBehavior.AllowGet);
         }
 
-
+        [HandleError]
+        [OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any, VaryByParam = "nameID")]
         public ActionResult Detail(string nameID)
         {
             var item = _unitOfWork.Product.GetProductByNameID(nameID);
-            var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description).Take(6);
-            var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp);
+            var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description);
+            var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
             var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item);
             var author = item.ProductAuthors.FirstOrDefault(m => m.ProductID == item.ID);
 
@@ -100,9 +78,10 @@ namespace WebBanSach_2._0.Web.Controllers
         #region childView
 
         [ChildActionOnly]
-        public ActionResult CategoryMenu()
+        [OutputCache(Duration = 3600 * 24 * 10)]
+        public async Task<ActionResult> CategoryMenu()
         {
-            var cate = _unitOfWork.Category.GetAll().Where(x => x.Status).ToList();
+            var cate = await _unitOfWork.Category.GetAll();
 
             var category = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
 

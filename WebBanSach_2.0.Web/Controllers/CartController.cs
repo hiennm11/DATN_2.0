@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
@@ -49,7 +50,7 @@ namespace WebBanSach_2_0.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CheckoutConfirmed(ClientViewModel client)
+        public async Task<ActionResult> CheckoutConfirmed(ClientViewModel client)
         {
             var user = _unitOfWork.ApplicationUser.GetUserByUserName(client.Email);
             var cart = Session[cartSession] as List<CartItem>;
@@ -61,7 +62,7 @@ namespace WebBanSach_2_0.Web.Controllers
                 var orderDetail = new OrderDetail() { OrderID = order.ID, ProductID = item.Product.ID, Quantity = item.Quantity };
                 _unitOfWork.OrderDetailRepository.Add(orderDetail);
             }
-            _unitOfWork.Save();
+            await _unitOfWork.Save();
             Session.Remove(cartSession);
             return RedirectToAction("Index","Home");
         }
