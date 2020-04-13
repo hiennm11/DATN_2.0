@@ -1,4 +1,20 @@
-﻿body {
+﻿:root{
+    --white-color: #fff;
+    --black-color: #000;
+    --text-color: #333;
+}
+
+/**{
+    box-sizing:inherit;
+}*/
+
+html {
+    font-size: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+body {
     /*padding-top: 50px;*/
     padding-bottom: 20px;
 }
@@ -47,6 +63,10 @@ body a:hover {
 .menu-dropdown > .dropdown-toggle:active {
     /*Without this, clicking will make it sticky*/
     pointer-events: none;
+}
+
+.dropdown-menu > .dropdown-item:hover {
+    background-color: Highlight;
 }
 
 .item-card {

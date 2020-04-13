@@ -11,7 +11,8 @@ namespace WebBanSach_2_0.Data
 {
     public class WebBanSach_2_0DbContext : IdentityDbContext<ApplicationUser>
     {
-        public WebBanSach_2_0DbContext() : base("Data Source=.;Initial Catalog=WebBanSach2DB;Integrated Security=True;MultipleActiveResultSets=True")
+        private const string conn = "Data Source=.;Initial Catalog=WebBanSach2DB;Integrated Security=True;MultipleActiveResultSets=True";
+        public WebBanSach_2_0DbContext() : base(conn)
         {
             
         }

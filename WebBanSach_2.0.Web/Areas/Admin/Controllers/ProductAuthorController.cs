@@ -70,7 +70,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 foreach (int item in author)
                 {
                     ProductAuthor pa = new ProductAuthor() { ProductID = productID, AuthorID = item };
-                    _unitOfWork.ProductAuthor.Add(pa);
+                    await _unitOfWork.ProductAuthor.Add(pa);
                 }
                 try
                 {
@@ -101,7 +101,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             var prod = _unitOfWork.Product.GetProductByNameID(EntityExtensions.convertToUnSign(id));
             if(prod != null)
             {
-                _unitOfWork.ProductAuthor.ShiftDelete(prod.ID);
+                await _unitOfWork.ProductAuthor.ShiftDelete(prod.ID);
                 try
                 {
                     await _unitOfWork.Save();

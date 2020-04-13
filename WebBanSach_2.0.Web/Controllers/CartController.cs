@@ -55,12 +55,12 @@ namespace WebBanSach_2_0.Web.Controllers
             var user = _unitOfWork.ApplicationUser.GetUserByUserName(client.Email);
             var cart = Session[cartSession] as List<CartItem>;
             var order = EntityExtensions.CreateOrder(client);
-            _unitOfWork.OrderRepository.Add(order);
+            await _unitOfWork.OrderRepository.Add(order);
             
             foreach (var item in cart)
             {
                 var orderDetail = new OrderDetail() { OrderID = order.ID, ProductID = item.Product.ID, Quantity = item.Quantity };
-                _unitOfWork.OrderDetailRepository.Add(orderDetail);
+                await _unitOfWork.OrderDetailRepository.Add(orderDetail);
             }
             await _unitOfWork.Save();
             Session.Remove(cartSession);

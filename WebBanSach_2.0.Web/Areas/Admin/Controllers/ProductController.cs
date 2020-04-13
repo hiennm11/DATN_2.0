@@ -95,7 +95,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     productDB.UpdateProduct(product);
                 }
 
-                _unitOfWork.Product.Update(productDB);
+                await _unitOfWork.Product.Update(productDB);
 
             }
 
@@ -107,7 +107,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     newProduct.Image = SaveImg(newProduct.NameID, newProduct.CateID, product.file);
                 }
 
-                _unitOfWork.Product.Add(newProduct);
+                await _unitOfWork.Product.Add(newProduct);
 
             }
             ViewBag.CateList = new SelectList(await _unitOfWork.Category.GetAll(), "ID", "CategoryName");
@@ -132,7 +132,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            _unitOfWork.Product.ShiftDelete(id);
+            await _unitOfWork.Product.ShiftDelete(id);
             try
             {
                 await _unitOfWork.Save();

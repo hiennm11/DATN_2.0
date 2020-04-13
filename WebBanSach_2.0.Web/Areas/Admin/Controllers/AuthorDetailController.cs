@@ -62,12 +62,12 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             {
                 var data = await _unitOfWork.AuthorDetail.GetSingleByID(obj.ID);
                 data.UpdateAuthorDetail(obj);
-                _unitOfWork.AuthorDetail.Update(data);
+                await _unitOfWork.AuthorDetail.Update(data);
             }
             else
             {
                 var newcate = EntityExtensions.CreateAuthorDetail(obj);
-                _unitOfWork.AuthorDetail.Add(newcate);
+                await _unitOfWork.AuthorDetail.Add(newcate);
             }
 
             try
@@ -90,7 +90,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            _unitOfWork.AuthorDetail.ShiftDelete(id);
+            await _unitOfWork.AuthorDetail.ShiftDelete(id);
             try
             {
                 await _unitOfWork.Save();

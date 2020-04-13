@@ -79,13 +79,15 @@ namespace WebBanSach_2._0.Web.Controllers
 
         [ChildActionOnly]
         [OutputCache(Duration = 3600 * 24 * 10)]
-        public async Task<ActionResult> CategoryMenu()
+        public ActionResult CategoryMenu()
         {
-            var cate = await _unitOfWork.Category.GetAll();
+            return Task.Run(async () => {
+                var cate = await _unitOfWork.Category.GetAll();
 
-            var category = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
+                var category = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
 
-            return PartialView("_CateMenu", category);
+                return PartialView("_CateMenu", category);
+            }).Result;           
         }
 
         #endregion

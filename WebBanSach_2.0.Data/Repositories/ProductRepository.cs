@@ -17,7 +17,7 @@ namespace WebBanSach_2_0.Data.Repositories
         IEnumerable<Product> GetTrueProduct();
         IEnumerable<Product> GetBySearch(string search);
         IEnumerable<Product> GetByCategoryInt(int cate);
-        void Delete(int id);
+        Task Delete(int id);
     }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
@@ -25,11 +25,11 @@ namespace WebBanSach_2_0.Data.Repositories
         {
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             var product = _dbContext.Products.Find(id);
             product.Status = false;
-            this.Update(product);
+            await this.Update(product);
         }
 
         public Product GetProductByNameID(string nameId)
@@ -39,7 +39,7 @@ namespace WebBanSach_2_0.Data.Repositories
 
         public IEnumerable<Product> GetBySearch(string search)
         {
-            var list = _dbContext.Products.Where(m => m.Name.ToLower().Contains(search.ToLower()));
+            var list = _dbContext.Products.Where(m => m.NameID.ToLower().Contains(search.ToLower()));
             return list;
         }
 

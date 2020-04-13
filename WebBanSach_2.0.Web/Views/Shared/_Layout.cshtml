@@ -6,9 +6,13 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap&subset=vietnamese" rel="stylesheet">
+
     <title>@ViewBag.Title - DATN 2.0</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+
 </head>
 <body>
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
@@ -76,8 +80,8 @@
             </footer>
         </div>*@
 
-    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryex")
     @RenderSection("scripts", required: false)
     @RenderSection("homeScript", required: false)
 

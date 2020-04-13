@@ -40,7 +40,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             if(item != null)
             {
                 item.Status = orderStatus;
-                _unitOfWork.OrderRepository.Update(item);
+                await _unitOfWork.OrderRepository.Update(item);
                 try
                 {
                     await _unitOfWork.Save();

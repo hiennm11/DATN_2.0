@@ -34,7 +34,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _unitOfWork.IdentityRole.Add(role);
+                    await _unitOfWork.IdentityRole.Add(role);
                     await _unitOfWork.Save();
                 }
                 return RedirectToAction("Index");

@@ -9,11 +9,12 @@ namespace WebBanSach_2_0.Data.Infrastructure
 {
     public interface IRepository<T> where T : class 
     {
-        T Add(T entity);
-        void Update(T entity);
-        T ShiftDelete(int id);
+        Task<T> Add(T entity);
+        Task Update(T entity);
+        Task<T> ShiftDelete(int id);
 
         Task<IEnumerable<T>> GetAll(string[] includes = null);
+        Task<IEnumerable<T>> GetPaging(int page, int pageSize);
         Task<T> GetSingleByID(int id);
         Task<T> GetSingleByStringID(string id);
         int Count(Expression<Func<T, bool>> where);

@@ -10,7 +10,7 @@ namespace WebBanSach_2_0.Data.Repositories
 {
     public interface ICategoryRepository : IRepository<Category>
     {
-        void Delete(int id);
+        Task Delete(int id);
         IEnumerable<Category> GetBySearch(string search);
         IEnumerable<Category> GetTrueCategories();
 
@@ -27,11 +27,11 @@ namespace WebBanSach_2_0.Data.Repositories
             return list;
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             var cate = _dbContext.Categories.Find(id);
             cate.Status = false;
-            this.Update(cate);
+            await this.Update(cate);
         }
 
         public IEnumerable<Category> GetBySearch(string search)

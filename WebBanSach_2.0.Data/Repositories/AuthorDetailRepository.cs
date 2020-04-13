@@ -10,7 +10,7 @@ namespace WebBanSach_2_0.Data.Repositories
 {
     public interface IAuthorDetailRepository : IRepository<AuthorDetail>
     {
-        void Delete(int id);
+        Task Delete(int id);
         IEnumerable<AuthorDetail> GetBySearchAsync(string nameID);
     }
     public class AuthorDetailRepository : GenericRepository<AuthorDetail>, IAuthorDetailRepository
@@ -19,11 +19,11 @@ namespace WebBanSach_2_0.Data.Repositories
         {
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
             var obj =_dbContext.AuthorDetails.Find(id);
             obj.Status = false;
-            this.Update(obj);
+            await this.Update(obj);
         }
 
         public IEnumerable<AuthorDetail> GetBySearchAsync(string search)

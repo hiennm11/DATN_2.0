@@ -35,7 +35,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             try
             {
-                _unitOfWork.ApplicationUser.Update(model);
+                await _unitOfWork.ApplicationUser.Update(model);
                 await _unitOfWork.Save();
                 return RedirectToAction("Index");
             }

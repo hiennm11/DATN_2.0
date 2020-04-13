@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,9 +19,9 @@ namespace WebBanSach_2_0.Data.Infrastructure
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<T>();
         }
-        public T Add(T entity)
+        public async Task<T> Add(T entity)
         {
-            return _dbSet.Add(entity);
+            return await Task.Run(() => _dbSet.Add(entity));
         }
 
         public int Count(Expression<Func<T, bool>> where)
@@ -35,32 +36,43 @@ namespace WebBanSach_2_0.Data.Infrastructure
                 var query = _dbContext.Set<T>().Include(includes.First());
                 foreach (var include in includes.Skip(1))
                     query = query.Include(include);
-                return query.AsQueryable();
+                return await query.ToListAsync();
             }
 
-            return _dbContext.Set<T>().AsQueryable();
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
         public async Task<T> GetSingleByID(int id)
         {
-            return _dbSet.Find(id);
+            return await Task.Run(() => _dbSet.Find(id));
         }
 
         public async Task<T> GetSingleByStringID(string id)
         {
-            return _dbSet.Find(id);
+            return await Task.Run(() => _dbSet.Find(id));
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
-            _dbSet.Attach(entity);
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            await Task.Run(() =>
+            {
+                _dbSet.Attach(entity);
+                _dbContext.Entry(entity).State = EntityState.Modified;
+            });
         }
 
-        public T ShiftDelete(int id)
+        public async Task<T> ShiftDelete(int id)
         {
-            var entity = _dbSet.Find(id);
-            return _dbSet.Remove(entity);
+            return await Task.Run(() =>
+            {
+                var entity = _dbSet.Find(id);
+                return _dbSet.Remove(entity);
+            });
+        }
+
+        public async Task<IEnumerable<T>> GetPaging(int page, int pageSize)
+        {
+            return await _dbContext.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
     }
 }
