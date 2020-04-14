@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Repositories;
 
@@ -18,7 +15,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
         IOrderRepository OrderRepository { get; }
         IOrderDetailRepository OrderDetailRepository { get; }
         
-        Task Save();
+        Task SaveAsync();
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -46,7 +43,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
         public IOrderRepository OrderRepository { get; private set; }
         public IOrderDetailRepository OrderDetailRepository { get; private set; }
 
-        public async Task Save()
+        public async Task SaveAsync()
         {
             await _dbContext.SaveChangesAsync();
         }

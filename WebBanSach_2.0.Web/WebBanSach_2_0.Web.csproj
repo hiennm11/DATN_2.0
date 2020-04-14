@@ -205,12 +205,6 @@
     <Compile Include="Infrastructure\Pagination.cs" />
     <Compile Include="Models\AccountManageVM.cs" />
     <Compile Include="Models\AccountVM.cs" />
-    <Compile Include="Models\AuthorDetailVM.cs" />
-    <Compile Include="Models\AuthorExtensions.cs" />
-    <Compile Include="Models\CartItem.cs" />
-    <Compile Include="Models\CategoryVM.cs" />
-    <Compile Include="Models\OrderVM.cs" />
-    <Compile Include="Models\ProductVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

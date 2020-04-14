@@ -7,8 +7,8 @@ using System.Web.Mvc;
 using WebBanSach_2_0.Data;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Web.Infrastructure;
-using WebBanSach_2_0.Web.Models;
 using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
@@ -43,7 +43,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 await _unitOfWork.OrderRepository.Update(item);
                 try
                 {
-                    await _unitOfWork.Save();
+                    await _unitOfWork.SaveAsync();
                     status = true;
                 }
                 catch (Exception ex)

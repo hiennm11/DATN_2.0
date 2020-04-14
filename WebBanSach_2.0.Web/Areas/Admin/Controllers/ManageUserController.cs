@@ -36,7 +36,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             try
             {
                 await _unitOfWork.ApplicationUser.Update(model);
-                await _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -67,7 +67,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     IdentityRole role = await _unitOfWork.IdentityRole.GetSingleByStringID(item);
                     model.Roles.Add(new IdentityUserRole() { UserId = UserId, RoleId = item });
                 }
-                await _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
             }
             var list = await _unitOfWork.IdentityRole.GetAll();
             ViewBag.RoleId = new SelectList(list.Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
@@ -80,7 +80,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             ApplicationUser model = await _unitOfWork.ApplicationUser.GetSingleByStringID(UserId);
             model.Roles.Remove(model.Roles.Single(m => m.RoleId == RoleId));
-            await _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
             var list = await _unitOfWork.IdentityRole.GetAll();
             ViewBag.RoleId = new SelectList(list.Where(item => model.Roles.FirstOrDefault(r => r.RoleId == item.Id) == null).ToList(), "Id", "Name");
             return RedirectToAction("EditRole", new { Id = UserId });
@@ -100,7 +100,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             try
             {
                 _unitOfWork.ApplicationUser.Delete(Id);
-                await _unitOfWork.Save();
+                await _unitOfWork.SaveAsync();
                 return RedirectToAction("Index");
             }
             catch (Exception ex)

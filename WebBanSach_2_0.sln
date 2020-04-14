@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBanSach_2_0.Model", "Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBanSach_2_0.Web", "WebBanSach_2.0.Web\WebBanSach_2_0.Web.csproj", "{C7FEA38D-74AA-42B1-83CC-185DFBED0978}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebBanSach_2_0.Services", "WebBanSach_2.0.Services\WebBanSach_2_0.Services.csproj", "{07976067-0C44-4DBB-AB94-6BE79A9FB954}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{C7FEA38D-74AA-42B1-83CC-185DFBED0978}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7FEA38D-74AA-42B1-83CC-185DFBED0978}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7FEA38D-74AA-42B1-83CC-185DFBED0978}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07976067-0C44-4DBB-AB94-6BE79A9FB954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07976067-0C44-4DBB-AB94-6BE79A9FB954}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07976067-0C44-4DBB-AB94-6BE79A9FB954}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07976067-0C44-4DBB-AB94-6BE79A9FB954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

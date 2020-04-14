@@ -6,8 +6,8 @@ using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Web.Infrastructure;
-using WebBanSach_2_0.Web.Models;
 using static WebBanSach_2_0.Web.Infrastructure.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers

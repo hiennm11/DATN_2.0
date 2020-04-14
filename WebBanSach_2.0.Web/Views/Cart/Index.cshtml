@@ -1,7 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "Giỏ hàng";
-    var cart = (List<WebBanSach_2_0.Web.Models.CartItem>)ViewBag.Cart;
+    var cart = (List<CartItem>)ViewBag.Cart;
     var totalPrice = ViewBag.Total;
     var user = System.Web.HttpContext.Current.User.Identity.Name;
 }

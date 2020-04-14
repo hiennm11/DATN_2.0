@@ -1,8 +1,8 @@
 ﻿@{
     ViewBag.Title = "Trang chủ";
-    var newProduct = (List<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.NewProduct;
-    var hotProduct = (List<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.HotProduct;
-    var productList = (WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.ProductList;
+    var newProduct = (List<ProductVM>)ViewBag.NewProduct;
+    var hotProduct = (List<ProductVM>)ViewBag.HotProduct;
+    var productList = (WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<ProductVM>)ViewBag.ProductList;
     var cateID = ViewBag.CategoryID;
     var search = ViewBag.SearchString;
 }

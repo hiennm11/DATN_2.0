@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using WebBanSach_2_0.Model.Models;
-using WebBanSach_2_0.Web.Models;
+using WebBanSach_2_0.Model.ViewModels;
 
 namespace WebBanSach_2_0.Web.Infrastructure
 {

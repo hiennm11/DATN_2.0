@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Web.Models;
 
 namespace WebBanSach_2_0.Web.Infrastructure

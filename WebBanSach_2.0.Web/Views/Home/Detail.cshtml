@@ -1,7 +1,7 @@
-﻿@model WebBanSach_2_0.Web.Models.ProductVM
+﻿@model ProductVM
 @{
     ViewBag.Title = Model.Name;
-    var relatedList = (List<WebBanSach_2_0.Web.Models.ProductVM>)ViewBag.RelatedList;
+    var relatedList = (List<ProductVM>)ViewBag.RelatedList;
     var cate = (string)ViewBag.CategoryName;
     var cateID = (string)ViewBag.CateNameID;
     var author = (string)ViewBag.Author;

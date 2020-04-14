@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Web.Infrastructure;
 using WebBanSach_2_0.Web.Models;
 
@@ -62,7 +63,7 @@ namespace WebBanSach_2_0.Web.Controllers
                 var orderDetail = new OrderDetail() { OrderID = order.ID, ProductID = item.Product.ID, Quantity = item.Quantity };
                 await _unitOfWork.OrderDetailRepository.Add(orderDetail);
             }
-            await _unitOfWork.Save();
+            await _unitOfWork.SaveAsync();
             Session.Remove(cartSession);
             return RedirectToAction("Index","Home");
         }
