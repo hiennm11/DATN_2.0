@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
+using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -15,6 +16,7 @@ using WebBanSach_2_0.Data;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Web.Infrastructure;
 
 [assembly: OwinStartup(typeof(WebBanSach_2_0.Web.App_Start.Startup))]
 
@@ -25,12 +27,20 @@ namespace WebBanSach_2_0.Web.App_Start
         public void Configuration(IAppBuilder app)
         {
             // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
-            //ConfigAutofac(app);
+            ConfigAutofac(app);
             ConfigureAuth(app);
         }
         private void ConfigAutofac(IAppBuilder app)
         {
             var builder = new ContainerBuilder();
+            var config = new MapperConfiguration(cfg => 
+            { 
+                cfg.AddProfile(new AutoMapperConfiguration()); 
+            });
+
+            //AutoMapper
+            builder.RegisterInstance(config.CreateMapper()).As<IMapper>().SingleInstance();
+
             //builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();           

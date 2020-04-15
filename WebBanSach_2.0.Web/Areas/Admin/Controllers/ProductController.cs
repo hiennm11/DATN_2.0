@@ -1,4 +1,5 @@
-﻿using PagedList;
+﻿using AutoMapper;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,21 +20,29 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     [Authorize(Roles ="Admin")]
     public class ProductController : Controller
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public ProductController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
+
         // GET: Admin/Product
         [Route("Product")]
         public ActionResult Index()
         {
             
             //ViewBag.CateList = new SelectList(_unitOfWork.Category.GetAll(), "ID", "CategoryName");
-            ViewBag.CateList = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>( _unitOfWork.Category.GetTrueCategories());
+            ViewBag.CateList = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>( _unitOfWork.Category.GetTrueCategories());
 
             return View();
         }
 
         public async Task<JsonResult> GetPaggedData(int page = 1, string search = null, int cate = 0)
         {
-            var dataTemp = await _unitOfWork.Product.GetAll();
+            var dataTemp = await _unitOfWork.Product.GetAllAsync();
 
             if (search != null && search != "")
             {
@@ -44,7 +53,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 dataTemp = _unitOfWork.Product.GetByCategoryInt(cate);
             }
 
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
+            var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
             var pager = new Pager(data.Count(), page);
             var viewModel = new IndexViewModel<ProductVM>()
             {
@@ -56,8 +65,8 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetDetail(int id)
         {
-            var datatemp = await _unitOfWork.Product.GetSingleByID(id);
-            var data = AutoMapperConfiguration.map.Map<Product, ProductVM>(datatemp);
+            var datatemp = await _unitOfWork.Product.GetSingleByIDAsync(id);
+            var data = _mapper.Map<Product, ProductVM>(datatemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
 
@@ -66,7 +75,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            var productDB = await _unitOfWork.Product.GetSingleByID(product.ID);
+            var productDB = await _unitOfWork.Product.GetSingleByIDAsync(product.ID);
             if (productDB != null)
             {
                 if (product.file != null)
@@ -95,7 +104,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     productDB.UpdateProduct(product);
                 }
 
-                await _unitOfWork.Product.Update(productDB);
+                await _unitOfWork.Product.UpdateAsync(productDB);
 
             }
 
@@ -107,10 +116,10 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     newProduct.Image = SaveImg(newProduct.NameID, newProduct.CateID, product.file);
                 }
 
-                await _unitOfWork.Product.Add(newProduct);
+                await _unitOfWork.Product.AddAsync(newProduct);
 
             }
-            ViewBag.CateList = new SelectList(await _unitOfWork.Category.GetAll(), "ID", "CategoryName");
+            ViewBag.CateList = new SelectList(await _unitOfWork.Category.GetAllAsync(), "ID", "CategoryName");
 
             try
             {
@@ -132,7 +141,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            await _unitOfWork.Product.ShiftDelete(id);
+            await _unitOfWork.Product.ShiftDeleteAsync(id);
             try
             {
                 await _unitOfWork.SaveAsync();

@@ -23,7 +23,7 @@ namespace WebBanSach_2_0.Data.Repositories
         {
             var obj =_dbContext.AuthorDetails.Find(id);
             obj.Status = false;
-            await this.Update(obj);
+            await this.UpdateAsync(obj);
         }
 
         public IEnumerable<AuthorDetail> GetBySearchAsync(string search)

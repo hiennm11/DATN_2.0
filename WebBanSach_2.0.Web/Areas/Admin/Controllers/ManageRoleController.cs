@@ -17,7 +17,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/ManageRole
         public async Task<ActionResult> Index()
         {
-            var model = await _unitOfWork.IdentityRole.GetAll();
+            var model = await _unitOfWork.IdentityRole.GetAllAsync();
             return View(model.Where(m => m.Id != "ad"));
         }
 
@@ -34,7 +34,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _unitOfWork.IdentityRole.Add(role);
+                    await _unitOfWork.IdentityRole.AddAsync(role);
                     await _unitOfWork.SaveAsync();
                 }
                 return RedirectToAction("Index");

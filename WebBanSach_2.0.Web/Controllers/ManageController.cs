@@ -13,6 +13,7 @@ using WebBanSach_2_0.Web.Infrastructure;
 using WebBanSach_2_0.Web.Models;
 using WebBanSach_2_0.Model.Models;
 using WebBanSach_2_0.Model.ViewModels;
+using AutoMapper;
 
 namespace WebBanSach_2_0.Web.Controllers
 {
@@ -21,16 +22,17 @@ namespace WebBanSach_2_0.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        private UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
 
         public ManageController()
         {
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUnitOfWork unitOfWork, IMapper mapper)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
         }
 
         public ApplicationSignInManager SignInManager
@@ -207,18 +209,18 @@ namespace WebBanSach_2_0.Web.Controllers
         public async Task<ActionResult> Order()
         {
             var user =  UserManager.FindById(User.Identity.GetUserId());
-            var temp = await _unitOfWork.OrderRepository.GetAll();
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp.Where(m => m.CustomerEmail == user.UserName));
+            var temp = await _unitOfWork.OrderRepository.GetAllAsync();
+            var data = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp.Where(m => m.CustomerEmail == user.UserName));
             return View(data);
         }
 
         public async Task<JsonResult> GetOrderDetail(int id)
         {
-            var list = await _unitOfWork.OrderDetailRepository.GetAll();           
+            var list = await _unitOfWork.OrderDetailRepository.GetAllAsync();           
             List<CartItem> cart = new List<CartItem>();
             foreach (var item in list.Where(m => m.OrderID == id))
             {
-                var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item.Product);
+                var product = _mapper.Map<Product, ProductVM>(item.Product);
                 CartItem cartItem = new CartItem { Product = product, Quantity = item.Quantity };
                 cart.Add(cartItem);
             }
@@ -230,6 +232,8 @@ namespace WebBanSach_2_0.Web.Controllers
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         private IAuthenticationManager AuthenticationManager
         {

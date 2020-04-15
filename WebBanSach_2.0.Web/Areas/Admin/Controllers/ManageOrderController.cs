@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +16,20 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
     public class ManageOrderController : Controller
     {
-        UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public ManageOrderController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
+
         // GET: Admin/ManageOrder
         public async Task<ActionResult> Index(int page = 1)
         {
-            var temp = await _unitOfWork.OrderRepository.GetAll();
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
+            var temp = await _unitOfWork.OrderRepository.GetAllAsync();
+            var data = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
             var pager = new Pager(data.Count(), page);
 
             var viewModel = new IndexViewModel<OrderVM>()
@@ -36,11 +45,11 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         public async Task<ActionResult> UpdateStatus(int id, int orderStatus)
         {
            bool status = false; string message = String.Empty;
-           var item = await _unitOfWork.OrderRepository.GetSingleByID(id);
+           var item = await _unitOfWork.OrderRepository.GetSingleByIDAsync(id);
             if(item != null)
             {
                 item.Status = orderStatus;
-                await _unitOfWork.OrderRepository.Update(item);
+                await _unitOfWork.OrderRepository.UpdateAsync(item);
                 try
                 {
                     await _unitOfWork.SaveAsync();

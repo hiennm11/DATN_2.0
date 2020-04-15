@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,13 +16,22 @@ namespace WebBanSach_2._0.Web.Controllers
     [HandleError]
     public class HomeController : Controller
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+
+        //private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
+        private readonly IMapper _mapper;
+
+        public HomeController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
 
         [Route("")]
         [Route("~/")]        
         public async Task<ActionResult> Index(string cateID = null, string search = null,int page = 1)
         {
-            var dataTemp = await _unitOfWork.Product.GetAll();
+            var dataTemp = await _unitOfWork.Product.GetAllAsync();
             var newTemp = _unitOfWork.Product.GetNewProduct();
             var hotTemp = _unitOfWork.Product.GetHotProduct();
 
@@ -37,10 +47,10 @@ namespace WebBanSach_2._0.Web.Controllers
                 dataTemp = _unitOfWork.Product.GetByCategory(cateID);
             }
 
-            var newProduct = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
-            var hotProduct = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
+            var newProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
+            var hotProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
 
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
+            var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
             var pager = new Pager(data.Count(), page, 18);
             var viewModel = new IndexViewModel<ProductVM>()
             {
@@ -63,8 +73,8 @@ namespace WebBanSach_2._0.Web.Controllers
         {
             var item = _unitOfWork.Product.GetProductByNameID(nameID);
             var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description);
-            var list = AutoMapperConfiguration.map.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
-            var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(item);
+            var list = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
+            var product = _mapper.Map<Product, ProductVM>(item);
             var author = item.ProductAuthors.FirstOrDefault(m => m.ProductID == item.ID);
 
             ViewBag.Author = author.Author.Name;
@@ -82,9 +92,9 @@ namespace WebBanSach_2._0.Web.Controllers
         public ActionResult CategoryMenu()
         {
             return Task.Run(async () => {
-                var cate = await _unitOfWork.Category.GetAll();
+                var cate = await _unitOfWork.Category.GetAllAsync();
 
-                var category = AutoMapperConfiguration.map.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
+                var category = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
 
                 return PartialView("_CateMenu", category);
             }).Result;           

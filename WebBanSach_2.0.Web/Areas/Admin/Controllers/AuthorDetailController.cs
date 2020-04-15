@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,15 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class AuthorDetailController : Controller
     {
-        UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public AuthorDetailController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
+
         // GET: Admin/AuthorDetail
         public ActionResult Index()
         {
@@ -25,14 +34,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetPaggedData(int page = 1, string search = null)
         {
-            var dataTemp = await _unitOfWork.AuthorDetail.GetAll();
+            var dataTemp = await _unitOfWork.AuthorDetail.GetAllAsync();
 
             if (search != null && search != "")
             {
                 dataTemp = _unitOfWork.AuthorDetail.GetBySearchAsync(search);
             }
             
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(dataTemp);
+            var data = _mapper.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(dataTemp);
             var pager = new Pager(data.Count(), page);
             var viewModel = new IndexViewModel<AuthorDetailVM>()
             {
@@ -45,8 +54,8 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         [OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any , VaryByParam = "id")]
         public async Task<JsonResult> GetDetail(int id)
         {
-            var dataTemp = await _unitOfWork.AuthorDetail.GetSingleByID(id);
-            var data = AutoMapperConfiguration.map.Map<AuthorDetail, AuthorDetailVM>(dataTemp);
+            var dataTemp = await _unitOfWork.AuthorDetail.GetSingleByIDAsync(id);
+            var data = _mapper.Map<AuthorDetail, AuthorDetailVM>(dataTemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
 
@@ -60,14 +69,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             string message = string.Empty;
             if (obj.ID > 0)
             {
-                var data = await _unitOfWork.AuthorDetail.GetSingleByID(obj.ID);
+                var data = await _unitOfWork.AuthorDetail.GetSingleByIDAsync(obj.ID);
                 data.UpdateAuthorDetail(obj);
-                await _unitOfWork.AuthorDetail.Update(data);
+                await _unitOfWork.AuthorDetail.UpdateAsync(data);
             }
             else
             {
                 var newcate = EntityExtensions.CreateAuthorDetail(obj);
-                await _unitOfWork.AuthorDetail.Add(newcate);
+                await _unitOfWork.AuthorDetail.AddAsync(newcate);
             }
 
             try
@@ -90,7 +99,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            await _unitOfWork.AuthorDetail.ShiftDelete(id);
+            await _unitOfWork.AuthorDetail.ShiftDeleteAsync(id);
             try
             {
                 await _unitOfWork.SaveAsync();

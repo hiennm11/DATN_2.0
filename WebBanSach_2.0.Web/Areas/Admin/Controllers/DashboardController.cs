@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,13 +17,20 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
-        UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public DashboardController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
 
         // GET: Admin/Dashboard
         public ActionResult Index()
         {
             var temp = _unitOfWork.OrderRepository.GetByDateDecending();
-            var data = AutoMapperConfiguration.map.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
+            var data = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp);
            
             ViewBag.OrderModel = data;
 

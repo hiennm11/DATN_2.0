@@ -31,7 +31,7 @@ namespace WebBanSach_2_0.Data.Repositories
         {
             var cate = _dbContext.Categories.Find(id);
             cate.Status = false;
-            await this.Update(cate);
+            await this.UpdateAsync(cate);
         }
 
         public IEnumerable<Category> GetBySearch(string search)

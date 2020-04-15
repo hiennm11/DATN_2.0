@@ -9,14 +9,14 @@ namespace WebBanSach_2_0.Data.Infrastructure
 {
     public interface IRepository<T> where T : class 
     {
-        Task<T> Add(T entity);
-        Task Update(T entity);
-        Task<T> ShiftDelete(int id);
+        Task<T> AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task<T> ShiftDeleteAsync(int id);
 
-        Task<IEnumerable<T>> GetAll(string[] includes = null);
-        Task<IEnumerable<T>> GetPaging(int page, int pageSize);
-        Task<T> GetSingleByID(int id);
-        Task<T> GetSingleByStringID(string id);
+        Task<IEnumerable<T>> GetAllAsync(string[] includes = null);
+        Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize);
+        Task<T> GetSingleByIDAsync(int id);
+        Task<T> GetSingleByStringIDAsync(string id);
         int Count(Expression<Func<T, bool>> where);
 
     }

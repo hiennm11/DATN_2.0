@@ -19,7 +19,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
             _dbContext = dbContext;
             _dbSet = _dbContext.Set<T>();
         }
-        public async Task<T> Add(T entity)
+        public async Task<T> AddAsync(T entity)
         {
             return await Task.Run(() => _dbSet.Add(entity));
         }
@@ -29,7 +29,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
             return _dbSet.Count(where);
         }
 
-        public async Task<IEnumerable<T>> GetAll(string[] includes = null)
+        public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null)
         {
             if (includes != null && includes.Count() > 0)
             {
@@ -42,17 +42,17 @@ namespace WebBanSach_2_0.Data.Infrastructure
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetSingleByID(int id)
+        public async Task<T> GetSingleByIDAsync(int id)
         {
             return await Task.Run(() => _dbSet.Find(id));
         }
 
-        public async Task<T> GetSingleByStringID(string id)
+        public async Task<T> GetSingleByStringIDAsync(string id)
         {
             return await Task.Run(() => _dbSet.Find(id));
         }
 
-        public async Task Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
             await Task.Run(() =>
             {
@@ -61,7 +61,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
             });
         }
 
-        public async Task<T> ShiftDelete(int id)
+        public async Task<T> ShiftDeleteAsync(int id)
         {
             return await Task.Run(() =>
             {
@@ -70,7 +70,7 @@ namespace WebBanSach_2_0.Data.Infrastructure
             });
         }
 
-        public async Task<IEnumerable<T>> GetPaging(int page, int pageSize)
+        public async Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize)
         {
             return await _dbContext.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }

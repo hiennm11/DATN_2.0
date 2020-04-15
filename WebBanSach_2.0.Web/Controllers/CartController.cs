@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,8 +15,16 @@ namespace WebBanSach_2_0.Web.Controllers
 {
     public class CartController : Controller
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
         private const string cartSession = "CartSession";
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public CartController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
+   
         // GET: Cart
         public ActionResult Index()
         {
@@ -56,12 +65,12 @@ namespace WebBanSach_2_0.Web.Controllers
             var user = _unitOfWork.ApplicationUser.GetUserByUserName(client.Email);
             var cart = Session[cartSession] as List<CartItem>;
             var order = EntityExtensions.CreateOrder(client);
-            await _unitOfWork.OrderRepository.Add(order);
+            await _unitOfWork.OrderRepository.AddAsync(order);
             
             foreach (var item in cart)
             {
                 var orderDetail = new OrderDetail() { OrderID = order.ID, ProductID = item.Product.ID, Quantity = item.Quantity };
-                await _unitOfWork.OrderDetailRepository.Add(orderDetail);
+                await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
             }
             await _unitOfWork.SaveAsync();
             Session.Remove(cartSession);
@@ -73,7 +82,7 @@ namespace WebBanSach_2_0.Web.Controllers
             bool status = false;
             var currentCart = Session[cartSession] as List<CartItem>;
             List<CartItem> cart = new List<CartItem>();
-            var product = AutoMapperConfiguration.map.Map<Product, ProductVM>(_unitOfWork.Product.GetProductByNameID(nameID));
+            var product = _mapper.Map<Product, ProductVM>(_unitOfWork.Product.GetProductByNameID(nameID));
             if(product != null)
             {
                 if (currentCart == null || currentCart.Count == 0)

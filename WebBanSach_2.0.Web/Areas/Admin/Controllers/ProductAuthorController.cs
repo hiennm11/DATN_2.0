@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +16,20 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class ProductAuthorController : Controller
     {
-        private UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public ProductAuthorController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            this._unitOfWork = unitOfWork;
+            this._mapper = mapper;
+        }
+
         // GET: Admin/ProductAuthor
         public async Task<ActionResult> Index(int page = 1)
         {
             var list = _unitOfWork.ProductAuthor.GetGrouping();
-            IEnumerable<Product> products = await _unitOfWork.Product.GetAll();
+            IEnumerable<Product> products = await _unitOfWork.Product.GetAllAsync();
             var pager = new Pager(list.Count(), page);
             var viewModel = new IndexViewModel<IGrouping<string,string>>()
             {
@@ -28,7 +37,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 Pager = new Pager(list.Count(), page)
             };
             ViewBag.ProductIds = new SelectList(products, "ID", "Name");
-            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAll();
+            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAllAsync();
             ViewBag.List = viewModel;
             return View();
         }
@@ -53,9 +62,9 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<ActionResult> Create()
         {
-            IEnumerable<Product> list = await _unitOfWork.Product.GetAll();
+            IEnumerable<Product> list = await _unitOfWork.Product.GetAllAsync();
             ViewBag.ProductIds = new SelectList(list,"ID","Name");
-            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAll();
+            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAllAsync();
             return View();
         }
 
@@ -70,7 +79,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 foreach (int item in author)
                 {
                     ProductAuthor pa = new ProductAuthor() { ProductID = productID, AuthorID = item };
-                    await _unitOfWork.ProductAuthor.Add(pa);
+                    await _unitOfWork.ProductAuthor.AddAsync(pa);
                 }
                 try
                 {
@@ -101,7 +110,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             var prod = _unitOfWork.Product.GetProductByNameID(EntityExtensions.convertToUnSign(id));
             if(prod != null)
             {
-                await _unitOfWork.ProductAuthor.ShiftDelete(prod.ID);
+                await _unitOfWork.ProductAuthor.ShiftDeleteAsync(prod.ID);
                 try
                 {
                     await _unitOfWork.SaveAsync();
@@ -143,10 +152,10 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             }
             else
             {
-                li = await _unitOfWork.AuthorDetail.GetAll();
+                li = await _unitOfWork.AuthorDetail.GetAllAsync();
             }
 
-            var result = AutoMapperConfiguration.map.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(li.Take(10));
+            var result = _mapper.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(li.Take(10));
             
             return Json(result, JsonRequestBehavior.AllowGet);
 

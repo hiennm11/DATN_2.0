@@ -29,7 +29,7 @@ namespace WebBanSach_2_0.Data.Repositories
         {
             var product = _dbContext.Products.Find(id);
             product.Status = false;
-            await this.Update(product);
+            await this.UpdateAsync(product);
         }
 
         public Product GetProductByNameID(string nameId)
