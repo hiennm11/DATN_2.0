@@ -22,17 +22,22 @@ namespace WebBanSach_2_0.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private IUnitOfWork _unitOfWork;
+        private IMapper _mapper;
         public ManageController()
         {
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUnitOfWork unitOfWork, IMapper mapper)
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
-            SignInManager = signInManager;
-            this._unitOfWork = unitOfWork;
-            this._mapper = mapper;
+            SignInManager = signInManager;            
+        }
+
+        public ManageController(IUnitOfWork unitOfWork, IMapper mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public ApplicationSignInManager SignInManager
@@ -231,9 +236,7 @@ namespace WebBanSach_2_0.Web.Controllers
 
         #region Helpers
         // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId";
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private const string XsrfKey = "XsrfId";       
 
         private IAuthenticationManager AuthenticationManager
         {

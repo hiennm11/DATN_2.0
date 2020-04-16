@@ -46,9 +46,9 @@ namespace WebBanSach_2_0.Web.App_Start
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();           
             builder.RegisterType<WebBanSach_2_0DbContext>().InstancePerRequest();
 
-            //ASP.NET Identity
-            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
-            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
+            ////ASP.NET Identity
+            //builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
+            //builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
 
             // Repositories
             builder.RegisterAssemblyTypes(typeof(CategoryRepository).Assembly)
