@@ -7,17 +7,26 @@ using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ManageRoleController : Controller
     {
-        UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0DbContext());
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IIdentityRoleRepository _identityRoleRepository;
+
+        public ManageRoleController(IUnitOfWork unitOfWork, IIdentityRoleRepository identityRoleRepository)
+        {
+            this._unitOfWork = unitOfWork;
+            this._identityRoleRepository = identityRoleRepository;
+        }
+
         // GET: Admin/ManageRole
         public async Task<ActionResult> Index()
         {
-            var model = await _unitOfWork.IdentityRole.GetAllAsync();
+            var model = await _identityRoleRepository.GetAllAsync();
             return View(model.Where(m => m.Id != "ad"));
         }
 
@@ -34,7 +43,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    await _unitOfWork.IdentityRole.AddAsync(role);
+                    await _identityRoleRepository.AddAsync(role);
                     await _unitOfWork.SaveAsync();
                 }
                 return RedirectToAction("Index");

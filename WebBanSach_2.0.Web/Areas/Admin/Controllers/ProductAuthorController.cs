@@ -6,30 +6,38 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
-using WebBanSach_2_0.Web.Infrastructure;
-using static WebBanSach_2_0.Web.Infrastructure.Pagination;
+using WebBanSach_2_0.Service.Infrastructure;
+using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
-namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
+namespace WebBanSach_2_0.Service.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ProductAuthorController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAuthorDetailRepository _authorDetailRepository;
+        private readonly IProductAuthorRepository _productAuthorRepository;
+        private readonly IProductRepository _productRepository;
         private readonly IMapper _mapper;
 
-        public ProductAuthorController(IUnitOfWork unitOfWork, IMapper mapper)
+        public ProductAuthorController(IUnitOfWork unitOfWork, IAuthorDetailRepository authorDetailRepository, 
+                                       IProductAuthorRepository productAuthorRepository, IProductRepository productRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
+            this._authorDetailRepository = authorDetailRepository;
+            this._productAuthorRepository = productAuthorRepository;
+            this._productRepository = productRepository;
             this._mapper = mapper;
         }
 
         // GET: Admin/ProductAuthor
         public async Task<ActionResult> Index(int page = 1)
         {
-            var list = _unitOfWork.ProductAuthor.GetGrouping();
-            IEnumerable<Product> products = await _unitOfWork.Product.GetAllAsync();
+            var list = _productAuthorRepository.GetGrouping();
+            IEnumerable<Product> products = await _productRepository.GetAllAsync();
             var pager = new Pager(list.Count(), page);
             var viewModel = new IndexViewModel<IGrouping<string,string>>()
             {
@@ -37,14 +45,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 Pager = new Pager(list.Count(), page)
             };
             ViewBag.ProductIds = new SelectList(products, "ID", "Name");
-            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAllAsync();
+            ViewBag.Authors = _authorDetailRepository.GetAllAsync();
             ViewBag.List = viewModel;
             return View();
         }
 
         //public JsonResult GetPaggedData(int page = 1)
         //{
-        //    var temp = _unitOfWork.ProductAuthor.GetAll();
+        //    var temp = _productAuthorRepository.GetAll();
         //    var pager = new Pager(temp.Count(), page);
         //    var data = new List<AuthorExtensions>();
         //    foreach(var item in temp)
@@ -62,9 +70,9 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<ActionResult> Create()
         {
-            IEnumerable<Product> list = await _unitOfWork.Product.GetAllAsync();
+            IEnumerable<Product> list = await _productRepository.GetAllAsync();
             ViewBag.ProductIds = new SelectList(list,"ID","Name");
-            ViewBag.Authors = _unitOfWork.AuthorDetail.GetAllAsync();
+            ViewBag.Authors = _authorDetailRepository.GetAllAsync();
             return View();
         }
 
@@ -78,8 +86,8 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             {
                 foreach (int item in author)
                 {
-                    ProductAuthor pa = new ProductAuthor() { ProductID = productID, AuthorID = item };
-                    await _unitOfWork.ProductAuthor.AddAsync(pa);
+                    ProductAuthor pa = new ProductAuthor() { ProductId = productID, AuthorId = item };
+                    await _productAuthorRepository.AddAsync(pa);
                 }
                 try
                 {
@@ -107,10 +115,10 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            var prod = _unitOfWork.Product.GetProductByNameID(EntityExtensions.convertToUnSign(id));
+            var prod = _productRepository.GetProductByNameIDAsync(EntityExtensions.convertToUnSign(id));
             if(prod != null)
             {
-                await _unitOfWork.ProductAuthor.ShiftDeleteAsync(prod.ID);
+                await _productAuthorRepository.ShiftDeleteAsync(prod.ProductId);
                 try
                 {
                     await _unitOfWork.SaveAsync();
@@ -133,7 +141,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         public JsonResult GetProduct(string tags)
         {
             string tagc = EntityExtensions.convertToUnSign(tags);
-            var li = _unitOfWork.Product.GetBySearch(tagc);
+            var li = _productRepository.GetBySearchAsync(tagc);
             return Json(li, JsonRequestBehavior.AllowGet);
         }
 
@@ -142,17 +150,17 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             IEnumerable<AuthorDetail> li = null;
             if (tags != null)
             {
-                var temp = _unitOfWork.ProductAuthor.GetByProduct(productID);
-                li =  _unitOfWork.AuthorDetail.GetBySearchAsync(tags);
+                var temp = _productAuthorRepository.GetByProduct(productID);
+                li =  _authorDetailRepository.GetBySearchAsync(tags);
                 
                 foreach (var item in temp)
                 {                   
-                   li.ToList().RemoveAll(x => x.ID == item.AuthorID);
+                   li.ToList().RemoveAll(x => x.AuthorId == item.AuthorId);
                 }                
             }
             else
             {
-                li = await _unitOfWork.AuthorDetail.GetAllAsync();
+                li = await _authorDetailRepository.GetAllAsync();
             }
 
             var result = _mapper.Map<IEnumerable<AuthorDetail>, IEnumerable<AuthorDetailVM>>(li.Take(10));

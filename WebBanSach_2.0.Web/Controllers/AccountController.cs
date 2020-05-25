@@ -9,7 +9,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Web.App_Start;
 using WebBanSach_2_0.Web.Models;
 
@@ -119,7 +119,7 @@ namespace WebBanSach_2_0.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Dob = model.Dob, FullName = model.FullName, Address = model.Address, PhoneNumber = model.PhoneNumber };
-                user.Roles.Add(new IdentityUserRole() { UserId = user.Id, RoleId = "client" });
+                user.Roles.Add(new IdentityUserRole() { UserId = user.Id, RoleId = "ca769529-3fa8-42a8-b936-bb6aef510384" });
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

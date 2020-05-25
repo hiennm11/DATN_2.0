@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
     public interface ICategoryRepository : IRepository<Category>
     {
         Task Delete(int id);
-        IEnumerable<Category> GetBySearch(string search);
-        IEnumerable<Category> GetTrueCategories();
+        Task<IEnumerable<Category>> GetBySearchAsync(string search);
+        Task<IEnumerable<Category>> GetTrueCategoriesAsync();
 
     }
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
@@ -21,10 +22,10 @@ namespace WebBanSach_2_0.Data.Repositories
         {
         }
 
-        public IEnumerable<Category> GetTrueCategories()
+        public async Task<IEnumerable<Category>> GetTrueCategoriesAsync()
         {
-            var list = _dbContext.Categories.OrderBy(c => c.Status);
-            return list;
+            var result = _dbContext.Categories.OrderBy(c => c.Status);
+            return await result.ToListAsync();
         }
 
         public async Task Delete(int id)
@@ -34,10 +35,10 @@ namespace WebBanSach_2_0.Data.Repositories
             await this.UpdateAsync(cate);
         }
 
-        public IEnumerable<Category> GetBySearch(string search)
+        public async Task<IEnumerable<Category>> GetBySearchAsync(string search)
         {
             var list = _dbContext.Categories.Where(m => m.CategoryName.ToLower().Contains(search.ToLower()));
-            return list;
+            return await list.ToListAsync();
         }
     }
 }

@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
     public interface IProductRepository : IRepository<Product>
     {
-        Product GetProductByNameID(string nameId);
-        IEnumerable<Product> GetByCategory(string cate);
-        IEnumerable<Product> GetNewProduct();
-        IEnumerable<Product> GetHotProduct();
-        IEnumerable<Product> GetTrueProduct();
-        IEnumerable<Product> GetBySearch(string search);
-        IEnumerable<Product> GetByCategoryInt(int cate);
-        Task Delete(int id);
+        Task<Product> GetProductByNameIDAsync(string nameId);
+        Task<IEnumerable<Product>> GetByCategoryAsync(string cate);
+        Task<IEnumerable<Product>> GetNewProductAsync();
+        Task<IEnumerable<Product>> GetHotProductAsync();
+        Task<IEnumerable<Product>> GetBySearchAsync(string search);
+        Task<IEnumerable<Product>> GetByCategoryIntAsync(int cate);
+        Task DeleteAsync(int id);
     }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
@@ -25,51 +25,45 @@ namespace WebBanSach_2_0.Data.Repositories
         {
         }
 
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var product = _dbContext.Products.Find(id);
             product.Status = false;
             await this.UpdateAsync(product);
         }
 
-        public Product GetProductByNameID(string nameId)
+        public async Task<Product> GetProductByNameIDAsync(string nameId)
         {
-            return _dbContext.Products.FirstOrDefault(n => n.NameID == nameId);
+            return await _dbContext.Products.FirstOrDefaultAsync(n => n.NameID == nameId);
         }
 
-        public IEnumerable<Product> GetBySearch(string search)
+        public async Task<IEnumerable<Product>> GetBySearchAsync(string search)
         {
             var list = _dbContext.Products.Where(m => m.NameID.ToLower().Contains(search.ToLower()));
-            return list;
+            return await list.ToListAsync();
         }
 
-        public IEnumerable<Product> GetByCategory(string cate)
+        public async Task<IEnumerable<Product>> GetByCategoryAsync(string cate)
         {
-            var list = _dbContext.Products.Where(c => c.Categories.Description == cate).OrderBy(c => c.Name);
-            return list;
+            var list = _dbContext.Products.Where(c => c.Category.Description == cate).OrderBy(c => c.Name);
+            return await list.ToListAsync();
         }
-        public IEnumerable<Product> GetByCategoryInt(int cate)
+        public async Task<IEnumerable<Product>> GetByCategoryIntAsync(int cate)
         {
-            var list = _dbContext.Products.Where(c => c.Categories.ID == cate).OrderBy(c => c.Name);
-            return list;
+            var list = _dbContext.Products.Where(c => c.Category.CategoryId == cate).OrderBy(c => c.Name);
+            return await list.ToListAsync();
         }
 
-        public IEnumerable<Product> GetNewProduct()
+        public async Task<IEnumerable<Product>> GetNewProductAsync()
         {
             var list = _dbContext.Products.OrderBy(c => c.CreateDate);
-            return list;
+            return await list.ToListAsync();
         }
 
-        public IEnumerable<Product> GetHotProduct()
+        public async Task<IEnumerable<Product>> GetHotProductAsync()
         {
             var list = _dbContext.Products.OrderBy(c => c.UpdatedDate);
-            return list;
-        }
-
-        public IEnumerable<Product> GetTrueProduct()
-        {
-            var list = _dbContext.Products.OrderBy(c => c.Status);
-            return list;
+            return await list.ToListAsync();
         }
     }
 }

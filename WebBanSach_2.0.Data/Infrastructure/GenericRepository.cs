@@ -12,21 +12,19 @@ namespace WebBanSach_2_0.Data.Infrastructure
     public class GenericRepository<T> : IRepository<T> where T : class
     {
         protected WebBanSach_2_0DbContext _dbContext;
-        protected readonly IDbSet<T> _dbSet;
       
         public GenericRepository(WebBanSach_2_0DbContext dbContext)
         {
             _dbContext = dbContext;
-            _dbSet = _dbContext.Set<T>();
         }
         public async Task<T> AddAsync(T entity)
         {
-            return await Task.Run(() => _dbSet.Add(entity));
+            return await Task.Run(() => _dbContext.Set<T>().Add(entity));
         }
 
         public int Count(Expression<Func<T, bool>> where)
         {
-            return _dbSet.Count(where);
+            return _dbContext.Set<T>().Count(where);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null)
@@ -44,19 +42,19 @@ namespace WebBanSach_2_0.Data.Infrastructure
 
         public async Task<T> GetSingleByIDAsync(int id)
         {
-            return await Task.Run(() => _dbSet.Find(id));
+            return await Task.Run(() => _dbContext.Set<T>().Find(id));
         }
 
         public async Task<T> GetSingleByStringIDAsync(string id)
         {
-            return await Task.Run(() => _dbSet.Find(id));
+            return await Task.Run(() => _dbContext.Set<T>().Find(id));
         }
 
         public async Task UpdateAsync(T entity)
         {
             await Task.Run(() =>
             {
-                _dbSet.Attach(entity);
+                _dbContext.Set<T>().Attach(entity);
                 _dbContext.Entry(entity).State = EntityState.Modified;
             });
         }
@@ -65,14 +63,19 @@ namespace WebBanSach_2_0.Data.Infrastructure
         {
             return await Task.Run(() =>
             {
-                var entity = _dbSet.Find(id);
-                return _dbSet.Remove(entity);
+                var entity = _dbContext.Set<T>().Find(id);
+                return _dbContext.Set<T>().Remove(entity);
             });
         }
 
         public async Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize)
         {
             return await _dbContext.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+        public int GetTotalRow()
+        {
+            return _dbContext.Set<T>().Count();
         }
     }
 }

@@ -91,8 +91,7 @@ function GetOrderDetail(id) {
 }
 
 function addToCart(id) {
-    var quantity = $("#cart-quantity").html(); 
-    $("#cart-quantity").empty();
+    var quantity = $("#cart-quantity").html();     
     $.ajax({
         url: "/Cart/AddToCart",
         type: "post",
@@ -112,9 +111,8 @@ function addToCart(id) {
                     loader: false,
                     loaderBg: '#9EC600',
                 });
-               
-                $("#cart-quantity").html(response.cart.length);
-                
+                //$("#cart-quantity").empty();
+                $("#cart-quantity").html(response.cart.length);               
             }
         }
     });

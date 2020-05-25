@@ -6,22 +6,32 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
-using WebBanSach_2_0.Web.Infrastructure;
-using WebBanSach_2_0.Web.Models;
+using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Models;
 
-namespace WebBanSach_2_0.Web.Controllers
+namespace WebBanSach_2_0.Service.Controllers
 {
     public class CartController : Controller
     {
         private const string cartSession = "CartSession";
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IMapper _mapper;
 
-        public CartController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CartController(IUnitOfWork unitOfWork, IApplicationUserRepository applicationUserRepository, IProductRepository productRepository
+            , IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
+            this._applicationUserRepository = applicationUserRepository;
+            this._productRepository = productRepository;
+            this._orderRepository = orderRepository;
+            this._orderDetailRepository = orderDetailRepository;
             this._mapper = mapper;
         }
    
@@ -43,7 +53,7 @@ namespace WebBanSach_2_0.Web.Controllers
             var client = new ClientViewModel();
             if (user != null)
             {
-                var temp = _unitOfWork.ApplicationUser.GetUserByUserName(user);
+                var temp = _applicationUserRepository.GetUserByUserName(user);
                 client = new ClientViewModel() { FullName = temp.FullName, Address = temp.Address, Email = temp.Email, PhoneNumber = temp.PhoneNumber };              
             }
 
@@ -62,15 +72,15 @@ namespace WebBanSach_2_0.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CheckoutConfirmed(ClientViewModel client)
         {
-            var user = _unitOfWork.ApplicationUser.GetUserByUserName(client.Email);
+            var user = _applicationUserRepository.GetUserByUserName(client.Email);
             var cart = Session[cartSession] as List<CartItem>;
             var order = EntityExtensions.CreateOrder(client);
-            await _unitOfWork.OrderRepository.AddAsync(order);
+            await _orderRepository.AddAsync(order);
             
             foreach (var item in cart)
             {
-                var orderDetail = new OrderDetail() { OrderID = order.ID, ProductID = item.Product.ID, Quantity = item.Quantity };
-                await _unitOfWork.OrderDetailRepository.AddAsync(orderDetail);
+                var orderDetail = new OrderDetail() { OrderId = order.OrderId, ProductId = item.Product.ID, Quantity = item.Quantity };
+                await _orderDetailRepository.AddAsync(orderDetail);
             }
             await _unitOfWork.SaveAsync();
             Session.Remove(cartSession);
@@ -82,7 +92,7 @@ namespace WebBanSach_2_0.Web.Controllers
             bool status = false;
             var currentCart = Session[cartSession] as List<CartItem>;
             List<CartItem> cart = new List<CartItem>();
-            var product = _mapper.Map<Product, ProductVM>(_unitOfWork.Product.GetProductByNameID(nameID));
+            var product = _mapper.Map<Product, ProductVM>(_productRepository.GetProductByNameIDAsync(nameID));
             if(product != null)
             {
                 if (currentCart == null || currentCart.Count == 0)

@@ -5,17 +5,8 @@ using WebBanSach_2_0.Data.Repositories;
 namespace WebBanSach_2_0.Data.Infrastructure
 {
     public interface IUnitOfWork : IDisposable
-    {
-        ICategoryRepository Category { get; }
-        IProductRepository Product { get; }
-        IAuthorDetailRepository AuthorDetail { get; }
-        IProductAuthorRepository ProductAuthor { get; }
-        IIdentityRoleRepository IdentityRole { get; }
-        IApplicationUserRepository ApplicationUser { get; }
-        IOrderRepository OrderRepository { get; }
-        IOrderDetailRepository OrderDetailRepository { get; }
-        
-        Task SaveAsync();
+    {   
+        Task<int> SaveAsync();
     }
     public class UnitOfWork : IUnitOfWork
     {
@@ -24,28 +15,11 @@ namespace WebBanSach_2_0.Data.Infrastructure
         public UnitOfWork(WebBanSach_2_0DbContext dbContext)
         {
             _dbContext = dbContext;
-            Category = new CategoryRepository(_dbContext);
-            Product = new ProductRepository(_dbContext);
-            AuthorDetail = new AuthorDetailRepository(_dbContext);
-            ProductAuthor = new ProductAuthorRepository(_dbContext);
-            IdentityRole = new IdentityRoleRepository(_dbContext);
-            ApplicationUser = new ApplicationUserRepository(_dbContext);
-            OrderRepository = new OrderRepository(_dbContext);
-            OrderDetailRepository = new OrderDetailRepository(_dbContext);
         }
 
-        public ICategoryRepository Category { get; private set; }
-        public IProductRepository Product { get; private set; }
-        public IAuthorDetailRepository AuthorDetail { get; private set; }
-        public IProductAuthorRepository ProductAuthor { get; private set; }
-        public IIdentityRoleRepository IdentityRole { get; private set; }
-        public IApplicationUserRepository ApplicationUser { get; private set; }
-        public IOrderRepository OrderRepository { get; private set; }
-        public IOrderDetailRepository OrderDetailRepository { get; private set; }
-
-        public async Task SaveAsync()
+        public async Task<int> SaveAsync()
         {
-            await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync();
         }
 
         #region Dispose

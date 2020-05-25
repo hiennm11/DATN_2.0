@@ -1,11 +1,11 @@
-﻿@model WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<WebBanSach_2_0.Web.Models.ProductVM>
+﻿@model WebBanSach_2_0.Model.ResponseModels.AdminListProductResponse
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";    
-    
-    var catelist = (List<WebBanSach_2_0.Web.Models.CategoryVM>)ViewBag.CateList;
-    catelist.Add(new WebBanSach_2_0.Web.Models.CategoryVM { ID = 0, CategoryName = "Tất cả" });
-    var cate = new SelectList(catelist.OrderBy(m => m.ID), "ID", "CategoryName");
+
+    var pager = Model.Products.Pager;
+    var catelist = Model.Categories as List<CategoryVM>;
+    catelist.Add(new CategoryVM { CategoryId = 0, CategoryName = "Tất cả" });
+    var cate = new SelectList(catelist.OrderBy(m => m.CategoryId), "CategoryId", "CategoryName");
 }
 
 <!-- Breadcrumbs-->
@@ -16,7 +16,10 @@
     <li class="breadcrumb-item">Quản lý</li>
     <li class="breadcrumb-item active">Sản phẩm</li>
 </ol>
-
+@if (ViewData["Message"] != null)
+{
+    <p class="text-success">@ViewData["Message"].ToString()</p>
+}
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
@@ -25,19 +28,19 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <button id="btnCreate" class="btn btn-info" role="button">Tạo mới</button>
+                <a href="@Url.Action("Details")" id="btnCreate" class="btn btn-info" role="button">Tạo mới</a>
             </div>
             <div class="col-sm-8 col-md-4">
                 @Html.DropDownList("Category", (IEnumerable<SelectListItem>)cate, new { @class = "form-control" })
                 @*<div class="dropdown-menu form-control">
-                    <a class="dropdown-item" href="#">Tất cả</a>
-                    @foreach (var item in catelist)
-                    {
-                        <a class="dropdown-item" href="#">@item.CategoryName</a>
-                    }
-                    <a class="dropdown-item" href="#">Link 2</a>
+                        <a class="dropdown-item" href="#">Tất cả</a>
+                        @foreach (var item in catelist)
+                        {
+                            <a class="dropdown-item" href="#">@item.CategoryName</a>
+                        }
+                        <a class="dropdown-item" href="#">Link 2</a>
 
-                </div>*@
+                    </div>*@
             </div>
             <div class="col-sm-8 col-md-4">
                 <div class="input-group mb-3">
@@ -49,87 +52,91 @@
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Thể loại</th>
-                        <th>Mô tả</th>
-                        <th>Hình ảnh</th>
-                        <th>Giá bán</th>
-                        <th>Lượng mua</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>Sản phẩm</th>
-                        <th>Thể loại</th>
-                        <th>Mô tả</th>
-                        <th>Hình ảnh</th>
-                        <th>Giá bán</th>
-                        <th>Lượng mua</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                </tfoot>
-                <tbody id="dataTableBody">
-                    @*@foreach (var item in list.Items)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td>@item.CateID</td>
-                            <td>Mô tả</td>
-                            <td><img src="@item.Image" style="height:100px; width:90px;border: solid" /></td>
-                            <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
-                            <td>Lượng mua</td>
-                            <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
-                            <td>
-                                <button class="btn btn-outline btn-edit" data-page="0" data-id="@item.ID"><i class="fas fa-pencil-alt" style="color: blue"></i></button>
-                                <button class="btn btn-outline-light open-delete-modal" data-id="@item.ID" data-name="@item.Name">
-                                    <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    }*@                   
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col-sm-12 col-md-5">
-                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+        @if (Model.Products == null)
+        {
 
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Thể loại</th>
+                            <th>Hình ảnh</th>
+                            <th>Giá bán</th>
+                            <th>Lượng mua</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Thể loại</th>
+                            <th>Hình ảnh</th>
+                            <th>Giá bán</th>
+                            <th>Lượng mua</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="dataTableBody">
+                        @foreach (var item in Model.Products.Items)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <td>@item.Category.CategoryName</td>
+                                <td><img src="@item.Image" style="height:100px; width:90px;border: solid 1px" /></td>
+                                <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
+                                <td>@item.Purchase</td>
+                                <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
+                                <td>
+                                    <a href="@Url.Action("Details", new { @productId = item.ProductId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                                    <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
+                                        <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+
+                        </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-md-7">
-                    <!-- pager -->
-                    <div class="paginationCustom" id="paged">
-                        @*@if (list.Pager.CurrentPage > 1)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.CurrentPage - 1 })"> Previous</a></li>
-                        }
-                        @for (int i = list.Pager.StartPage; i <= list.Pager.EndPage; i++)
-                        {
-                            if (i == list.Pager.CurrentPage)
+                    <div class="col-sm-12 col-md-7">
+                        <!-- pager -->
+                        <ul class="pagination" id="paged">
+                            @if (pager.CurrentPage > 1)
                             {
-                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage - 1 })"> Previous</a></li>
                             }
-                            else
+                            @for (int i = pager.StartPage; i <= pager.EndPage; i++)
                             {
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                                if (i == pager.CurrentPage)
+                                {
+                                    <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                                }
+                                else
+                                {
+                                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                                }
                             }
-                        }
-                        @if (list.Pager.CurrentPage < list.Pager.TotalPages)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.CurrentPage + 1 })"> Next</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = list.Pager.TotalPages })"> Last</a></li>
-                        }*@
+                            @if (pager.CurrentPage < pager.TotalPages)
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage + 1 })"> Next</a></li>
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.TotalPages })"> Last</a></li>
+                            }
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
 </div>
 
@@ -235,15 +242,12 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            @using (Html.BeginForm())
+            @using (Html.BeginForm("DeleteConfirmed", "Product"))
             {
-
                 <div class="modal-body" id="modal-body">
-
                     @Html.AntiForgeryToken()
                     <input data-val="true" type="number" name="id" id="modelID" value="0" hidden />
                     <p><h4>Are you sure to delete <span class="text-danger" id="modelName"></span> ?</h4></p>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -258,5 +262,13 @@
 
 
 @section scripts {
-    @Scripts.Render("~/bundles/admin/extensions/product-admin")
+    <script>
+        (function () {
+            $("#content-wrapper").off('click', '.open-delete-modal').on('click', '.open-delete-modal', function () {
+                $("#deleteModal").modal('show');
+                $("#modelID").val($(this).data("id"));
+                $("#modelName").html($(this).data("name"));
+            });
+        })();
+    </script>
 }

@@ -7,7 +7,7 @@ namespace WebBanSach_2_0.Model.ViewModels
 {
     public class OrderVM
     {
-        public int ID { get; set; }
+        public int OrderId { get; set; }
         public string CustomerName { get; set; }
         public string CustomerAddress { get; set; }
         public string CustomerEmail { get; set; }
@@ -21,8 +21,8 @@ namespace WebBanSach_2_0.Model.ViewModels
 
     public class OrderDetailVM
     {
-        public int OrderID { get; set; }
-        public int ProductID { get; set; }
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
         public int Quantity { get; set; }
     }
 }

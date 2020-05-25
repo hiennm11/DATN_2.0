@@ -8,7 +8,7 @@ namespace WebBanSach_2_0.Model.ViewModels
 {
     public class CategoryVM : AbstractProps
     {
-        public int ID { get; set; }
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
     }

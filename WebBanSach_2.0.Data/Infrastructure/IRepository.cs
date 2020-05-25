@@ -12,12 +12,12 @@ namespace WebBanSach_2_0.Data.Infrastructure
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
         Task<T> ShiftDeleteAsync(int id);
-
         Task<IEnumerable<T>> GetAllAsync(string[] includes = null);
-        Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize);
+        Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize = 18);
         Task<T> GetSingleByIDAsync(int id);
         Task<T> GetSingleByStringIDAsync(string id);
         int Count(Expression<Func<T, bool>> where);
+        int GetTotalRow();
 
     }
 }

@@ -15,7 +15,8 @@ using WebBanSach_2._0.Web;
 using WebBanSach_2_0.Data;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
+using WebBanSach_2_0.Service.AdminServices;
 using WebBanSach_2_0.Web.Infrastructure;
 
 [assembly: OwinStartup(typeof(WebBanSach_2_0.Web.App_Start.Startup))]
@@ -54,7 +55,11 @@ namespace WebBanSach_2_0.Web.App_Start
             builder.RegisterAssemblyTypes(typeof(CategoryRepository).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
                 .AsImplementedInterfaces().InstancePerRequest();
-           
+
+            builder.RegisterAssemblyTypes(typeof(AdminProductService).Assembly)
+                .Where(t => t.Name.EndsWith("Service"))
+                .AsImplementedInterfaces().InstancePerRequest();
+
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 

@@ -9,7 +9,7 @@ namespace WebBanSach_2_0.Model.ViewModels
 {
     public class AuthorDetailVM : AbstractProps
     {
-        public int ID { get; set; }
+        public int AuthorDetailId { get; set; }
         [Required(ErrorMessage = "An author has a name?")]
         public string Name { get; set; }
         public string Description { get; set; }

@@ -10,7 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using WebBanSach_2_0.Data;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Web.App_Start
 {

@@ -7,22 +7,25 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
-using WebBanSach_2_0.Web.Infrastructure;
-using static WebBanSach_2_0.Web.Infrastructure.Pagination;
+using WebBanSach_2_0.Service.Infrastructure;
+using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
-namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
+namespace WebBanSach_2_0.Service.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public CategoryController(IUnitOfWork unitOfWork, IMapper mapper)
+        public CategoryController(IUnitOfWork unitOfWork, ICategoryRepository categoryRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
+            this._categoryRepository = categoryRepository;
             this._mapper = mapper;
         }
 
@@ -35,11 +38,11 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetPaggedData(int page = 1, string search = null)
         {
-            var dataTemp = await _unitOfWork.Category.GetAllAsync();
+            var dataTemp = await _categoryRepository.GetAllAsync();
 
             if (search != null && search != "")
             {
-                dataTemp = _unitOfWork.Category.GetBySearch(search);
+                dataTemp = _categoryRepository.GetBySearch(search);
             }
             
             var data = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(dataTemp);
@@ -54,7 +57,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         public async Task<JsonResult> GetDetail(int id)
         {
-            var dataTemp = await _unitOfWork.Category.GetSingleByIDAsync(id);
+            var dataTemp = await _categoryRepository.GetSingleByIDAsync(id);
             var data = _mapper.Map<Category, CategoryVM>(dataTemp);
             return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
         }
@@ -69,14 +72,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             string message = string.Empty;
             if (obj.ID > 0)
             {
-                var data = await _unitOfWork.Category.GetSingleByIDAsync(obj.ID);
+                var data = await _categoryRepository.GetSingleByIDAsync(obj.ID);
                 data.UpdateCategory(obj);
-                await _unitOfWork.Category.UpdateAsync(data);
+                await _categoryRepository.UpdateAsync(data);
             }
             else
             {
                 var newcate = EntityExtensions.CreateCategory(obj);
-                await _unitOfWork.Category.AddAsync(newcate);
+                await _categoryRepository.AddAsync(newcate);
             }
 
             try
@@ -99,7 +102,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         {
             bool status;
             string message = string.Empty;
-            await _unitOfWork.Category.ShiftDeleteAsync(id);
+            await _categoryRepository.ShiftDeleteAsync(id);
             try
             {
                 await _unitOfWork.SaveAsync();

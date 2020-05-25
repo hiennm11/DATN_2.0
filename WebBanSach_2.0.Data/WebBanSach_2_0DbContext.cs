@@ -5,14 +5,13 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data
 {
     public class WebBanSach_2_0DbContext : IdentityDbContext<ApplicationUser>
     {
-        private const string conn = "Data Source=.;Initial Catalog=WebBanSach2DB;Integrated Security=True;MultipleActiveResultSets=True";
-        public WebBanSach_2_0DbContext() : base(conn)
+        public WebBanSach_2_0DbContext() : base("BookStoreDB")
         {
             
         }

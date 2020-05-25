@@ -27,7 +27,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TypeScriptToolsVersion>3.7</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -37,6 +37,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>React</TypeScriptJSXEmit>
+    <TypeScriptModuleKind />
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -184,25 +197,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
-    <Compile Include="Areas\Admin\Controllers\AuthorDetailController.cs" />
-    <Compile Include="Areas\Admin\Controllers\CategoryController.cs" />
-    <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
-    <Compile Include="Areas\Admin\Controllers\ManageOrderController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageRoleController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageUserController.cs" />
-    <Compile Include="Areas\Admin\Controllers\ProductAuthorController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProductController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\CartController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\AutoMapperConfiguration.cs" />
     <Compile Include="Infrastructure\CustomErrorHandler.cs" />
-    <Compile Include="Infrastructure\EntityExtensions.cs" />
-    <Compile Include="Infrastructure\Pagination.cs" />
     <Compile Include="Models\AccountManageVM.cs" />
     <Compile Include="Models\AccountVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1804,6 +1808,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\card-style.css" />
+    <Content Include="Content\datatables.css" />
     <Content Include="Content\fontawesome-free\css\all.css" />
     <Content Include="Content\fontawesome-free\css\all.min.css" />
     <Content Include="Content\fontawesome-free\css\brands.css" />
@@ -3363,7 +3368,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Areas\Admin\Views\web.config" />
-    <Content Include="Areas\Admin\Views\Shared\_adminLayout.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
     <Content Include="Areas\Admin\Content\vendor\bootstrap\js\bootstrap.bundle.js.map" />
     <Content Include="Areas\Admin\Content\vendor\bootstrap\js\bootstrap.bundle.min.js.map" />
     <Content Include="Areas\Admin\Content\vendor\bootstrap\js\bootstrap.js.map" />
@@ -3515,6 +3520,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\datatables.js" />
     <Content Include="Scripts\esm\popper-utils.js" />
     <Content Include="Scripts\esm\popper-utils.min.js" />
     <Content Include="Scripts\esm\popper.js" />
@@ -3594,6 +3600,9 @@
     <Content Include="Content\fontawesome-free\webfonts\fa-solid-900.woff2" />
     <Content Include="Areas\Admin\Views\ManageOrder\Index.cshtml" />
     <Content Include="Content\normalize.min.css.map" />
+    <Content Include="libman.json" />
+    <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Product\Details.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3735,6 +3744,10 @@
     <ProjectReference Include="..\WebBanSach_2.0.Model\WebBanSach_2_0.Model.csproj">
       <Project>{e7023f39-5dbf-4445-a577-2bf11cc16011}</Project>
       <Name>WebBanSach_2_0.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebBanSach_2.0.Service\WebBanSach_2_0.Service.csproj">
+      <Project>{67541ded-21b0-49da-b4ac-8bfef202e166}</Project>
+      <Name>WebBanSach_2_0.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

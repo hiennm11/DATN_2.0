@@ -11,9 +11,10 @@ using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Web.App_Start;
 using WebBanSach_2_0.Web.Infrastructure;
 using WebBanSach_2_0.Web.Models;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using AutoMapper;
+using WebBanSach_2_0.Data.Repositories;
 
 namespace WebBanSach_2_0.Web.Controllers
 {
@@ -24,20 +25,22 @@ namespace WebBanSach_2_0.Web.Controllers
         private ApplicationUserManager _userManager;
         private IUnitOfWork _unitOfWork;
         private IMapper _mapper;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+
         public ManageController()
         {
         }
 
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUnitOfWork unitOfWork, IMapper mapper, 
+                                IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository)
         {
             UserManager = userManager;
-            SignInManager = signInManager;            
-        }
-
-        public ManageController(IUnitOfWork unitOfWork, IMapper mapper)
-        {
+            SignInManager = signInManager;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this._orderRepository = orderRepository;
+            this._orderDetailRepository = orderDetailRepository;
         }
 
         public ApplicationSignInManager SignInManager
@@ -214,16 +217,16 @@ namespace WebBanSach_2_0.Web.Controllers
         public async Task<ActionResult> Order()
         {
             var user =  UserManager.FindById(User.Identity.GetUserId());
-            var temp = await _unitOfWork.OrderRepository.GetAllAsync();
+            var temp = await _orderRepository.GetAllAsync();
             var data = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp.Where(m => m.CustomerEmail == user.UserName));
             return View(data);
         }
 
         public async Task<JsonResult> GetOrderDetail(int id)
         {
-            var list = await _unitOfWork.OrderDetailRepository.GetAllAsync();           
+            var list = await _orderDetailRepository.GetAllAsync();           
             List<CartItem> cart = new List<CartItem>();
-            foreach (var item in list.Where(m => m.OrderID == id))
+            foreach (var item in list.Where(m => m.OrderId == id))
             {
                 var product = _mapper.Map<Product, ProductVM>(item.Product);
                 CartItem cartItem = new CartItem { Product = product, Quantity = item.Quantity };

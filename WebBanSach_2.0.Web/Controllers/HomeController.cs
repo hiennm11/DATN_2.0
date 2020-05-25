@@ -2,14 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
+using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
-using WebBanSach_2_0.Web.Infrastructure;
-using static WebBanSach_2_0.Web.Infrastructure.Pagination;
+using WebBanSach_2_0.Service.Infrastructure;
+using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers
 {
@@ -17,13 +19,17 @@ namespace WebBanSach_2._0.Web.Controllers
     public class HomeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
         //private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
         private readonly IMapper _mapper;
 
-        public HomeController(IUnitOfWork unitOfWork, IMapper mapper)
+        public HomeController(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
+            this._productRepository = productRepository;
+            this._categoryRepository = categoryRepository;
             this._mapper = mapper;
         }
 
@@ -31,20 +37,20 @@ namespace WebBanSach_2._0.Web.Controllers
         [Route("~/")]        
         public async Task<ActionResult> Index(string cateID = null, string search = null,int page = 1)
         {
-            var dataTemp = await _unitOfWork.Product.GetAllAsync();
-            var newTemp = _unitOfWork.Product.GetNewProduct();
-            var hotTemp = _unitOfWork.Product.GetHotProduct();
+            var dataTemp = await _productRepository.GetAllAsync();
+            var newTemp = _productRepository.GetNewProductAsync();
+            var hotTemp = _productRepository.GetHotProductAsync();
 
             if (search != null && search != "")
             {
                 string searchc = EntityExtensions.convertToUnSign(search);
                 cateID = null;
-                dataTemp = _unitOfWork.Product.GetBySearch(searchc);
+                dataTemp = _productRepository.GetBySearchAsync(searchc);
             }
             if (cateID != null && cateID != "")
             {
                 search = null;
-                dataTemp = _unitOfWork.Product.GetByCategory(cateID);
+                dataTemp = _productRepository.GetByCategoryAsync(cateID);
             }
 
             var newProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
@@ -71,20 +77,20 @@ namespace WebBanSach_2._0.Web.Controllers
         [OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any, VaryByParam = "nameID")]
         public ActionResult Detail(string nameID)
         {
-            var item = _unitOfWork.Product.GetProductByNameID(nameID);
-            var temp = _unitOfWork.Product.GetByCategory(item.Categories.Description);
+            var item = _productRepository.GetProductByNameIDAsync(nameID);
+            var temp = _productRepository.GetByCategory(item.Category.Description);
             var list = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
             var product = _mapper.Map<Product, ProductVM>(item);
-            var author = item.ProductAuthors.FirstOrDefault(m => m.ProductID == item.ID);
+            var author = item.ProductAuthors.FirstOrDefault(m => m.ProductId == item.ProductId);
 
             ViewBag.Author = author.Author.Name;
-            ViewBag.CategoryName = item.Categories.CategoryName;
-            ViewBag.CateNameID = item.Categories.Description;
+            ViewBag.CategoryName = item.Category.CategoryName;
+            ViewBag.CateNameID = item.Category.Description;
             ViewBag.RelatedList = list.ToList();
 
             return View(product);
         }
-       
+
         #region childView
 
         [ChildActionOnly]
@@ -92,7 +98,7 @@ namespace WebBanSach_2._0.Web.Controllers
         public ActionResult CategoryMenu()
         {
             return Task.Run(async () => {
-                var cate = await _unitOfWork.Category.GetAllAsync();
+                var cate = await _categoryRepository.GetAllAsync();
 
                 var category = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
 
