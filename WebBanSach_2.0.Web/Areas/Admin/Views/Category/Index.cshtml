@@ -1,7 +1,7 @@
-﻿
+﻿@model Pagination.IndexViewModel<CategoryVM>
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
+    var pager = Model.Pager;
 }
 
 <!-- Breadcrumbs-->
@@ -16,12 +16,12 @@
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
-        Danh sách danh mục sản phẩm
+        Danh sách thể loại sản phẩm
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <button id="btnCreate" class="btn btn-info" role="button">Thêm mới 1 thể loại</button>
+                <a href="@Url.Action("Detail")" id="btnCreate" class="btn btn-info" role="button">Tạo mới</a>
             </div>
 
             <div class="col-sm-8 col-md-4">
@@ -57,19 +57,55 @@
                     </tr>
                 </tfoot>
                 <tbody id="dataTableBody">
+                    @foreach (var item in Model.Items)
+                    {
+                    <tr>
+                        <td>@item.CategoryName</td>
+                        <td>@item.CreateDate</td>
+                        <td>@item.UpdatedDate</td>
+                        <td>@item.UpdateBy</td>
+                        <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
+                        <td>
+                            <a href="@Url.Action("Detail", new { item.CategoryId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.CategoryId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                            <button class="btn btn-outline-light open-delete-modal" data-id="@item.CategoryId" data-name="@item.CategoryName">
+                                <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    }
                 </tbody>
             </table>
             <div class="row">
                 <div class="col-sm-12 col-md-5">
                     <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
-
+                        
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-7">
                     <!-- pager -->
-                    <div class="paginationCustom" id="paged">
-
-                    </div>
+                    <ul class="pagination" id="paged">
+                        @if (pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage - 1 })"> Previous</a></li>
+                        }
+                        @for (int i = pager.StartPage; i <= pager.EndPage; i++)
+                        {
+                            if (i == pager.CurrentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
+                            }
+                        }
+                        @if (pager.CurrentPage < pager.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage + 1 })"> Next</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.TotalPages })"> Last</a></li>
+                        }
+                    </ul>
                 </div>
             </div>
         </div>
@@ -162,5 +198,5 @@
 
 
 @section scripts {
-    @Scripts.Render("~/bundles/admin/extensions/cate-admin")
+    
 }

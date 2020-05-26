@@ -41,7 +41,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return View(response);
         }
 
-        public async Task<ActionResult> Details(int productId = 0)
+        public async Task<ActionResult> Detail(int productId = 0)
         {
             var response = new AdminProductDetailResponse() 
             {

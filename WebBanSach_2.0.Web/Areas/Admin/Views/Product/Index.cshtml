@@ -93,7 +93,7 @@
                                 <td>@item.Purchase</td>
                                 <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
                                 <td>
-                                    <a href="@Url.Action("Details", new { @productId = item.ProductId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                                    <a href="@Url.Action("Detail", new { @productId = item.ProductId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
                                     <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
                                         <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
                                     </button>
@@ -137,98 +137,6 @@
                 </div>
             </div>
         }
-    </div>
-</div>
-
-<!-- Create Modal-->
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <i class="far fa-edit"></i>
-                Create or Edit
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form id="createForm" method="post" enctype="multipart/form-data" onsubmit="return SaveProduct(this)">
-                @*@Html.AntiForgeryToken()*@
-                <div class="modal-body" id="modal-body">
-                    <div class="form-horizontal row">
-
-                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                        @Html.Hidden("ID")
-                        @Html.Hidden("Purchase")
-                        @Html.Hidden("Star")
-                        @Html.Hidden("UpdateBy")
-                        @Html.Hidden("CreateBy")
-                        @Html.Hidden("CreateDate")
-                        @Html.Hidden("UpdatedDate")
-
-                        <div class="col-md-7">
-                            <div class="form-group">
-                                @Html.Label("Name", htmlAttributes: new { @class = "control-label col-md-5" })
-                                <div class="col-md-10">
-                                    @Html.Editor("Name", new { htmlAttributes = new { @class = "form-control", @required = "required" } })
-                                    @Html.ValidationMessage("Name", "", new { @class = "text-danger" })
-                                    <div class="text-danger">@ViewBag.ErrorMessage</div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                @Html.Label("CateID", htmlAttributes: new { @class = "control-label col-md-5" })
-                                <div class="col-md-10">
-                                    @Html.DropDownList("CateID", (IEnumerable<SelectListItem>)cate, new { @class = "form-control", @required = "required" })
-                                    @Html.ValidationMessage("CateID", "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                @Html.Label("Description", htmlAttributes: new { @class = "control-label col-md-5" })
-                                <div class="col-md-10">
-                                    @Html.Editor("Description", new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessage("Description", "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                @Html.Label("Price", htmlAttributes: new { @class = "control-label col-md-5" })
-                                <div class="col-md-10">
-                                    @Html.Editor("Price", new { htmlAttributes = new { @class = "form-control" } })
-                                    @Html.ValidationMessage("Price", "", new { @class = "text-danger" })
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-5" for="Status">
-                                    <input type="checkbox" id="Status" name="Status" value="true">
-                                    Status
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <div class="col-md-10">
-                                    <img id="productImg" src="" style="border:solid;height:350px;width:100%" />
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-10">
-                                    <input type="file" id="file" name="file" class="form-control-file border" accept="image/*">
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" class="btn btn-success" id="saveData" value="Save" />"
-                </div>
-            </form>
-
-        </div>
     </div>
 </div>
 

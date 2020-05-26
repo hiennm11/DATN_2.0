@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminServices\AdminCategoryService.cs" />
     <Compile Include="AdminServices\AdminProductService.cs" />
     <Compile Include="Infrastructure\EntityExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

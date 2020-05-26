@@ -70,9 +70,9 @@ namespace WebBanSach_2_0.Service.Areas.Admin.Controllers
             var obj = serializer.Deserialize<AuthorDetailVM>(postData);
             bool status;
             string message = string.Empty;
-            if (obj.ID > 0)
+            if (obj.AuthorDetailId > 0)
             {
-                var data = await _authorDetailRepository.GetSingleByIDAsync(obj.ID);
+                var data = await _authorDetailRepository.GetSingleByIDAsync(obj.AuthorDetailId);
                 data.UpdateAuthorDetail(obj);
                 await _authorDetailRepository.UpdateAsync(data);
             }
