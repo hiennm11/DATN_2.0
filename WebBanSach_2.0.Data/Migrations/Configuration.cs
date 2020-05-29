@@ -23,28 +23,88 @@
             //  to avoid creating duplicate seed data.
 
             ////Step 1 Create the user.
-            //var passwordHasher = new PasswordHasher();
-            //var user = new ApplicationUser();
-            //user.UserName = "Admin";
-            //user.Email = "admin@abc.xyz";
-            //user.PasswordHash = passwordHasher.HashPassword("Admin12345");
-            //user.SecurityStamp = Guid.NewGuid().ToString();            
+            var passwordHasher = new PasswordHasher();
+            var user = new ApplicationUser();
+            user.UserName = "Admin";
+            user.Email = "admin@abc.xyz";
+            user.PasswordHash = passwordHasher.HashPassword("minhhien123x");
+            user.SecurityStamp = Guid.NewGuid().ToString();
 
-            ////Step 2 Create and add the new Role.
-            //var roleToChoose = new IdentityRole("Admin");
-            //context.Roles.Add(roleToChoose);            
+            ////Step 2 Create and add the new Role.            
+            var adRole = new IdentityRole()
+            {
+                Id = "admin",
+                Name = "Admin"
+            };
+
+            var modRole = new IdentityRole()
+            {
+                Id = "mod",
+                Name = "Quản lý"
+            };
+
+            var empRole = new IdentityRole()
+            {
+                Id = "employee",
+                Name = "Nhân viên"
+            };
+
+            var userRole = new IdentityRole()
+            {
+                Id = "user",
+                Name = "User"
+            };
+
+            context.Roles.Add(adRole);
+            context.Roles.Add(modRole);
+            context.Roles.Add(empRole);
+            context.Roles.Add(userRole);
 
             ////Step 3 Create a role for a user
-            //var role = new IdentityUserRole();
-            //role.RoleId = roleToChoose.Id;
-            //role.UserId = user.Id;
+            var role = new IdentityUserRole();
+            role.RoleId = adRole.Id;
+            role.UserId = user.Id;
 
             ////Step 4 Add the role row and add the user to DB)
-            //user.Roles.Add(role);
-            //context.Users.Add(user);
+            user.Roles.Add(role);
+            context.Users.Add(user);
 
-            var roleToChoose = new IdentityRole("Client");
-            context.Roles.Add(roleToChoose);          
+            var undefinedCategory = new Category
+            {
+                CategoryName = "Undefined",
+                CategoryId = 1
+                ,
+                NameAlias = "undefined",
+                Status = true,
+                UniqueStringKey = Guid.NewGuid()
+                ,
+                Description = "undefined",
+                CreateBy = "admin",
+                CreateDate = DateTime.Now
+                ,
+                UpdateBy = "admin",
+                UpdatedDate = DateTime.Now
+            };
+
+            context.Categories.Add(undefinedCategory);
+
+            var undefinedAuthor = new Author
+            {
+                AuthorId = 1,
+                Name = "Undefined",
+                NameAlias = "undefined"
+                ,
+                Status = true,
+                UniqueStringKey = Guid.NewGuid(),
+                Description = "undefined",
+                CreateBy = "admin",
+                CreateDate = DateTime.Now
+                ,
+                UpdateBy = "admin",
+                UpdatedDate = DateTime.Now
+            };
+
+            context.Authors.Add(undefinedAuthor);
         }
     }
 }

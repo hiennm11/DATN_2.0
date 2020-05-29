@@ -37,74 +37,74 @@ namespace WebBanSach_2._0.Web.Controllers
         [Route("~/")]        
         public async Task<ActionResult> Index(string cateID = null, string search = null,int page = 1)
         {
-            var dataTemp = await _productRepository.GetAllAsync();
-            var newTemp = _productRepository.GetNewProductAsync();
-            var hotTemp = _productRepository.GetHotProductAsync();
+            //var dataTemp = await _productRepository.GetAllAsync();
+            //var newTemp = _productRepository.GetNewProductAsync();
+            //var hotTemp = _productRepository.GetHotProductAsync();
 
-            if (search != null && search != "")
-            {
-                string searchc = EntityExtensions.convertToUnSign(search);
-                cateID = null;
-                dataTemp = _productRepository.GetBySearchAsync(searchc);
-            }
-            if (cateID != null && cateID != "")
-            {
-                search = null;
-                dataTemp = _productRepository.GetByCategoryAsync(cateID);
-            }
+            //if (search != null && search != "")
+            //{
+            //    string searchc = EntityExtensions.convertToUnSign(search);
+            //    cateID = null;
+            //    dataTemp = _productRepository.GetBySearchAsync(searchc);
+            //}
+            //if (cateID != null && cateID != "")
+            //{
+            //    search = null;
+            //    dataTemp = _productRepository.GetByCategoryAsync(cateID);
+            //}
 
-            var newProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
-            var hotProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
+            //var newProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
+            //var hotProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
 
-            var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
-            var pager = new Pager(data.Count(), page, 18);
-            var viewModel = new IndexViewModel<ProductVM>()
-            {
-                Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
-                Pager = pager
-            };
+            //var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
+            //var pager = new Pager(data.Count(), page, 18);
+            //var viewModel = new IndexViewModel<ProductVM>()
+            //{
+            //    Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
+            //    Pager = pager
+            //};
                      
-            ViewBag.NewProduct = newProduct.Take(18).ToList();
-            ViewBag.HotProduct = hotProduct.Take(18).ToList();
-            ViewBag.ProductList = viewModel;
-            ViewBag.CategoryID = cateID;
-            ViewBag.SearchString = search;
+            //ViewBag.NewProduct = newProduct.Take(18).ToList();
+            //ViewBag.HotProduct = hotProduct.Take(18).ToList();
+            //ViewBag.ProductList = viewModel;
+            //ViewBag.CategoryID = cateID;
+            //ViewBag.SearchString = search;
 
             return View();
         }
 
-        [HandleError]
-        [OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any, VaryByParam = "nameID")]
-        public ActionResult Detail(string nameID)
-        {
-            var item = _productRepository.GetProductByNameIDAsync(nameID);
-            var temp = _productRepository.GetByCategory(item.Category.Description);
-            var list = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
-            var product = _mapper.Map<Product, ProductVM>(item);
-            var author = item.ProductAuthors.FirstOrDefault(m => m.ProductId == item.ProductId);
+        //[HandleError]
+        //[OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any, VaryByParam = "nameID")]
+        //public ActionResult Detail(string nameID)
+        //{
+        //    var item = _productRepository.GetProductByNameIDAsync(nameID);
+        //    var temp = _productRepository.GetByCategory(item.Category.Description);
+        //    var list = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
+        //    var product = _mapper.Map<Product, ProductVM>(item);
+        //    var author = item.ProductAuthors.FirstOrDefault(m => m.ProductId == item.ProductId);
 
-            ViewBag.Author = author.Author.Name;
-            ViewBag.CategoryName = item.Category.CategoryName;
-            ViewBag.CateNameID = item.Category.Description;
-            ViewBag.RelatedList = list.ToList();
+        //    ViewBag.Author = author.Author.Name;
+        //    ViewBag.CategoryName = item.Category.CategoryName;
+        //    ViewBag.CateNameID = item.Category.Description;
+        //    ViewBag.RelatedList = list.ToList();
 
-            return View(product);
-        }
+        //    return View(product);
+        //}
 
         #region childView
 
-        [ChildActionOnly]
-        [OutputCache(Duration = 3600 * 24 * 10)]
-        public ActionResult CategoryMenu()
-        {
-            return Task.Run(async () => {
-                var cate = await _categoryRepository.GetAllAsync();
+        //[ChildActionOnly]
+        //[OutputCache(Duration = 3600 * 24 * 10)]
+        //public ActionResult CategoryMenu()
+        //{
+        //    return Task.Run(async () => {
+        //        var cate = await _categoryRepository.GetAllAsync();
 
-                var category = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
+        //        var category = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
 
-                return PartialView("_CateMenu", category);
-            }).Result;           
-        }
+        //        return PartialView("_CateMenu", category);
+        //    }).Result;           
+        //}
 
         #endregion
 

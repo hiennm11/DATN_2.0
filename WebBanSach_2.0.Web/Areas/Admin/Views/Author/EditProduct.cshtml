@@ -1,44 +1,45 @@
-﻿@model WebBanSach_2_0.Model.Entities.ApplicationUser
+﻿@model AuthorVM
 @{
-    ViewBag.Title = "Sửa quyền";
+    ViewBag.Title = "Quản lý tác giả - tác phẩm";
 }
-
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
         <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item">Thành viên</li>
-    <li class="breadcrumb-item active">Sửa quyền</li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item">Tác giả</li>
+    <li class="breadcrumb-item active">@ViewBag.Title</li>
 </ol>
-
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+{
+    @Html.Raw(ViewBag.StatusMessage)
+}
 <div class="card mb-3">
     <div class="card-header">
-        <i class="fas fa-table"></i>
+        <i class="far fa-edit"></i>
         @ViewBag.Title
     </div>
     <div class="card-body">
         <div class="row">
             <div class="col-sm-6">
-                <h2>@ViewBag.Title</h2>
-                <hr />
-                <h5><strong>Các quyền hiện tại của thành viên @Model.Email:</strong> </h5>
+                <h5><strong>Các tác phẩm hiện tại của tác giả @Model.Name:</strong> </h5>
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Quyền</th>
+                            <th>Tác phẩm</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.Roles.Count > 0)
+                        @if (Model.Products.Count > 0)
                         {
-                            foreach (var item in Model.Roles)
+                            foreach (var item in Model.Products)
                             {
                                 <tr>
-                                    <td>@item.RoleId</td>
+                                    <td>@item.Name</td>
                                     <td>
-                                        <form action="@Url.Action("DeleteRoleFromUser", new { UserId = item.UserId, RoleId = item.RoleId })" method="post">
+                                        <form action="@Url.Action("DeleteProductFromAuthor", new { AuthorId = Model.AuthorId, ProductId = item.ProductId })" method="post">
                                             @Html.AntiForgeryToken()
                                             <button type="submit" class="btn btn-xs btn-danger">Gỡ bỏ</button>
                                         </form>
@@ -50,25 +51,25 @@
                         {
                             <tr>
                                 <td colspan="2">
-                                    <p>Thành viên chưa có quyền nào</p>
+                                    <p>Tác giả chưa có tác phẩm nào.</p>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                <h5><strong>Thêm quyền cho thành viên này:</strong></h5>
-                <form action="@Url.Action("AddToRole")" method="post">
-                    <input type="hidden" name="UserId" value="@Model.Id" />
+                <h5><strong>Thêm tác phẩm cho tác giả này:</strong></h5>
+                <form action="@Url.Action("AddProductToAuthor")" method="post">
+                    <input type="hidden" name="authorId" value="@Model.AuthorId" />
                     @Html.AntiForgeryToken()
-                    @Html.ListBox("RoleId", null, new { @class = "form-control", multiple = "multiple" })
+                    @Html.ListBox("ProductId", null, new { @class = "form-control", multiple = "multiple" })
                     <div class="form-group">
                         <br />
                         <button type="submit" class="btn btn-primary">Thêm </button>
+                        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
                     </div>
                 </form>
+
             </div>
         </div>
     </div>
 </div>
-
-        

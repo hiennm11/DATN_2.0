@@ -7,8 +7,6 @@
 
     ViewBag.Title = "Quản lý quyền hạn người dùng";
 
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
-
 }
 
 <!-- Breadcrumbs-->
@@ -16,8 +14,8 @@
     <li class="breadcrumb-item">
         <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
     </li>
-    <li class="breadcrumb-item">User</li>
-    <li class="breadcrumb-item active">Tables</li>
+    <li class="breadcrumb-item">Quyền</li>
+    <li class="breadcrumb-item active">Danh sách quyền hạn</li>
 </ol>
 
 <div class="card mb-3">
@@ -27,54 +25,29 @@
     </div>
     <div class="card-body">
         <div class="row">
-
             <div class="col-sm-6">
-
                 @Html.ActionLink("Tạo role", "Create", null, new { @class = "btn btn-primary" })
-
                 <br /><br />
-
                 <table class="table table-bordered">
-
                     <thead>
-
                         <tr>
-
                             <th>ID</th>
-
                             <th>Tên quyền</th>
-
                             <th>Thao tác</th>
-
                         </tr>
-
                     </thead>
-
                     <tbody>
-
                         @foreach (var item in Model)
-
                         {
-
                             <tr>
-
                                 <td>@item.Id</td>
-
                                 <td>@item.Name</td>
-
                                 <td>@Html.ActionLink("Xóa", "Delete", new { id = item.Id })</td>
-
                             </tr>
-
                         }
-
                     </tbody>
-
                 </table>
-
             </div>
-
         </div>
     </div>
-
 </div>

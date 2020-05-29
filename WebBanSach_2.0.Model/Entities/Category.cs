@@ -12,10 +12,12 @@ namespace WebBanSach_2_0.Model.Entities
     public class Category : AbstractProps
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CategoryId { get; set; }
         [Required]
         public string CategoryName { get; set; }
         public string Description { get; set; }
+        public string NameAlias { get; set; }
 
         public IEnumerable<Product> Products { get; set; }
     }

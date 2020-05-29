@@ -11,5 +11,7 @@ namespace WebBanSach_2_0.Model.ViewModels
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }
+        public string NameAlias { get; set; }
+
     }
 }

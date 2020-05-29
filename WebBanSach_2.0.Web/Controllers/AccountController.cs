@@ -119,7 +119,7 @@ namespace WebBanSach_2_0.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Dob = model.Dob, FullName = model.FullName, Address = model.Address, PhoneNumber = model.PhoneNumber };
-                user.Roles.Add(new IdentityUserRole() { UserId = user.Id, RoleId = "ca769529-3fa8-42a8-b936-bb6aef510384" });
+                user.Roles.Add(new IdentityUserRole() { UserId = user.Id, RoleId = "user" });
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

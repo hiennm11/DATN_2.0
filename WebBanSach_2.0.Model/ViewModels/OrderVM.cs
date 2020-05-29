@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using WebBanSach_2_0.Model.Enums;
 
 namespace WebBanSach_2_0.Model.ViewModels
 {
@@ -16,13 +17,13 @@ namespace WebBanSach_2_0.Model.ViewModels
         public string CreatedBy { get; set; }
         public string PaymentMethod { get; set; }
         public bool PaymentStatus { get; set; }
-        public int Status { get; set; }
+        public OrderStatus Status { get; set; }
     }
 
     public class OrderDetailVM
     {
-        public int OrderId { get; set; }
-        public int ProductId { get; set; }
+        public string OrderId { get; set; }
+        public string ProductId { get; set; }
         public int Quantity { get; set; }
     }
 }

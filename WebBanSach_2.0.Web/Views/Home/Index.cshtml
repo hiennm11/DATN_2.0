@@ -2,56 +2,112 @@
     ViewBag.Title = "Trang chủ";
     var newProduct = (List<ProductVM>)ViewBag.NewProduct;
     var hotProduct = (List<ProductVM>)ViewBag.HotProduct;
-    var productList = (WebBanSach_2_0.Web.Infrastructure.Pagination.IndexViewModel<ProductVM>)ViewBag.ProductList;
+    var productList = (Pagination.IndexViewModel<ProductVM>)ViewBag.ProductList;
     var cateID = ViewBag.CategoryID;
     var search = ViewBag.SearchString;
 }
-@section searchBar{
-    @using (Html.BeginForm("Index","Home",new { @cateID = "" },FormMethod.Post,new { @class="form-inline my-2 my-lg-0" }))
-    {
-        <input class="form-control mr-sm-2" id="search-text" name="search" type="search" placeholder="Nhập sách muốn tìm..." aria-label="Search">
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search">
-            <i class="fa fa-search"></i>
-        </button>
-       
+@*
+    @section searchBar{
+        @using (Html.BeginForm("Index","Home",new { @cateID = "" },FormMethod.Post,new { @class="form-inline my-2 my-lg-0" }))
+        {
+            <input class="form-control mr-sm-2" id="search-text" name="search" type="search" placeholder="Nhập sách muốn tìm..." aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit" id="btn-search">
+                <i class="fa fa-search"></i>
+            </button>
+
+        }
+
     }
- 
-}
 
-<!-- Nav tabs -->
-<ul class="nav nav-tabs nav-fill">
-    <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#home">Sản phẩm</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#menu1">Sản phẩm mới</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="tab" href="#menu2">Sản phẩm "HOT"</a>
-    </li>
-</ul>
+     Nav tabs
+    <ul class="nav nav-tabs nav-fill">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#home">Sản phẩm</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#menu1">Sản phẩm mới</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#menu2">Sản phẩm "HOT"</a>
+        </li>
+    </ul>
 
-<!-- Tab panes -->
-<div class="tab-content">
-    <div id="home" class="container tab-pane active">
-        <br />
-        <nav class="navbar-nav bg-transparent"><h4>Thể loại: <span class="text-danger">@(cateID == null ? "tất cả" : cateID)</span></h4></nav>
-        <br />
-        <div class="row" id="data-box">
-            @if (productList == null)
-            {
-                <span>Loading...</span>
-            }
-            else
-            {
-                foreach (var item in productList.Items)
+     Tab panes
+    <div class="tab-content">
+        <div id="home" class="container tab-pane active">
+            <br />
+            <nav class="navbar-nav bg-transparent"><h4>Thể loại: <span class="text-danger">@(cateID == null ? "tất cả" : cateID)</span></h4></nav>
+            <br />
+            <div class="row" id="data-box">
+                @if (productList == null)
+                {
+                    <span>Loading...</span>
+                }
+                else
+                {
+                    foreach (var item in productList.Items)
+                    {
+                        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                            <div class="card item-card">
+                                <a href="/chi-tiet/@item.NameAlias"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
+                                @if (item.Name.Length > 25)
+                                {
+                                    <a href="/chi-tiet/@item.NameAlias">
+                                        <h6>
+                                            @item.Name.Substring(0, 25) ...
+                                        </h6>
+                                    </a>
+                                }
+
+                                else
+                                { <a href="/chi-tiet/@item.NameAlias">
+                                        <h6>@item.Name</h6>
+                                    </a>}
+
+                                <p class="price">@(String.Format("{0:0,0}", item.Price)).đ</p>
+                                <p><a class="add-to-cart" data-NameAlias="@item.NameAlias">Add to Cart</a></p>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+            <br /><br />
+            <ul class="pagination pagination-lg" id="paged">
+                @if (productList.Pager.CurrentPage > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = 1 })">First</a></li>
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.CurrentPage - 1 })"> Previous</a></li>
+                }
+                @for (int i = productList.Pager.StartPage; i <= productList.Pager.EndPage; i++)
+                {
+                    if (i == productList.Pager.CurrentPage)
+                    {
+                        <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = @i })">@i</a></li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = @i })">@i</a></li>
+                    }
+                }
+                @if (productList.Pager.CurrentPage < productList.Pager.TotalPages)
+                {
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.CurrentPage + 1 })"> Next</a></li>
+                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.TotalPages })"> Last</a></li>
+                }
+            </ul>
+        </div>
+        <div id="menu1" class="container tab-pane fade">
+            <br>
+            <div class="row">
+                @foreach (var item in newProduct)
                 {
                     <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
                         <div class="card item-card">
-                            <a href="/chi-tiet/@item.NameID"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
+                            <a href="/chi-tiet/@item.NameAlias"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
                             @if (item.Name.Length > 25)
                             {
-                                <a href="/chi-tiet/@item.NameID">
+                                <a href="/chi-tiet/@item.NameAlias">
                                     <h6>
                                         @item.Name.Substring(0, 25) ...
                                     </h6>
@@ -59,106 +115,51 @@
                             }
 
                             else
-                            { <a href="/chi-tiet/@item.NameID">
+                            { <a href="/chi-tiet/@item.NameAlias">
                                     <h6>@item.Name</h6>
                                 </a>}
 
                             <p class="price">@(String.Format("{0:0,0}", item.Price)).đ</p>
-                            <p><a class="add-to-cart" data-nameid="@item.NameID">Add to Cart</a></p>
+                            <p><a class="add-to-cart" data-NameAlias="@item.NameAlias">Add to Cart</a></p>
                         </div>
                     </div>
                 }
-            }
 
+            </div>
         </div>
-        <br /><br />
-        <ul class="pagination pagination-lg" id="paged">
-            @if (productList.Pager.CurrentPage > 1)
-            {
-                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = 1 })">First</a></li>
-                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.CurrentPage - 1 })"> Previous</a></li>
-            }
-            @for (int i = productList.Pager.StartPage; i <= productList.Pager.EndPage; i++)
-            {
-                if (i == productList.Pager.CurrentPage)
+        <div id="menu2" class="container tab-pane fade">
+            <br>
+            <div class="row">
+                @foreach (var item in hotProduct)
                 {
-                    <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = @i })">@i</a></li>
-                }
-                else
-                {
-                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = @i })">@i</a></li>
-                }
-            }
-            @if (productList.Pager.CurrentPage < productList.Pager.TotalPages)
-            {
-                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.CurrentPage + 1 })"> Next</a></li>
-                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new {@cateID = cateID, @search = search, @page = productList.Pager.TotalPages })"> Last</a></li>
-            }
-        </ul>
-    </div>
-    <div id="menu1" class="container tab-pane fade">
-        <br>
-        <div class="row">
-            @foreach (var item in newProduct)
-            {
-                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-                    <div class="card item-card">
-                        <a href="/chi-tiet/@item.NameID"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
-                        @if (item.Name.Length > 25)
-                        {
-                            <a href="/chi-tiet/@item.NameID">
-                                <h6>
-                                    @item.Name.Substring(0, 25) ...
-                                </h6>
-                            </a>
-                        }
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+                        <div class="card item-card">
+                            <a href="/chi-tiet/@item.NameAlias"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
+                            @if (item.Name.Length > 25)
+                            {
+                                <a href="/chi-tiet/@item.NameAlias">
+                                    <h6>
+                                        @item.Name.Substring(0, 25) ...
+                                    </h6>
+                                </a>
+                            }
 
-                        else
-                        { <a href="/chi-tiet/@item.NameID">
-                                <h6>@item.Name</h6>
-                            </a>}
+                            else
+                            { <a href="/chi-tiet/@item.NameAlias">
+                                    <h6>@item.Name</h6>
+                                </a>}
 
-                        <p class="price">@(String.Format("{0:0,0}", item.Price)).đ</p>
-                        <p><a class="add-to-cart" data-nameid="@item.NameID">Add to Cart</a></p>
+                            <p class="price">@(String.Format("{0:0,0}", item.Price)).đ</p>
+                            <p><a class="add-to-cart" data-NameAlias="@item.NameAlias">Add to Cart</a></p>
+                        </div>
                     </div>
-                </div>
-            }
+                }
 
+            </div>
         </div>
     </div>
-    <div id="menu2" class="container tab-pane fade">
-        <br>
-        <div class="row">
-            @foreach (var item in hotProduct)
-            {
-                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-                    <div class="card item-card">
-                        <a href="/chi-tiet/@item.NameID"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
-                        @if (item.Name.Length > 25)
-                        {
-                            <a href="/chi-tiet/@item.NameID">
-                                <h6>
-                                    @item.Name.Substring(0, 25) ...
-                                </h6>
-                            </a>
-                        }
+    <a id="back2Top" title="Back to top" href="#">&#10148;</a>
 
-                        else
-                        { <a href="/chi-tiet/@item.NameID">
-                                <h6>@item.Name</h6>
-                            </a>}
-
-                        <p class="price">@(String.Format("{0:0,0}", item.Price)).đ</p>
-                        <p><a class="add-to-cart" data-nameid="@item.NameID">Add to Cart</a></p>
-                    </div>
-                </div>
-            }
-
-        </div>
-    </div>
-</div>
-<a id="back2Top" title="Back to top" href="#">&#10148;</a>
-
-@section homeScript{
-        @Scripts.Render("~/bundles/app-js.js")
-}
+    @section homeScript{
+            @Scripts.Render("~/bundles/app-js.js")
+    }*@

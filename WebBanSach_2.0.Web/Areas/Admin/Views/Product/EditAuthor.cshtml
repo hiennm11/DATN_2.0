@@ -1,0 +1,83 @@
+﻿@model ProductVM
+@{
+    ViewBag.Title = "Quản lý tác giả - tác phẩm";
+}
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item">Sản phẩm</li>
+    <li class="breadcrumb-item active">@ViewBag.Title</li>
+</ol>
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+{
+    @Html.Raw(ViewBag.StatusMessage)
+}
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="far fa-edit"></i>
+        @ViewBag.Title
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <h5><strong>Các tác giả hiện tại của tác phẩm: @Model.Name:</strong> </h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tác giả</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Authors.Count > 0)
+                        {
+                            foreach (var item in Model.Authors)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        <form action="@Url.Action("DeleteAuthorFromProduct", new { ProductId = Model.NameAlias, AuthorId = item.AuthorId })" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger">Gỡ bỏ</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="2">
+                                    <p>Tác phẩm chưa có tác giả nào.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h5><strong>Thêm tác giả cho tác phẩm này:</strong></h5>
+                <form action="@Url.Action("AddAuthorToProduct")" method="post">
+                    <input type="hidden" name="productId" value="@Model.NameAlias" />
+                    @Html.AntiForgeryToken()
+                    @Html.ListBox("AuthorId", null, new { @class = "form-control", multiple = "multiple" })
+                    <div class="form-group">
+                        <br />
+                        <button type="submit" class="btn btn-primary">Thêm </button>
+                        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <img id="productImg" src="@(!string.IsNullOrEmpty(Model.Image) ? Model.Image : "/img/noCover.jpg")" style="border:solid;height:400px;width:100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

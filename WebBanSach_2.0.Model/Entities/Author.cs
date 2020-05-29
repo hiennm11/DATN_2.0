@@ -9,14 +9,15 @@ using WebBanSach_2_0.Model.Abstract;
 
 namespace WebBanSach_2_0.Model.Entities
 {
-    public class AuthorDetail : AbstractProps
+    public class Author : AbstractProps
     {       
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int AuthorId { get; set; }
-
         public string Name { get; set; }
+        public string NameAlias { get; set; }
         public string Description { get; set; }
 
-        public ICollection<ProductAuthor> ProductAuthors { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

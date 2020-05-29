@@ -69,7 +69,6 @@
     <Compile Include="Repositories\IdentityRoleRepository.cs" />
     <Compile Include="Repositories\OrderDetailRepository.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
-    <Compile Include="Repositories\ProductAuthorRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="WebBanSach_2_0DbContext.cs" />
   </ItemGroup>
@@ -83,6 +82,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

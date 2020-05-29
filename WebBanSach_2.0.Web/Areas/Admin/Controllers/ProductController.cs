@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Entities;
+using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.AdminServices;
@@ -17,35 +18,46 @@ using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles ="Admin")]
+    //[Authorize(Roles ="Admin")]
     public class ProductController : Controller
     {
-        private readonly IProductService _productService;
+        private readonly IAdminProductService _productService;
+        private readonly IAdminAuthorService _adminAuthorService;
 
-        public ProductController(IProductService productService)
+        public ProductController(IAdminProductService productService, IAdminAuthorService adminAuthorService)
         {
-            _productService = productService;            
+            this._productService = productService;
+            this._adminAuthorService = adminAuthorService;
         }
 
         // GET: Admin/Product
         [Route("Product")]
-        public async Task<ActionResult> Index(int page = 1, string search = null, int cate = 0)
+        public async Task<ActionResult> Index(StatusMessageId? status, int page = 1, string search = null, int categoryId = 0)
         {
+            //ViewBag.StatusMessage = status == StatusMessageId.AddSuccess ? "Đã tạo thành công bản ghi." :
+            //    status == StatusMessageId.UpdateSuccess ? "Đã cập nhật thành công bản ghi." :
+            //    status == StatusMessageId.DeleteSuccess ? "Đã xóa thành công bản ghi." :
+            //    status == StatusMessageId.Error ? "Đã có lỗi xảy ra." : "";
+            
+            ViewBag.StatusMessage = status != null ? EntityExtensions.HtmlStatusMessage(status) : "";
+
             var response = new AdminListProductResponse()
             {
-                Products = await _productService.GetDataAsync(page, search, cate),
+                Products = await _productService.GetDataAsync(page, search, categoryId),
                 Categories = await _productService.GetCategoriesListAsync()
             };
-            //ViewBag.CateList = new SelectList(_categoryRepository.GetAll(), "ID", "CategoryName");
+
+            ViewBag.SearchString = search;
+            ViewBag.CategoryID = categoryId;
            
             return View(response);
         }
 
-        public async Task<ActionResult> Detail(int productId = 0)
+        public async Task<ActionResult> Detail(string productId = null)
         {
             var response = new AdminProductDetailResponse() 
             {
-                Product = productId != 0 ? await _productService.GetProductAsync(productId) : new ProductVM(),
+                Product = !string.IsNullOrEmpty(productId) ? await _productService.GetDataByIDAsync(productId) : new ProductVM(),
                 Categories = await _productService.GetCategoriesListAsync()
             };
             
@@ -54,14 +66,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Details(ProductVM product, HttpPostedFileBase file)
+        public async Task<ActionResult> Detail(ProductVM product, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
-                product.NameID = EntityExtensions.convertToUnSign(product.Name);
+                product.NameAlias = EntityExtensions.ConvertToUnSign(product.Name);
                 if (file != null && file.ContentLength > 0)
                 {
-                    string pic = product.NameID + Path.GetExtension(file.FileName);
+                    string pic = product.NameAlias + Path.GetExtension(file.FileName);
                     string path = Path.Combine(Server.MapPath("/img/" + product.CategoryId), pic);
                     if (System.IO.File.Exists(path))
                     {
@@ -70,127 +82,65 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                     file.SaveAs(path);
                     product.Image = String.Concat("/img/", product.CategoryId, "/", pic);
                 }
-                if(await _productService.SaveProduct(product) > 0)
+                if(await _productService.SaveDataAsync(product) > 0)
                 {
-                    return RedirectToAction("Index");
+                    if(product.ProductId == 0)
+                    {
+                        return RedirectToAction("Index", new { status = StatusMessageId.AddSuccess });
+                    }
+                    return RedirectToAction("Index", new { status = StatusMessageId.UpdateSuccess });
                 }
             }
             ModelState.AddModelError("Error", "Cannot save your product");
             return View();
         }
 
+        public async Task<ActionResult> EditAuthor(StatusMessageId? status, string productId)
+        {
+            ViewBag.StatusMessage = status != null ? EntityExtensions.HtmlStatusMessage(status) : "";
+
+            var model = await _productService.GetDataByIDAsync(productId);
+            var list = await _adminAuthorService.GetAllAuthorAsync();
+            ViewBag.AuthorId = new SelectList(list.Where(item => model.Authors.FirstOrDefault(r => r.AuthorId == item.AuthorId) == null).ToList(), "AuthorId", "Name");
+            return View(model);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddAuthorToProduct(string productId, int[] authorId)
+        {
+            await _productService.AddAuthorToProduct(productId, authorId);
+
+            var model = await _productService.GetDataByIDAsync(productId);
+            var list = await _adminAuthorService.GetAllAuthorAsync();
+
+            ViewBag.AuthorId = new SelectList(list.Where(item => model.Authors.FirstOrDefault(r => r.AuthorId == item.AuthorId) == null).ToList(), "AuthorId", "Name");
+            return RedirectToAction("EditAuthor", new { status = StatusMessageId.UpdateSuccess, productId = productId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteAuthorFromProduct(string productId, int authorId)
+        {
+            await _productService.DeleteAuthorFromProduct(productId, authorId);
+
+            var model = await _productService.GetDataByIDAsync(productId);           
+            var list = await _adminAuthorService.GetAllAuthorAsync();
+
+            ViewBag.AuthorId = new SelectList(list.Where(item => model.Authors.FirstOrDefault(r => r.AuthorId == item.AuthorId) == null).ToList(), "AuthorId", "Name");
+            return RedirectToAction("EditAuthor", new { status = StatusMessageId.DeleteSuccess, productId = productId });
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
-        {
-            
-            if (await _productService.DeleteProduct(id) > 0)
+        {           
+            if (await _productService.DeleteDataAsync(id) > 0)
             {
-                ViewData["Message"] = "Product has been deleted";
-            }
-            ViewData["Message"] = "Delete Error!";
-            return RedirectToAction("Index");
+                return RedirectToAction("Index", new { status = StatusMessageId.DeleteSuccess });
+            }            
+            return RedirectToAction("Index", new { status = StatusMessageId.Error });
         }
-
-
-        //public async Task<JsonResult> GetPaggedData(int page = 1, string search = null, int cate = 0)
-        //{
-        //    var viewModel = await _productService.GetDataAsync(page, search, cate);
-        //    return Json(new { data = viewModel, status = true }, JsonRequestBehavior.AllowGet);
-        //}
-
-        //public async Task<JsonResult> GetDetail(int id)
-        //{
-        //    var datatemp = await _productRepository.GetSingleByIDAsync(id);
-        //    var data = _mapper.Map<Product, ProductVM>(datatemp);
-        //    return Json(new { data = data, status = true }, JsonRequestBehavior.AllowGet);
-        //}
-
-        //[HttpPost]
-        //public async Task<JsonResult> SaveDetail(ProductVM product)
-        //{
-        //    bool status;
-        //    string message = string.Empty;
-        //    var productDB = await _productRepository.GetSingleByIDAsync(product.ID);
-        //    if (productDB != null)
-        //    {
-        //        if (product.file != null)
-        //        {
-        //            string imgTemp = productDB.Image;
-        //            string imgDir = SaveImg(productDB.NameID, productDB.CategoryId, product.file);
-
-        //            productDB.Image = (imgDir ?? imgTemp);
-
-        //            productDB.UpdateProduct(product);
-
-        //            //Change image location
-        //            string oldPath = Server.MapPath(imgTemp);
-        //            string newPath = Path.Combine(Server.MapPath("/img/" + product.CateID),
-        //                productDB.NameID + Path.GetExtension(imgTemp));
-
-        //            System.IO.File.Move(oldPath, newPath);
-
-        //            productDB.Image = String.Concat("/img/", productDB.CategoryId, "/",
-        //                productDB.NameID + Path.GetExtension(imgTemp));
-
-        //        }
-
-        //        else
-        //        {
-        //            productDB.UpdateProduct(product);
-        //        }
-
-        //        await _productRepository.UpdateAsync(productDB);
-
-        //    }
-
-        //    else
-        //    {
-        //        Product newProduct = EntityExtensions.CreateNewProduct(product);
-        //        if (product.file != null)
-        //        {
-        //            newProduct.Image = SaveImg(newProduct.NameID, newProduct.CategoryId, product.file);
-        //        }
-
-        //        await _productRepository.AddAsync(newProduct);
-
-        //    }
-        //    ViewBag.CateList = new SelectList(await _categoryRepository.GetAllAsync(), "ID", "CategoryName");
-
-        //    try
-        //    {
-        //        await _unitOfWork.SaveAsync();
-        //        status = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        status = false;
-        //        message = ex.Message;
-        //    }
-
-        //    return Json(new { status = status, message = message });
-        //}
-
-
-        //private string SaveImg(string nameID, int cateID, HttpPostedFileBase file)
-        //{
-        //    if (file != null && file.ContentLength > 0)
-        //    {
-        //        try
-        //        {
-        //            string pic = nameID + Path.GetExtension(file.FileName);
-        //            string path = Path.Combine(Server.MapPath("/img/" + cateID), pic);
-        //            string result = String.Concat("/img/", cateID, "/", pic);
-        //            file.SaveAs(path);
-        //            return result;
-        //        }
-        //        catch
-        //        {
-
-        //        }
-        //    }
-        //    return null;
-        //}
-
     }
 }

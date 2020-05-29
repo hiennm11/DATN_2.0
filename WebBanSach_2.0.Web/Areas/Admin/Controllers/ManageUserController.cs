@@ -11,7 +11,7 @@ using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class ManageUserController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

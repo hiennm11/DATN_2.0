@@ -9,8 +9,8 @@ namespace WebBanSach_2_0.Web.Infrastructure
         public AutoMapperConfiguration()
         {
             CreateMap<Category, CategoryVM>().ReverseMap();
-            CreateMap<Product, ProductVM>().ReverseMap();
-            CreateMap<AuthorDetail, AuthorDetailVM>().ReverseMap();
+            CreateMap<Product, ProductVM>().ForMember(entity => entity.Authors, opt => opt.MapFrom(model => model.Authors)).ReverseMap();
+            CreateMap<Author, AuthorVM>().ReverseMap();
             CreateMap<Order, OrderVM>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailVM>().ReverseMap();
         }

@@ -60,19 +60,20 @@
   <ItemGroup>
     <Compile Include="Abstract\AbstractProps.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
-    <Compile Include="Entities\AuthorDetail.cs" />
+    <Compile Include="Entities\Author.cs" />
     <Compile Include="Entities\Category.cs" />
     <Compile Include="Entities\Comment.cs" />
     <Compile Include="Entities\Error.cs" />
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\OrderDetail.cs" />
     <Compile Include="Entities\Product.cs" />
-    <Compile Include="Entities\ProductAuthor.cs" />
+    <Compile Include="Enums\OrderStatus.cs" />
+    <Compile Include="Enums\StatusMessageId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestModels\AdminProductRequest.cs" />
     <Compile Include="ResponseModels\AdminProductDetailResponse.cs" />
     <Compile Include="ResponseModels\AdminListProductResponse.cs" />
-    <Compile Include="ViewModels\AuthorDetailVM.cs" />
+    <Compile Include="ViewModels\AuthorVM.cs" />
     <Compile Include="ViewModels\AuthorExtensions.cs" />
     <Compile Include="ViewModels\CartItem.cs" />
     <Compile Include="ViewModels\CategoryVM.cs" />

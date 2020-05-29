@@ -1,83 +1,61 @@
 ﻿
-@model WebBanSach_2_0.Model.Models.ApplicationUser
+@model WebBanSach_2_0.Model.Entities.ApplicationUser
 
 @{
 
     ViewBag.Title = "Sửa thông tin";
-
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
 }
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+    </li>
+    <li class="breadcrumb-item">User</li>
+    <li class="breadcrumb-item active">Sửa thông tin User</li>
+</ol>
 
-}
-
-<div class="row">
-
-    <div class="col-sm-8">
-
-        <h2>@ViewBag.Title</h2>
-
-        <hr />
-
-        @using (Html.BeginForm())
-
-        {
-
-            @Html.ValidationSummary("", new { @class = "text-danger" })
-
-            @Html.AntiForgeryToken()
-
-
-
-            @Html.HiddenFor(m => m.UserName)
-
-            @Html.HiddenFor(m => m.Id)
-
-            @Html.HiddenFor(m => m.Email)
-
-            @Html.HiddenFor(m => m.AccessFailedCount)
-
-            @Html.HiddenFor(m => m.Claims)
-
-            @Html.HiddenFor(m => m.EmailConfirmed)
-
-            @Html.HiddenFor(m => m.LockoutEnabled)
-
-            @Html.HiddenFor(m => m.LockoutEndDateUtc)
-
-            @Html.HiddenFor(m => m.PasswordHash)
-
-            @Html.HiddenFor(m => m.PhoneNumber)
-
-            @Html.HiddenFor(m => m.PhoneNumberConfirmed)
-
-            @Html.HiddenFor(m => m.SecurityStamp)
-
-            @Html.HiddenFor(m => m.TwoFactorEnabled)
-
-            <div class="form-group">
-
-                <label>Họ tên:</label>
-
-                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", required = "required" })
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Địa chỉ:</label>
-
-                @Html.TextBoxFor(m => m.Address, new { @class = "form-control", required = "required" })
-
-            </div>           
-
-            <div class="form-group">
-
-                <button type="submit" class="btn btn-primary">Lưu</button>
-
-            </div>
-
-        }
-
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        @ViewBag.Title
     </div>
-
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8">
+                <h2>@ViewBag.Title</h2>
+                <hr />
+                @using (Html.BeginForm())
+                {
+                    @Html.ValidationSummary("", new { @class = "text-danger" })
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.UserName)
+                    @Html.HiddenFor(m => m.Id)
+                    @Html.HiddenFor(m => m.Email)
+                    @Html.HiddenFor(m => m.AccessFailedCount)
+                    @Html.HiddenFor(m => m.Claims)
+                    @Html.HiddenFor(m => m.EmailConfirmed)
+                    @Html.HiddenFor(m => m.LockoutEnabled)
+                    @Html.HiddenFor(m => m.LockoutEndDateUtc)
+                    @Html.HiddenFor(m => m.PasswordHash)
+                    @Html.HiddenFor(m => m.PhoneNumber)
+                    @Html.HiddenFor(m => m.PhoneNumberConfirmed)
+                    @Html.HiddenFor(m => m.SecurityStamp)
+                    @Html.HiddenFor(m => m.TwoFactorEnabled)
+                    <div class="form-group">
+                        <label>Họ tên:</label>
+                        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", required = "required" })
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ:</label>
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", required = "required" })
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
+
+

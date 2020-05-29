@@ -100,14 +100,14 @@
                     <div class="col-md-5">
                         <div class="form-group">
                             <div class="col-md-10">
-                                <img id="productImg" src="@(Model.Product.Image != null ? Model.Product.Image : "")" style="border:solid;height:400px;width:100%" />
+                                <img id="productImg" src="@(!string.IsNullOrEmpty(Model.Product.Image) ? Model.Product.Image : "/img/noCover.jpg")" style="border:solid;height:400px;width:100%" />
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-md-10">
                                 <input type="file" id="file" name="file" class="form-control-file border" accept="image/*">
                             </div>
-
+                            
                         </div>
                     </div>
                 </div>

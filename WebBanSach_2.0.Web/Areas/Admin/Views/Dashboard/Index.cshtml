@@ -1,7 +1,6 @@
 ﻿
 @{
     ViewBag.Title = "Index";
-    Layout = "~/Areas/Admin/Views/Shared/_adminLayout.cshtml";
     var orderList = (IEnumerable<OrderVM>)ViewBag.OrderModel;
 }
 <!-- Breadcrumbs-->
@@ -100,7 +99,6 @@
     </div>
     <div class="card-body">
         <div class="table-responsive">
-
             <table class="table table-bordered" width="100%" cellspacing="0">
                 <thead>
                     <tr>
@@ -125,20 +123,20 @@
                             <td class="item-status">
                                 @switch (item.Status)
                                 {
-                                    case 1:<span>Đang giao hàng</span>; break;
-                                    case 2: <span class="text-success">Đã hoàn thành</span>; break;
+                                    case OrderStatus.Shipping:<span>Đang giao hàng</span>; break;
+                                    case OrderStatus.Completed: <span class="text-success">Đã hoàn thành</span>; break;
                                     default: <span class="text-danger">Đã hủy</span>; 
                                         break;
                                 }
                             </td>
                             <td>
-                                <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.ID">
+                                <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.OrderId">
                                     <i class="fas fa-check-circle"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-primary btn-order-detail btn-sm" data-id="@item.ID">
+                                <button type="button" class="btn btn-outline-primary btn-order-detail btn-sm" data-id="@item.OrderId">
                                     <i class="fas fa-info-circle"></i>
                                 </button>
-                                <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.ID">
+                                <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.OrderId">
                                     <i class="fas fa-times-circle"></i>
                                 </button>
                             </td>
@@ -148,7 +146,7 @@
             </table>
         </div>
     </div>
-    <div class="card-footer small text-muted">Updated @orderList.Select(m => m.CreatedDate.ToString()).First()</div>
+    @*<div class="card-footer small text-muted">Updated @orderList.Select(m => m.CreatedDate.ToString()).First()</div>*@
 </div>
 <!-- /.container-fluid -->
 <!-- The Modal -->

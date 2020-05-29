@@ -18,11 +18,10 @@ namespace WebBanSach_2_0.Model.ViewModels
         public double Price { get; set; }
         public int Purchase { get; set; }
         public double Star { get; set; }
-        public string NameID { get; set; }
+        public string NameAlias { get; set; }
         public string Link { get; set; }
 
-        public HttpPostedFileBase ImageFile { get; set; }
-
         public CategoryVM Category { get; set; }
+        public ICollection<AuthorVM> Authors { get; set; }
     }
 }

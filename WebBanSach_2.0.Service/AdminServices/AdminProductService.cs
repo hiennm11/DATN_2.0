@@ -14,27 +14,33 @@ using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
 {
-    public interface IProductService
+    public interface IAdminProductService
     {
+        Task<int> AddAuthorToProduct(string productId, int[] authorId);
+        Task<int> DeleteAuthorFromProduct(string productId, int authorId);
+        Task<IEnumerable<ProductVM>> GetAllProductAsync();
         Task<IndexViewModel<ProductVM>> GetDataAsync(int page, string search, int cateId);
         Task<IEnumerable<CategoryVM>> GetCategoriesListAsync();
-        Task<ProductVM> GetProductAsync(int id);
-        Task<int> SaveProduct(ProductVM product);
-        Task<int> DeleteProduct(int id);
+        Task<ProductVM> GetDataByIDAsync(string id);
+        Task<int> SaveDataAsync(ProductVM viewModel);
+        Task<int> DeleteDataAsync(int id);
     }
 
-    public class AdminProductService : IProductService
+    public class AdminProductService : IAdminProductService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IAuthorDetailRepository _authorDetailRepository;
         private readonly IMapper _mapper;
 
-        public AdminProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public AdminProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository
+                                                         , IAuthorDetailRepository authorDetailRepository, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _authorDetailRepository = authorDetailRepository;
             _mapper = mapper;
         }
 
@@ -43,14 +49,14 @@ namespace WebBanSach_2_0.Service.AdminServices
             var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetAllAsync(new string[1] { "Category" }));
             var pager = new Pager(_productRepository.GetTotalRow(), page);
 
-            if (search != null && search != "")
+            if (!string.IsNullOrEmpty(search))
             {
-                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetBySearchAsync(search));
+                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetBySearchAsync(EntityExtensions.ConvertToUnSign(search)));
                 pager = new Pager(data.Count(), page);
             }
             if (cateId > 0)
             {
-                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetByCategoryIntAsync(cateId));
+                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetByCategoryIdAsync(cateId));
                 pager = new Pager(data.Count(), page);
             }
 
@@ -66,16 +72,17 @@ namespace WebBanSach_2_0.Service.AdminServices
             return _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(await _categoryRepository.GetTrueCategoriesAsync());
         }
 
-        public async Task<ProductVM> GetProductAsync(int id)
+        public async Task<ProductVM> GetDataByIDAsync(string id)
         {
-            return _mapper.Map<Product, ProductVM>(await _productRepository.GetSingleByIDAsync(id));
+            var model = await _productRepository.GetProductByNameIDAsync(id);
+            return _mapper.Map<Product, ProductVM>(model);
         }
 
-        public async Task<int> SaveProduct(ProductVM product)
+        public async Task<int> SaveDataAsync(ProductVM viewModel)
         {
-            var entity = _mapper.Map<ProductVM, Product>(product);
-            
-            if (product.ProductId == 0)
+            var entity = _mapper.Map<ProductVM, Product>(viewModel);
+
+            if (viewModel.ProductId == 0)
             {
                 entity.CreateBy = "admin"; entity.UpdateBy = "admin";
                 entity.Purchase = 0; entity.Star = 0;
@@ -93,10 +100,37 @@ namespace WebBanSach_2_0.Service.AdminServices
             return await _unitOfWork.SaveAsync();
         }
 
-        public async Task<int> DeleteProduct(int id)
+        public async Task<int> DeleteDataAsync(int id)
         {
             await _productRepository.ShiftDeleteAsync(id);
             return await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<int> AddAuthorToProduct(string productId, int[] authorId)
+        {
+            var model = await _productRepository.GetProductByNameIDAsync(productId);
+            if (authorId != null && authorId.Count() > 0)
+            {
+                foreach (int item in authorId)
+                {
+                    var author = await _authorDetailRepository.GetSingleByIDAsync(item);
+                    model.Authors.Add(author);
+                }
+                return await _unitOfWork.SaveAsync();
+            }
+            return 0;
+        }
+
+        public async Task<int> DeleteAuthorFromProduct(string productId, int authorId)
+        {
+            var model = await _productRepository.GetProductByNameIDAsync(productId);
+            model.Authors.Remove(model.Authors.Single(m => m.AuthorId == authorId));
+            return await _unitOfWork.SaveAsync();
+        }
+
+        public async Task<IEnumerable<ProductVM>> GetAllProductAsync()
+        {
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetAllAsync());
         }
     }
 }

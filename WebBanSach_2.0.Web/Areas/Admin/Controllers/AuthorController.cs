@@ -1,117 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Model.Models;
-using WebBanSach_2_0.Web.Infrastructure;
-using WebBanSach_2_0.Web.Models;
-using static WebBanSach_2_0.Web.Infrastructure.Pagination;
+using WebBanSach_2_0.Model.Enums;
+using WebBanSach_2_0.Model.ViewModels;
+using WebBanSach_2_0.Service.AdminServices;
+using WebBanSach_2_0.Service.Infrastructure;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
     public class AuthorController : Controller
     {
-        UnitOfWork _unitOfWork = new UnitOfWork(new Data.WebBanSach_2_0DbContext());
+        private readonly IAdminAuthorService _adminAuthorService;
+        private readonly IAdminProductService _adminProductService;
 
-        // GET: Admin/Author
-        public ActionResult Index()
+        public AuthorController(IAdminAuthorService adminAuthorService, IAdminProductService adminProductService)
         {
-            return View();
+            this._adminAuthorService = adminAuthorService;
+            this._adminProductService = adminProductService;
         }
 
-        public JsonResult GetPaggedData(int page = 1)
+        // GET: Admin/AuthorDetail
+        public async Task<ActionResult> Index(StatusMessageId? status, int page = 1, string search = null)
         {
-            string[] includes = { "AuthorDetails", "Product" };
-            var data = _unitOfWork.Author.GetAll(includes);
-            var pager = new Pager(data.Count(), page);
-            var aExtensions = new List<AuthorExtensions>();
-            foreach (var item in data)
-            {
-                AuthorExtensions ex = new AuthorExtensions();
-                ex.AuthorID = item.AuthorID;
-                ex.AuthorName = item.AuthorDetails.Name;
-                ex.ProductID = item.ProductID;
-                ex.ProductName = item.Product.Name;
+            ViewBag.StatusMessage = status != null ? EntityExtensions.HtmlStatusMessage(status) : "";
 
-                aExtensions.Add(ex);
-            }
-            
-            var viewModel = new IndexViewModel<AuthorExtensions>()
-            {
-                Items = aExtensions.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
-                Pager = new Pager(data.Count(), page)
-            };
-            return Json(viewModel, JsonRequestBehavior.AllowGet);
+            var response = await _adminAuthorService.GetDataAsync(page, search);
+            ViewBag.SearchString = search;
+
+            return View(response);
         }
 
-        public ActionResult Detail(int productID, int authorID)
+        public async Task<ActionResult> Detail(int authorId = 0)
         {
-
-            if (productID != 0)
-            {
-                var authorTemp = _unitOfWork.Author.GetAuthor(productID,authorID);
-                var ex = new AuthorExtensions()
-                {
-                    AuthorID = authorTemp.AuthorID,
-                    ProductID = authorTemp.ProductID,
-                    ProductName = authorTemp.Product.Name,
-                    AuthorName = authorTemp.AuthorDetails.Name
-                };
-                
-                return View(ex);
-            }
-            return View(new AuthorExtensions());
+            var response = authorId == 0 ? new AuthorVM() : await _adminAuthorService.GetDataByIDAsync(authorId);
+            return View(response);
         }
 
         [HttpPost]
-        public ActionResult Detail(int productIDnew, int authorIDnew, AuthorExtensions author)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Detail(AuthorVM author)
         {
             if (ModelState.IsValid)
             {
-                var addedAuthor = new Author();                
-
-                if (productIDnew > 0)
+                if (await _adminAuthorService.SaveDataAsync(author) > 0)
                 {
-                    addedAuthor = _unitOfWork.Author.GetAuthor(productIDnew, authorIDnew);
-                    addedAuthor.ProductID = author.ProductID;
-                    addedAuthor.AuthorID = author.AuthorID;
-                    _unitOfWork.Author.Update(addedAuthor);
+                    return RedirectToAction("Index", new { @status = StatusMessageId.UpdateSuccess });
                 }
-                else
-                {
-                    addedAuthor.AuthorID = author.AuthorID;
-                    addedAuthor.ProductID = author.ProductID;
-                    _unitOfWork.Author.Add(addedAuthor);
-                }
-
-                _unitOfWork.Save();
-                return RedirectToAction("Index");
             }
-            return View(author);
+            ModelState.AddModelError("Error", "Cannot save your product");
+
+            return View();
         }
 
-        [HttpPost, ActionName("Delete")]
+        public async Task<ActionResult> EditProduct(StatusMessageId? status, int authorId)
+        {
+            ViewBag.StatusMessage = status != null ? EntityExtensions.HtmlStatusMessage(status) : "";
+
+            var model = await _adminAuthorService.GetDataByIDAsync(authorId);
+            var list = await _adminProductService.GetAllProductAsync();
+            ViewBag.ProductId = new SelectList(list.Where(item => model.Products.FirstOrDefault(r => r.ProductId == item.ProductId) == null).ToList(), "ProductId", "Name");
+            return View(model);
+
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public async Task<ActionResult> AddProductToAuthor(int authorId, int[] productId)
         {
-            _unitOfWork.Author.ShiftDelete(id);
-            _unitOfWork.Save();
-            return RedirectToAction("Index");
+            await _adminAuthorService.AddProductToAuthor(authorId, productId);
+
+            var model = await _adminAuthorService.GetDataByIDAsync(authorId);
+            var list = await _adminProductService.GetAllProductAsync();
+            ViewBag.ProductId = new SelectList(list.Where(item => model.Products.FirstOrDefault(r => r.ProductId == item.ProductId) == null).ToList(), "AuthorId", "Name");
+            return RedirectToAction("EditProduct", new { status = StatusMessageId.UpdateSuccess, authorId = authorId });
         }
 
-        public JsonResult getProduct(string tags)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteProductFromAuthor(int authorId, int productId)
         {
-            string tagc = EntityExtensions.convertToUnSign(tags); 
-            List<Product> li = _unitOfWork.Product.GetAll().Where(x=>x.NameID.Contains(tagc)).OrderBy(x => x.Name).Take(10).ToList();
-            return Json(li, JsonRequestBehavior.AllowGet);
+            await _adminAuthorService.DeleteProductFromAuthor(authorId, productId);
+
+            var model = await _adminAuthorService.GetDataByIDAsync(authorId);
+            var list = await _adminProductService.GetAllProductAsync();
+            ViewBag.ProductId = new SelectList(list.Where(item => model.Products.FirstOrDefault(r => r.ProductId == item.ProductId) == null).ToList(), "AuthorId", "Name");
+            return RedirectToAction("EditProduct", new { status = StatusMessageId.DeleteSuccess, authorId = authorId });
         }
 
-        public JsonResult getAuthor(string tags)
-        {           
-            List<AuthorDetail> li = _unitOfWork.AuthorDetail.GetAll().Where(x => x.Name.ToLower().Contains(tags)).OrderBy(x => x.Name).Take(10).ToList();
-            return Json(li, JsonRequestBehavior.AllowGet);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)
+        {
+            if (await _adminAuthorService.DeleteDataAsync(id) > 0)
+            {
+                return RedirectToAction("Index", new { status = StatusMessageId.DeleteSuccess });
+            }
+            return RedirectToAction("Index", new { status = StatusMessageId.Error });
         }
     }
 }

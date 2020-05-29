@@ -11,7 +11,7 @@ using WebBanSach_2_0.Data.Repositories;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class ManageRoleController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

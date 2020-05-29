@@ -32,13 +32,13 @@ namespace WebBanSach_2_0.Web.Areas.Admin
             context.MapRoute(
                 "author",
                 "admin/quan-ly/chi-tiet-tac-gia",
-                new { controller = "AuthorDetail", action = "Index" }
+                new { controller = "Author", action = "Index" }
             );
-            context.MapRoute(
-                "proauthor",
-                "admin/quan-ly/tac-gia",
-                new { controller = "ProductAuthor", action = "Index" }
-            );
+            //context.MapRoute(
+            //    "proauthor",
+            //    "admin/quan-ly/tac-gia",
+            //    new { controller = "ProductAuthor", action = "Index" }
+            //);
             context.MapRoute(
                 "theloai",
                 "admin/quan-ly/the-loai",

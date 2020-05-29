@@ -7,11 +7,15 @@ using WebBanSach_2_0.Model.Abstract;
 
 namespace WebBanSach_2_0.Model.ViewModels
 {
-    public class AuthorDetailVM : AbstractProps
+    public class AuthorVM : AbstractProps
     {
-        public int AuthorDetailId { get; set; }
+        public int AuthorId { get; set; }
         [Required(ErrorMessage = "An author has a name?")]
         public string Name { get; set; }
         public string Description { get; set; }
+        public string NameAlias { get; set; }
+
+        public ICollection<ProductVM> Products { get; set; }
+
     }
 }

@@ -8,6 +8,7 @@ namespace WebBanSach_2_0.Model.Entities
     public class Product : AbstractProps
     {      
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; set; }
         [Required]
         public string Name { get; set; }
@@ -18,12 +19,12 @@ namespace WebBanSach_2_0.Model.Entities
         public double Price { get; set; }
         public int Purchase { get; set; }
         public double Star { get; set; }
-        public string NameID { get; set; }
+        public string NameAlias { get; set; }
         public string Link { get; set; }
 
         public Category Category { get; set; }
 
-        public ICollection<ProductAuthor> ProductAuthors { get; set; }
+        public ICollection<Author> Authors { get; set; }
         public ICollection<Comment> Comments { get; set; }
 
     }

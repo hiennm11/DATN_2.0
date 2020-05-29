@@ -6,12 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Model.Abstract;
+using WebBanSach_2_0.Model.Enums;
 
 namespace WebBanSach_2_0.Model.Entities
 {
     public class Order
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int OrderId { get; set; }
         [Required]
         public string CustomerName { get; set; }
@@ -27,7 +29,7 @@ namespace WebBanSach_2_0.Model.Entities
 
         public string PaymentMethod { get; set; }
         public bool PaymentStatus { get; set; }
-        public int Status { get; set; }
+        public OrderStatus Status { get; set; }
         
 
         public IEnumerable<OrderDetail> OrderDetails { get; set; }

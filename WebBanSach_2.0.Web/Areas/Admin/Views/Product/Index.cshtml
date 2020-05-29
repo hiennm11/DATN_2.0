@@ -6,6 +6,7 @@
     var catelist = Model.Categories as List<CategoryVM>;
     catelist.Add(new CategoryVM { CategoryId = 0, CategoryName = "Tất cả" });
     var cate = new SelectList(catelist.OrderBy(m => m.CategoryId), "CategoryId", "CategoryName");
+
 }
 
 <!-- Breadcrumbs-->
@@ -16,9 +17,9 @@
     <li class="breadcrumb-item">Quản lý</li>
     <li class="breadcrumb-item active">Sản phẩm</li>
 </ol>
-@if (ViewData["Message"] != null)
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
 {
-    <p class="text-success">@ViewData["Message"].ToString()</p>
+    @Html.Raw(ViewBag.StatusMessage)
 }
 <div class="card mb-3">
     <div class="card-header">
@@ -28,115 +29,116 @@
     <div class="card-body">
         <div class="row">
             <div class="col-sm-8 col-md-4">
-                <a href="@Url.Action("Details")" id="btnCreate" class="btn btn-info" role="button">Tạo mới</a>
+                <a href="@Url.Action("Detail")" id="btnCreate" class="btn btn-info" role="button">Tạo mới</a>
             </div>
-            <div class="col-sm-8 col-md-4">
-                @Html.DropDownList("Category", (IEnumerable<SelectListItem>)cate, new { @class = "form-control" })
-                @*<div class="dropdown-menu form-control">
-                        <a class="dropdown-item" href="#">Tất cả</a>
-                        @foreach (var item in catelist)
-                        {
-                            <a class="dropdown-item" href="#">@item.CategoryName</a>
-                        }
-                        <a class="dropdown-item" href="#">Link 2</a>
-
-                    </div>*@
-            </div>
-            <div class="col-sm-8 col-md-4">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text">Tìm kiếm</span>
+            @using (Html.BeginForm("Index", "Product", FormMethod.Get, new { @class = "col-sm-12 col-md-8" }))
+            {
+                <div class="row">
+                    <div class="col">
+                        @Html.DropDownList("CategoryId", (IEnumerable<SelectListItem>)cate, new { @class = "form-control" })
                     </div>
-                    <input type="text" class="form-control" id="searchDetail">
+                    <div class="col">
+                        <div class="input-group mb-3">
+                            <input type="text" name="search" class="form-control" value="@ViewBag.SearchString">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Thể loại</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Lượt mua</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Thể loại</th>
+                        <th>Hình ảnh</th>
+                        <th>Giá bán</th>
+                        <th>Lượt mua</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+                <tbody id="dataTableBody">
+                    @foreach (var item in Model.Products.Items)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td><img src="@(!string.IsNullOrEmpty(item.Image) ? item.Image : "/img/noCover.jpg")" style="height:100px; width:90px;border: solid 1px" /></td>
+                            <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
+                            <td>@item.Purchase</td>
+                            <td>
+                                <h5>
+                                    @if (item.Status == true)
+                                    {
+                                        <span class="badge badge-success">Còn hàng</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Hết hàng</span>
+                                    }
+                                </h5>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Detail", new { @productId = item.NameAlias })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                                <a href="@Url.Action("EditAuthor", new { @productId = item.NameAlias })" class="btn btn-outline"><i class="fas fa-user-plus"></i></a>
+                                <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
+                                    <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-sm-12 col-md-5">
+                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-7">
+                    <!-- pager -->
+                    <ul class="pagination" id="paged">
+                        @if (pager.CurrentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = 1 })">First</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage - 1 })"> Previous</a></li>
+                        }
+                        @for (int i = pager.StartPage; i <= pager.EndPage; i++)
+                        {
+                            if (i == pager.CurrentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
+                            }
+                        }
+                        @if (pager.CurrentPage < pager.TotalPages)
+                        {
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage + 1 })"> Next</a></li>
+                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.TotalPages })"> Last</a></li>
+                        }
+                    </ul>
                 </div>
             </div>
         </div>
-
-        @if (Model.Products == null)
-        {
-
-        }
-        else
-        {
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>Thể loại</th>
-                            <th>Hình ảnh</th>
-                            <th>Giá bán</th>
-                            <th>Lượng mua</th>
-                            <th>Trạng thái</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>Thể loại</th>
-                            <th>Hình ảnh</th>
-                            <th>Giá bán</th>
-                            <th>Lượng mua</th>
-                            <th>Trạng thái</th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-                    <tbody id="dataTableBody">
-                        @foreach (var item in Model.Products.Items)
-                        {
-                            <tr>
-                                <td>@item.Name</td>
-                                <td>@item.Category.CategoryName</td>
-                                <td><img src="@item.Image" style="height:100px; width:90px;border: solid 1px" /></td>
-                                <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
-                                <td>@item.Purchase</td>
-                                <td>@(item.Status == true ? "Còn hàng": "Hết hàng")</td>
-                                <td>
-                                    <a href="@Url.Action("Detail", new { @productId = item.ProductId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
-                                    <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
-                                        <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                <div class="row">
-                    <div class="col-sm-12 col-md-5">
-                        <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
-
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-7">
-                        <!-- pager -->
-                        <ul class="pagination" id="paged">
-                            @if (pager.CurrentPage > 1)
-                            {
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = 1 })">First</a></li>
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage - 1 })"> Previous</a></li>
-                            }
-                            @for (int i = pager.StartPage; i <= pager.EndPage; i++)
-                            {
-                                if (i == pager.CurrentPage)
-                                {
-                                    <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
-                                }
-                                else
-                                {
-                                    <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = @i })">@i</a></li>
-                                }
-                            }
-                            @if (pager.CurrentPage < pager.TotalPages)
-                            {
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.CurrentPage + 1 })"> Next</a></li>
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @page = pager.TotalPages })"> Last</a></li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        }
     </div>
 </div>
 

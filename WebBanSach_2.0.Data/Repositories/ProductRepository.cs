@@ -16,7 +16,7 @@ namespace WebBanSach_2_0.Data.Repositories
         Task<IEnumerable<Product>> GetNewProductAsync();
         Task<IEnumerable<Product>> GetHotProductAsync();
         Task<IEnumerable<Product>> GetBySearchAsync(string search);
-        Task<IEnumerable<Product>> GetByCategoryIntAsync(int cate);
+        Task<IEnumerable<Product>> GetByCategoryIdAsync(int cate);
         Task DeleteAsync(int id);
     }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
@@ -34,21 +34,23 @@ namespace WebBanSach_2_0.Data.Repositories
 
         public async Task<Product> GetProductByNameIDAsync(string nameId)
         {
-            return await _dbContext.Products.FirstOrDefaultAsync(n => n.NameID == nameId);
+            var model = await _dbContext.Products.FirstOrDefaultAsync(n => n.NameAlias == nameId);
+            await _dbContext.Entry(model).Collection(p => p.Authors).LoadAsync();
+            return model;
         }
 
         public async Task<IEnumerable<Product>> GetBySearchAsync(string search)
-        {
-            var list = _dbContext.Products.Where(m => m.NameID.ToLower().Contains(search.ToLower()));
+        {            
+            var list = _dbContext.Products.Where(m => m.NameAlias.ToLower().Contains(search.ToLower()));
             return await list.ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetByCategoryAsync(string cate)
         {
-            var list = _dbContext.Products.Where(c => c.Category.Description == cate).OrderBy(c => c.Name);
+            var list = _dbContext.Products.Where(c => c.Category.NameAlias == cate).OrderBy(c => c.Name);
             return await list.ToListAsync();
         }
-        public async Task<IEnumerable<Product>> GetByCategoryIntAsync(int cate)
+        public async Task<IEnumerable<Product>> GetByCategoryIdAsync(int cate)
         {
             var list = _dbContext.Products.Where(c => c.Category.CategoryId == cate).OrderBy(c => c.Name);
             return await list.ToListAsync();
