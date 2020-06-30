@@ -79,10 +79,11 @@
                     <a class="dropdown-item" href="@Url.Action("Index","Author")">Tác giả</a>
                     <a class="dropdown-item" href="@Url.Action("Index","Category")">Thể loại sách</a>
                     <a class="dropdown-item" href="@Url.Action("Index","Product")">Sản phẩm</a>
+                    <a class="dropdown-item" href="@Url.Action("Index","Discount")">Khuyến mãi</a>
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="@Url.Action("Index","Chart")">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Biểu đồ</span>
                 </a>
@@ -93,16 +94,22 @@
                     <span>Tài khoản</span>
                 </a>
                 <div class="dropdown-menu" aria-labelledby="pagesDropdown">
-                    <a class="dropdown-item" href="@Url.Action("Index","ManageUser")">Users</a>
-                    <a class="dropdown-item" href="@Url.Action("Index","ManageRole")">Roles</a>
+                    <a class="dropdown-item" href="@Url.Action("Index","ManageUser")">Tài khoản</a>
+                    <a class="dropdown-item" href="@Url.Action("Index","ManageRole")">Quyền hạn</a>
                 </div>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index","ManageOrder")">
-                    <i class="fas fa-file-invoice-dollar"></i>                    
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-file-invoice-dollar"></i>
                     <span>Hóa đơn</span>
                 </a>
-            </li>
+                <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+                    <a class="dropdown-item" href="@Url.Action("WaitingOrder","Order")">HĐ chờ duyệt</a>
+                    <a class="dropdown-item" href="@Url.Action("Index","Order")">HĐ chưa hoàn thành</a>
+                    <a class="dropdown-item" href="@Url.Action("CompleteOrder","Order")">HĐ đã hoàn thành</a>
+                    <a class="dropdown-item" href="@Url.Action("DeletedOrder","Order")">HĐ bị xóa</a>
+                </div>
+            </li>            
         </ul>
 
         <div id="content-wrapper">
@@ -156,11 +163,6 @@
     @Scripts.Render("~/bundles/admin/js")
     @RenderSection("scripts",false)
    
-
-    <!-- Demo scripts for this page-->
-    @*<script src="js/demo/datatables-demo.js"></script>
-        <script src="js/demo/chart-area-demo.js"></script>*@
-
 </body>
 
 </html>

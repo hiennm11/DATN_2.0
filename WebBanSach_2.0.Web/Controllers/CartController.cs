@@ -8,157 +8,138 @@ using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Entities;
+using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
-using WebBanSach_2_0.Service.Models;
+using WebBanSach_2_0.Web.Models;
 
 namespace WebBanSach_2_0.Service.Controllers
 {
     public class CartController : Controller
     {
         private const string cartSession = "CartSession";
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IApplicationUserRepository _applicationUserRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IOrderDetailRepository _orderDetailRepository;
-        private readonly IMapper _mapper;
+        private readonly IClientCartService _clientCartService;
+        private readonly IClientOrderService _clientOrderService;
 
-        public CartController(IUnitOfWork unitOfWork, IApplicationUserRepository applicationUserRepository, IProductRepository productRepository
-            , IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper)
+        public CartController(IClientCartService clientCartService, IClientOrderService clientOrderService)
         {
-            this._unitOfWork = unitOfWork;
-            this._applicationUserRepository = applicationUserRepository;
-            this._productRepository = productRepository;
-            this._orderRepository = orderRepository;
-            this._orderDetailRepository = orderDetailRepository;
-            this._mapper = mapper;
+            this._clientCartService = clientCartService;
+            this._clientOrderService = clientOrderService;
         }
    
         // GET: Cart
         public ActionResult Index()
         {
-            var cart = Session[cartSession] as List<CartItem>;
-            if (cart != null)
+            var shoppingCart = (ShoppingCart)Session[cartSession] ?? new ShoppingCart();
+            var cart = new ClientCartResponse() 
+            { 
+                Cart = shoppingCart.Cart              
+            };
+
+            if (cart.Cart != null)
             {
-                ViewBag.Cart = cart;
-                ViewBag.Total = cart.Sum(m => m.Product.Price * m.Quantity);
-            }
-           
-            return View();
+                cart.TotalPrice = cart.Cart.Sum(m => m.Product.Price * (100 - m.Product.Discount.DiscountValue) / 100 * m.Quantity);
+            }  
+            return View(cart);
         }
 
-        public ActionResult Checkout(string user = null)
+        
+        public async Task<ActionResult> Checkout(string user = null)
         {
-            var client = new ClientViewModel();
-            if (user != null)
+            var shoppingCart = (ShoppingCart)Session[cartSession];
+            var response = _clientCartService.GetCheckoutModel(shoppingCart, user);
+            if (!string.IsNullOrEmpty(shoppingCart.CartPromoCode))
             {
-                var temp = _applicationUserRepository.GetUserByUserName(user);
-                client = new ClientViewModel() { FullName = temp.FullName, Address = temp.Address, Email = temp.Email, PhoneNumber = temp.PhoneNumber };              
+                var order = response.OrderInfo;
+                response = await _clientCartService.AddCodeToCart(shoppingCart.Cart, shoppingCart.CartPromoCode);
+                response.OrderInfo = order;
             }
-
-            
-            var cart = Session[cartSession] as List<CartItem>;
-            if (cart != null)
-            {
-                ViewBag.Cart = cart;
-                ViewBag.Total = cart.Sum(m => m.Product.Price * m.Quantity);
-            }
-            ViewBag.Client = client;
-            return View();
+            return View(response);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CheckoutConfirmed(ClientViewModel client)
+        public async Task<ActionResult> Checkout(string promoCode, string user = null)
         {
-            var user = _applicationUserRepository.GetUserByUserName(client.Email);
-            var cart = Session[cartSession] as List<CartItem>;
-            var order = EntityExtensions.CreateOrder(client);
-            await _orderRepository.AddAsync(order);
-            
-            foreach (var item in cart)
+            var shoppingCart = (ShoppingCart)Session[cartSession];
+            var checkoutModel = _clientCartService.GetCheckoutModel(shoppingCart, user);
+            var response = await _clientCartService.AddCodeToCart(shoppingCart.Cart, promoCode);
+            response.OrderInfo = checkoutModel.OrderInfo;
+            if (string.IsNullOrEmpty(response.PromoCode))
             {
-                var orderDetail = new OrderDetail() { OrderId = order.OrderId, ProductId = item.Product.ID, Quantity = item.Quantity };
-                await _orderDetailRepository.AddAsync(orderDetail);
+                ModelState.AddModelError("promoCode", "Mã không tồn tại.");
             }
-            await _unitOfWork.SaveAsync();
-            Session.Remove(cartSession);
-            return RedirectToAction("Index","Home");
+
+            SaveCartSession(response);
+            return View(response);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CheckoutConfirmed(ClientCartResponse order)
+        {
+            if (ModelState.IsValid)
+            {
+                var shoppingCart = (ShoppingCart)Session[cartSession];
+                var orderToAdd = order.OrderInfo;
+                if (await _clientOrderService.PlaceOrder(shoppingCart, orderToAdd) > 0)
+                {
+                    Session.Remove(cartSession);
+                    return RedirectToAction("OrderComplete");
+                }
+            }
+            
+            return RedirectToAction("Checkout");
         }
 
         public ActionResult AddToCart(string nameID)
         {
-            bool status = false;
-            var currentCart = Session[cartSession] as List<CartItem>;
-            List<CartItem> cart = new List<CartItem>();
-            var product = _mapper.Map<Product, ProductVM>(_productRepository.GetProductByNameIDAsync(nameID));
-            if(product != null)
-            {
-                if (currentCart == null || currentCart.Count == 0)
-                {
-                    cart.Add(new CartItem { Product = product, Quantity = 1 });
-                }
-                else
-                {
-                    cart = Session[cartSession] as List<CartItem>;
-                    int index = isExist(nameID);
-                    if (index != -1)
-                    {
-                        cart[index].Quantity++;
-                    }
-                    else
-                    {
-                        cart.Add(new CartItem { Product = product, Quantity = 1 });
-                    }
-                    status = true;
-                }
+            var shoppingCart = (ShoppingCart)Session[cartSession] ?? new ShoppingCart() { Cart = new List<CartItem>(), CartPromoCode = string.Empty };
 
-            }
-
-            Session[cartSession] = cart;
-            return Json(new {cart = Session[cartSession], status = status });
+            shoppingCart.Cart = _clientCartService.AddToCart(shoppingCart.Cart, nameID, 1);
+            SaveCartSession(shoppingCart);
+            return Json(new { cartLength = shoppingCart.Cart.Count, status = true });
         }
 
         public ActionResult UpdateCart(string nameID, int quantity)
         {
-            var cart = Session[cartSession] as List<CartItem>;
-            int index = isExist(nameID);
-            cart[index].Quantity = quantity;
-
-            var total = cart.Sum(m => m.Product.Price * m.Quantity);
-
-            return Json(new { cart = cart,total = total , status = true });
-        }
+            var shoppingCart = (ShoppingCart)Session[cartSession];
+            shoppingCart.Cart = _clientCartService.UpdateCart(shoppingCart.Cart, nameID, quantity);
+            var totalPrice = shoppingCart.Cart.Sum(m => (m.Product.Price * (100 - m.Product.Discount.DiscountValue) / 100) * m.Quantity);
+            SaveCartSession(shoppingCart);
+            return Json(new { total = totalPrice, status = true });
+        }        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(string deleteId)
         {
-            var cart = Session[cartSession] as List<CartItem>;
-            int index = isExist(deleteId);
-            cart.RemoveAt(index);
-            ViewBag.Quantity = cart.Count - 1;
-            if (cart.Count == 0)
+            var shoppingCart = (ShoppingCart)Session[cartSession];
+            shoppingCart.Cart = _clientCartService.DeleteItem(shoppingCart.Cart, deleteId);
+            SaveCartSession(shoppingCart);
+            if (shoppingCart.Cart.Count == 0)
             {
                 Session.Remove(cartSession);
-                ViewBag.Quantity = 0;
             }
-            
+
             return RedirectToAction("Index");
         }
 
-        private int isExist(string id)
+        public ActionResult OrderComplete(string message = null)
         {
-            var cart = Session[cartSession] as List<CartItem>;
-            for (int i = 0; i < cart.Count; i++)
-            {
-                if (cart[i].Product.NameID.Equals(id))
-                {
-                    return i;
-                }
-            }
-            return -1;
+            return View();
+        }
+
+        private void SaveCartSession(ClientCartResponse response)
+        {
+            var shoppingCart = new ShoppingCart { Cart = response.Cart, CartPromoCode = response.PromoCode };
+            Session[cartSession] = shoppingCart;
+        }
+
+        private void SaveCartSession(ShoppingCart response)
+        {
+            Session[cartSession] = response;
         }
     }
 }

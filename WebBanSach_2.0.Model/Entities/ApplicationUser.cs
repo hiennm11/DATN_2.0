@@ -15,6 +15,7 @@ namespace WebBanSach_2_0.Model.Entities
         public string Address { get; set; }
         public DateTime? Dob { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<Discount> Discounts { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType

@@ -1,0 +1,61 @@
+﻿
+@model ClientOrderDetailResponse
+
+<div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col"> </th>
+                <th scope="col">Sản phẩm</th>
+                <th scope="col">Giá bán</th>
+                <th scope="col">Số lượng</th>
+                <th scope="col" class="text-right">Đơn giá</th>
+                <th> </th>
+            </tr>
+        </thead>
+        <tbody id="order-detail-dataTable">
+            @foreach (var item in Model.Carts)
+            {
+                <tr>
+                    <td><img src="@(!string.IsNullOrEmpty(item.Product.Image) ? item.Product.Image : "/img/noCover.jpg")" style="width:100px;height:auto" /> </td>
+                    <td>@item.Product.Name</td>
+                    <td>
+                        @if (item.Product.Discount.DiscountValue > 0)
+                        {
+                            <div>@(String.Format("{0:0,0}", item.Product.Price * (100 - item.Product.Discount.DiscountValue) / 100)).đ</div>
+                            <div class="text-muted"><del>@(String.Format("{0:0,0}", item.Product.Price)).đ</del></div>
+                        }
+                        else
+                        {
+                            <div>@(String.Format("{0:0,0}", item.Product.Price)).đ</div>
+                        }
+                    </td>
+                    <td>@item.Quantity</td>
+                    <td class="text-right" id="item-total">
+                        @if (item.Product.Discount.DiscountValue > 0)
+                        {
+                            <div>@(String.Format("{0:0,0}", item.Product.Price * (100 - item.Product.Discount.DiscountValue) / 100 * item.Quantity)).đ</div>
+                        }
+                        else
+                        {
+                            <div>@(String.Format("{0:0,0}", item.Product.Price * item.Quantity)).đ</div>
+                        }
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td></td>
+                <td><strong>Tạm tính:</strong> @(String.Format("{0:0,0}", Model.TotalPrice)).đ</td>
+                <td class="text-danger"><strong>Phí ship:</strong> 50,000.đ</td>
+                <td class="text-success">
+                    @if (Model.BonusPrice > 0)
+                    {
+                        <strong>Giảm giá:</strong> @(String.Format("{0:0,0}.đ", Model.BonusPrice))
+                    }
+                </td>
+                <td><strong>Tổng:</strong> @(String.Format("{0:0,0}", Model.TotalPrice - Model.BonusPrice + 50000)).đ</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

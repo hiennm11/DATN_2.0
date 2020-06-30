@@ -19,6 +19,15 @@ namespace WebBanSach_2._0.Web
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
+            bundles.Add(new ScriptBundle("~/bundles/ckeditor").Include(
+                        "~/Scripts/ckeditor/ckeditor.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/chosen").Include(
+                        "~/Scripts/chosen/chosen.jquery.min.js",
+                        "~/Scripts/chosen/chosen.jquery.js",
+                        "~/Scripts/chosen/docsupport/prism.js",
+                        "~/Scripts/chosen/docsupport/init.js"));
+
             // Use the development version of Modernizr to develop with and learn from. Then, when you're
             // ready for production, use the build tool at https://modernizr.com to pick only the tests you need.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
@@ -40,7 +49,8 @@ namespace WebBanSach_2._0.Web
                 "~/Areas/Admin/Content/vendor/datatables/dataTables.bootstrap4.css",
                 "~/Areas/Admin/Content/vendor/fontawesome-free/css/all.min.css",
                 "~/Areas/Admin/Content/css/bs-pagination.css",
-                "~/Areas/Admin/Content/css/jquery-ui.css"));
+                "~/Areas/Admin/Content/css/jquery-ui.css",
+                "~/Scripts/chosen/chosen.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/admin/js").Include(
                 "~/Areas/Admin/Content/vendor/bootstrap/js/bootstrap.bundle.min.js",

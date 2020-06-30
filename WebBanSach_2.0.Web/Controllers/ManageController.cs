@@ -1,46 +1,29 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Web.App_Start;
-using WebBanSach_2_0.Web.Infrastructure;
-using WebBanSach_2_0.Web.Models;
-using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
-using AutoMapper;
-using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Service;
+using WebBanSach_2_0.Web.App_Start;
+using WebBanSach_2_0.Web.Models;
 
 namespace WebBanSach_2_0.Web.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
+        private readonly IClientOrderService _clientOrderService;
         private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-        private IUnitOfWork _unitOfWork;
-        private IMapper _mapper;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IOrderDetailRepository _orderDetailRepository;
+        private ApplicationUserManager _userManager;        
 
-        public ManageController()
+        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IClientOrderService clientOrderService)
         {
-        }
-
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUnitOfWork unitOfWork, IMapper mapper, 
-                                IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            this._orderRepository = orderRepository;
-            this._orderDetailRepository = orderDetailRepository;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            this._clientOrderService = clientOrderService;
         }
 
         public ApplicationSignInManager SignInManager
@@ -48,11 +31,7 @@ namespace WebBanSach_2_0.Web.Controllers
             get
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
+            }           
         }
 
         public ApplicationUserManager UserManager
@@ -60,11 +39,7 @@ namespace WebBanSach_2_0.Web.Controllers
             get
             {
                 return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            }            
         }
         // GET: Manage
         public async Task<ActionResult> Index(ManageMessageId? message)
@@ -217,29 +192,26 @@ namespace WebBanSach_2_0.Web.Controllers
         public async Task<ActionResult> Order()
         {
             var user =  UserManager.FindById(User.Identity.GetUserId());
-            var temp = await _orderRepository.GetAllAsync();
-            var data = _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(temp.Where(m => m.CustomerEmail == user.UserName));
-            return View(data);
+            var response = await _clientOrderService.GetOrder(user.Email);
+            return View(response);
         }
 
-        public async Task<JsonResult> GetOrderDetail(int id)
+        public ActionResult GetOrderDetailPartial(int id)
         {
-            var list = await _orderDetailRepository.GetAllAsync();           
-            List<CartItem> cart = new List<CartItem>();
-            foreach (var item in list.Where(m => m.OrderId == id))
+            return Task.Run(async () =>
             {
-                var product = _mapper.Map<Product, ProductVM>(item.Product);
-                CartItem cartItem = new CartItem { Product = product, Quantity = item.Quantity };
-                cart.Add(cartItem);
-            }
-            var total = cart.Sum(m => m.Product.Price * m.Quantity);
-            return Json(new { data = cart, total = total, status = true });
-        }
-
+                var cart = await _clientOrderService.GetOrderDetailCartView(id);
+                if (Request.IsAjaxRequest())
+                {
+                    return PartialView("_OrderDetail", cart);
+                }
+                return PartialView("_OrderDetail", cart);               
+            }).Result;            
+        }        
 
         #region Helpers
         // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId";       
+        private const string XsrfKey = "XsrfId";
 
         private IAuthenticationManager AuthenticationManager
         {

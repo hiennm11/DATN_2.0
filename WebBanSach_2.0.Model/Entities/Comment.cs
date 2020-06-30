@@ -16,6 +16,7 @@ namespace WebBanSach_2_0.Model.Entities
         public int ProductId { get; set; }
         public string UserId { get; set; }
         public string Review { get; set; }
+        public double Rating { get; set; }
         public DateTime CommentDate { get; set; }
 
         public Product Product { get; set; }

@@ -2,8 +2,6 @@
 @{
     ViewBag.Title = "Details";
     var cate = new SelectList(Model.Categories.OrderBy(m => m.CategoryId), "CategoryId", "CategoryName");
-
-    var request = new WebBanSach_2_0.Model.RequestModels.AdminProductRequest();
 }
 
 <!-- Breadcrumbs-->
@@ -33,16 +31,20 @@
             @Html.AntiForgeryToken()
 
             <div class="form-horizontal">
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                @Html.HiddenFor(model => model.Product.ProductId)
-                @Html.HiddenFor(model => model.Product.Purchase)
-                @Html.HiddenFor(model => model.Product.Star)
-                @Html.HiddenFor(model => model.Product.UpdateBy)
-                @Html.HiddenFor(model => model.Product.UpdatedDate)
-                @Html.HiddenFor(model => model.Product.CreateBy)
-                @Html.HiddenFor(model => model.Product.CreateDate)
-                @Html.HiddenFor(model => model.Product.Image)
-               
+                <div class="hidden-input">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.Product.ProductId)
+                    @Html.HiddenFor(model => model.Product.Purchase)
+                    @Html.HiddenFor(model => model.Product.Star)
+                    @Html.HiddenFor(model => model.Product.UpdateBy)
+                    @Html.HiddenFor(model => model.Product.UpdatedDate)
+                    @Html.HiddenFor(model => model.Product.CreateBy)
+                    @Html.HiddenFor(model => model.Product.CreateDate)
+                    @Html.HiddenFor(model => model.Product.Image)
+                    @Html.HiddenFor(model => model.Product.PublicationDate)
+                    @Html.HiddenFor(model => model.Product.UniqueStringKey)
+                </div>
+
                 <div class="row">
                     <div class="col-md-7">
                         <div class="form-group">
@@ -62,14 +64,6 @@
                         </div>
 
                         <div class="form-group">
-                            @Html.Label("Mô tả", htmlAttributes: new { @class = "control-label col-md-5" })
-                            <div class="col-md-10">
-                                @Html.EditorFor(model => model.Product.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                @Html.ValidationMessageFor(model => model.Product.Description, "", new { @class = "text-danger" })
-                            </div>
-                        </div>
-
-                        <div class="form-group">
                             @Html.Label("Giá", htmlAttributes: new { @class = "control-label col-md-5" })
                             <div class="col-md-10">
                                 @Html.EditorFor(model => model.Product.Price, new { htmlAttributes = new { @class = "form-control" } })
@@ -85,12 +79,21 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-5" })
-                            <div class="col-md-10">
-                                <div class="checkbox">
+                        <div class="form-group row">
+                            
+                            <div class="col">
+                                @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="checkbox col">
                                     @Html.EditorFor(model => model.Product.Status)
                                     @Html.ValidationMessageFor(model => model.Product.Status, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            
+                            <div class="col">
+                                @Html.Label("Tình trạng", htmlAttributes: new { @class = "control-label col-md-5" })
+                                <div class="checkbox col">
+                                    @Html.EditorFor(model => model.Product.IsAvailable)
+                                    @Html.ValidationMessageFor(model => model.Product.IsAvailable, "", new { @class = "text-danger" })
                                 </div>
                             </div>
                         </div>
@@ -107,7 +110,16 @@
                             <div class="col-md-10">
                                 <input type="file" id="file" name="file" class="form-control-file border" accept="image/*">
                             </div>
-                            
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            @Html.Label("Mô tả", htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-10">
+                                @Html.TextAreaFor(model => model.Product.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Product.Description, "", new { @class = "text-danger" })
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -130,8 +142,17 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/ckeditor")
     <script>
         (function () {
+
+            CKEDITOR.editorConfig = function (config) {
+                config.removePlugins = 'easyimage, cloudservices';
+            };
+
+            CKEDITOR.replace("Product_Description");
+     
+            
             $("#file").change(function () {
                 readURL(this);
             });

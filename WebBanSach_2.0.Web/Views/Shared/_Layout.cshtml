@@ -1,5 +1,5 @@
 ﻿@{ 
-    var cart = Session["CartSession"] as List<CartItem>;
+    var cart = Session["CartSession"] as ShoppingCart;
 }
 <!DOCTYPE html>
 <html>
@@ -35,7 +35,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                             Thể loại sách
                         </a>
-                        @*@{Html.RenderAction("CategoryMenu", "Home");}*@
+                        @{Html.RenderAction("CategoryMenu", "Home");}
                     </li>
                     <li class="nav-item dropdown menu-dropdown col">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
@@ -50,7 +50,7 @@
                 @RenderSection("searchBar", false)
                 <a class="btn btn-success btn-sm ml-3" href="/gio-hang">
                     <i class="fa fa-shopping-cart"></i> Giỏ hàng
-                    <span class="badge badge-light" id="cart-quantity">@(cart != null ? cart.Count : 0)</span>
+                    <span class="badge badge-light" id="cart-quantity">@(cart != null ? cart.Cart.Count : 0)</span>
                 </a>
             </div>
             @Html.Partial("_LoginPartial")

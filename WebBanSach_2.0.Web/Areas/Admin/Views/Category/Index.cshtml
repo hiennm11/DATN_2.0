@@ -96,37 +96,7 @@
                 </tbody>
             </table>
             <div class="row">
-                <div class="col-sm-12 col-md-5">
-                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
-
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-7">
-                    <!-- pager -->
-                    <ul class="pagination" id="paged">
-                        @if (pager.CurrentPage > 1)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = 1 })">First</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage - 1 })"> Previous</a></li>
-                        }
-                        @for (int i = pager.StartPage; i <= pager.EndPage; i++)
-                        {
-                            if (i == pager.CurrentPage)
-                            {
-                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
-                            }
-                            else
-                            {
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
-                            }
-                        }
-                        @if (pager.CurrentPage < pager.TotalPages)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage + 1 })"> Next</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.TotalPages })"> Last</a></li>
-                        }
-                    </ul>
-                </div>
+                @{ Html.RenderPartial("_Pager", Model.Pager); }
             </div>
         </div>
     </div>

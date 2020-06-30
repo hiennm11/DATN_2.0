@@ -6,22 +6,7 @@ using System.Web;
 
 namespace WebBanSach_2_0.Web.Models
 {
-    public class ClientViewModel
-    {
-        [Required]
-        public string FullName { get; set; }
-        [Required]
-        public string Address { get; set; }
-        [Required]
-        public string PhoneNumber { get; set; }
-        [Required]
-        public string Email { get; set; }
-        public string PaymentMethod { get; set; }
-        
-        public DateTime? Dob { get; set; }
-
-    }
-
+    
     public class ExternalLoginConfirmationViewModel
     {
         [Required]

@@ -69,42 +69,6 @@ body a:hover {
     background-color: Highlight;
 }
 
-.item-card {
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    max-width: 300px;
-    margin: auto;
-    text-align: center;
-    font-family: arial;
-}
-
-.item-card > .price {
-    color: grey;
-    font-size: 22px;
-}
-
-.item-card h6 {
-    margin-bottom: 10px;
-    height: 35px;
-}
-
-    .item-card .add-to-cart {
-        border: none;
-        outline: 0;
-        padding: 12px;
-        color: white;
-        background-color: #0094ff;
-        text-align: center;
-        cursor: pointer;
-        width: 100%;
-        font-size: 18px;
-    }
-
-    .item-card .add-to-cart:hover {
-        opacity: 0.7;
-    }
-
-
-
 
 .detail__intro-img-wrap {
     border: 1px solid #e1e1e1;
@@ -146,4 +110,22 @@ body a:hover {
     #back2Top:hover {
         background-color: #DDF;
         color: #000;
+    }
+
+.related .carousel-indicators {
+    left: 0;
+    top: auto;
+    bottom: -40px;
+}
+
+    /* The colour of the indicators */
+    .related .carousel-indicators li {
+        background: #a3a3a3;
+        border-radius: 50%;
+        width: 8px;
+        height: 8px;
+    }
+
+    .related .carousel-indicators .active {
+        background: #707070;
     }

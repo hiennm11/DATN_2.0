@@ -8,6 +8,7 @@ using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.AdminServices;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {
@@ -37,7 +38,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Detail(CategoryVM category)
         {
             if (ModelState.IsValid)

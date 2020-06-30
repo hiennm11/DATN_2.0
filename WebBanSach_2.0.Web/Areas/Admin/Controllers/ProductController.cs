@@ -14,6 +14,7 @@ using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.AdminServices;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
@@ -65,7 +66,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
         public async Task<ActionResult> Detail(ProductVM product, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)

@@ -13,6 +13,10 @@ namespace WebBanSach_2_0.Web.Infrastructure
             CreateMap<Author, AuthorVM>().ReverseMap();
             CreateMap<Order, OrderVM>().ReverseMap();
             CreateMap<OrderDetail, OrderDetailVM>().ReverseMap();
+            CreateMap<Comment, CommentVM>().ReverseMap();
+            CreateMap<Discount, DiscountVM>().ReverseMap();
+            CreateMap<Shipper, ShipperVM>().ReverseMap();
+
         }
 
         //public static MapperConfiguration config = new MapperConfiguration(cfg => {

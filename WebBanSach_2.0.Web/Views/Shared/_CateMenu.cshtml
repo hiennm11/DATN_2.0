@@ -1,8 +1,0 @@
-﻿@model IEnumerable<CategoryVM>
-    <div class="dropdown-menu scrollable-menu" role="menu">
-        <a class="dropdown-item" href="/">Tất cả</a>
-        @foreach (var item in Model)
-        {
-            <a class="dropdown-item cate-item" data-id="@item.Description" href="/san-pham/@item.Description">@item.CategoryName</a>
-        }
-    </div>

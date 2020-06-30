@@ -27,12 +27,14 @@ namespace WebBanSach_2_0.Model.Entities
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
 
-        public string PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public bool PaymentStatus { get; set; }
         public OrderStatus Status { get; set; }
         
 
         public IEnumerable<OrderDetail> OrderDetails { get; set; }
+        public Shipper Shipper { get; set; }
+        public Discount Discount { get; set; }
 
     }
 }

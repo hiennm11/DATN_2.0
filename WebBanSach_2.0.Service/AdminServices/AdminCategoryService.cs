@@ -9,17 +9,11 @@ using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
 {
-    public interface IAdminCategoryService
-    {
-        Task<IndexViewModel<CategoryVM>> GetDataAsync(int page, string search);
-        Task<CategoryVM> GetDataByIDAsync(int id);
-        Task<int> SaveDataAsync(CategoryVM viewModel);
-        Task<int> DeleteDataAsync(int id);
-    }
     public class AdminCategoryService : IAdminCategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -83,6 +77,7 @@ namespace WebBanSach_2_0.Service.AdminServices
                 entity.CreateBy = "admin"; entity.UpdateBy = "admin";
                 entity.CreateDate = DateTime.Now;
                 entity.UpdatedDate = DateTime.Now;
+                entity.UniqueStringKey = Guid.NewGuid();
 
                 await _categoryRepository.AddAsync(entity);
             }

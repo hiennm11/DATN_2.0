@@ -10,39 +10,34 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <td>#</td>
-                <td>Ngày đặt hàng</td>
-                <td>Địa chỉ nhận</td>
-                <td>Điện thoại</td>
-                <td>Hình thức thanh toán</td>
-                <td>Trạng thái</td>
-                <td></td>
+                <th>#</th>
+                <th>Ngày đặt hàng</th>
+                <th>Địa chỉ nhận</th>
+                <th>Điện thoại</th>
+                <th>Hình thức thanh toán</th>
+                <th>Trạng thái</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @if (Model != null)
             {
+                int count = 1;
                 foreach (var item in Model)
                 {
                     <tr>
-                        <td>1</td>
+                        <td>@count @{ count++; }</td>
                         <td>@item.CreatedDate</td>
                         <td>@item.CustomerAddress</td>
                         <td>@item.CustomerMobile</td>
-                        <td>@item.PaymentMethod</td>
+                        <td>@Extension.GetEnumDisplayName(item.PaymentMethod)</td>
                         <td>
-                            @switch (item.Status)
-                            {
-                                case 1:<span>Đang giao hàng</span>; break;
-                                case 2: <span class="text-success">Đã hoàn thành</span>; break;
-                                default: <span class="text-danger">Đã hủy</span>;
-                                    break;
-                            }
+                           @Extension.GetEnumDisplayName(item.Status)                            
                         </td>
-                        <td>
-                            <button type="button" class="btn btn-primary btn-order-detail" data-id="@item.ID">
-                                Chi tiết
-                            </button>
+                        <td>                            
+                            @Ajax.ActionLink("Chi tiết", "GetOrderDetailPartial", new { @id = item.OrderId }
+                                            ,new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "modal-detail" }
+                                            ,new { @class = "btn btn-primary btn-order-detail" })
                         </td>
                     </tr>
                 }
@@ -68,39 +63,8 @@
                 <h4 class="modal-title">Chi tiết hóa đơn</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col"> </th>
-                                <th scope="col">Sản phẩm</th>
-                                <th scope="col">Giá bán</th>
-                                <th scope="col" class="text-center">Số lượng</th>
-                                <th scope="col" class="text-right">Đơn giá</th>
-                                <th> </th>
-                            </tr>
-                        </thead>
-                        <tbody id="order-detail-dataTable">
-                            <tr>
-                                <td><img src="" style="width:100px;height:auto" /> </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td class="text-right">vnđ</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
+            <div class="modal-body" id="modal-detail">
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -111,5 +75,12 @@
 </div>
 
 @section homeScript{
-    @Scripts.Render("~/bundles/app-js.js")
+    <script>
+        (function () {
+            $(".btn-order-detail").off('click').on('click', function () {
+                $("#order-detail-modal").modal('show');
+            });
+        })();
+        
+    </script>
 }

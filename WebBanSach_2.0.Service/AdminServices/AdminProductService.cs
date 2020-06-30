@@ -2,49 +2,38 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
 {
-    public interface IAdminProductService
-    {
-        Task<int> AddAuthorToProduct(string productId, int[] authorId);
-        Task<int> DeleteAuthorFromProduct(string productId, int authorId);
-        Task<IEnumerable<ProductVM>> GetAllProductAsync();
-        Task<IndexViewModel<ProductVM>> GetDataAsync(int page, string search, int cateId);
-        Task<IEnumerable<CategoryVM>> GetCategoriesListAsync();
-        Task<ProductVM> GetDataByIDAsync(string id);
-        Task<int> SaveDataAsync(ProductVM viewModel);
-        Task<int> DeleteDataAsync(int id);
-    }
-
     public class AdminProductService : IAdminProductService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IDiscountRepository _discountRepository;
         private readonly IAuthorDetailRepository _authorDetailRepository;
         private readonly IMapper _mapper;
 
         public AdminProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository
-                                                         , IAuthorDetailRepository authorDetailRepository, IMapper mapper)
+                                  ,IDiscountRepository discountRepository, IAuthorDetailRepository authorDetailRepository, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _discountRepository = discountRepository;
             _authorDetailRepository = authorDetailRepository;
             _mapper = mapper;
         }
 
-        public async Task<IndexViewModel<ProductVM>> GetDataAsync(int page, string search, int cateId)
+        public async Task<IndexViewModel<ProductVM>> GetDataAsync(int page, string search, int? cateId)
         {
             var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetAllAsync(new string[1] { "Category" }));
             var pager = new Pager(_productRepository.GetTotalRow(), page);
@@ -54,9 +43,9 @@ namespace WebBanSach_2_0.Service.AdminServices
                 data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetBySearchAsync(EntityExtensions.ConvertToUnSign(search)));
                 pager = new Pager(data.Count(), page);
             }
-            if (cateId > 0)
+            if (cateId.HasValue && cateId > 0)
             {
-                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetByCategoryIdAsync(cateId));
+                data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetByCategoryIdAsync(cateId.Value));
                 pager = new Pager(data.Count(), page);
             }
 
@@ -88,6 +77,11 @@ namespace WebBanSach_2_0.Service.AdminServices
                 entity.Purchase = 0; entity.Star = 0;
                 entity.CreateDate = DateTime.Now;
                 entity.UpdatedDate = DateTime.Now;
+                entity.PublicationDate = DateTime.Now;
+                entity.UniqueStringKey = Guid.NewGuid();
+
+                var zeroDiscount = await _discountRepository.GetSingleByIDAsync(1);
+                entity.Discount = zeroDiscount;
 
                 await _productRepository.AddAsync(entity);
             }

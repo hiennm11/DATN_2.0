@@ -68,9 +68,20 @@ namespace WebBanSach_2_0.Data.Infrastructure
             });
         }
 
-        public async Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize)
+        public async Task<IEnumerable<T>> GetPagingAsync(int page, int pageSize, string[] includes = null)
         {
-            return await _dbContext.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            var result = new List<T>();
+            if (includes != null && includes.Count() > 0)
+            {
+                var query = _dbContext.Set<T>().Include(includes.First());
+                foreach (var include in includes.Skip(1))
+                    query = query.Include(include);
+                result = await query.ToListAsync();
+                return result.Skip((page - 1) * pageSize).Take(pageSize);
+            }
+
+            result = await _dbContext.Set<T>().ToListAsync();
+            return result.Skip((page - 1) * pageSize).Take(pageSize);
         }
 
         public int GetTotalRow()

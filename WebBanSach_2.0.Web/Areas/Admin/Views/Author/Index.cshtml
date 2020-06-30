@@ -97,37 +97,8 @@
                 </tbody>
             </table>
             <div class="row">
-                <div class="col-sm-12 col-md-5">
-                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite">
+                @{ Html.RenderPartial("_Pager", Model.Pager); }
 
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-7">
-                    <!-- pager -->
-                    <ul class="pagination" id="paged">
-                        @if (pager.CurrentPage > 1)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = 1 })">First</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage - 1 })"> Previous</a></li>
-                        }
-                        @for (int i = pager.StartPage; i <= pager.EndPage; i++)
-                        {
-                            if (i == pager.CurrentPage)
-                            {
-                                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
-                            }
-                            else
-                            {
-                                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
-                            }
-                        }
-                        @if (pager.CurrentPage < pager.TotalPages)
-                        {
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.CurrentPage + 1 })"> Next</a></li>
-                            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = pager.TotalPages })"> Last</a></li>
-                        }
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
@@ -161,60 +132,6 @@
         </div>
     </div>
 </div>
-
-<!-- Create Modal-->
-<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <i class="far fa-edit"></i>
-                Create or Edit
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form role="form" id="createForm">
-                @Html.AntiForgeryToken()
-                <div class="modal-body" id="modal-body">
-                    <div class="form-horizontal">
-                        <input data-val="true" data-val-number="The field ID must be a number." data-val-required="The ID field is required." id="ID" name="ID" type="hidden" value="0">
-                        <input id="pageNumber" type="hidden" value="0">
-
-                        <div class="form-group">
-                            <label class="control-label col-md-5" for="Name">Tên tác giả</label>
-                            <div class="col-md-10">
-                                <input class="form-control text-box single-line" id="Name" name="Name" type="text" value="" required="required">
-                                <span class="field-validation-valid text-danger" data-valmsg-for="CategoryName" data-valmsg-replace="true"></span>
-                                <div class="text-danger"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="control-label col-md-5" for="Description">Mô tả</label>
-                            <div class="col-md-10">
-                                <input class="form-control text-box single-line" id="Description" name="Description" type="text" value="">
-                                <span class="field-validation-valid text-danger" data-valmsg-for="Description" data-valmsg-replace="true"></span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="control-label col-md-5" for="Status">
-                                <input type="checkbox" id="Status" name="Status" value="true">
-                                Active
-                            </label>
-
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <input type="submit" class="btn btn-success" id="saveData" value="Save">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </form>
-
-        </div>
-    </div>
-</div>
-
 
 @section scripts {
     <script>

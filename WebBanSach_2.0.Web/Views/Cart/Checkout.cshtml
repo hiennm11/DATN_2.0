@@ -1,34 +1,42 @@
-﻿
+﻿@model ClientCartResponse
 @{
     ViewBag.Title = "Checkout";
-    var client = (WebBanSach_2_0.Web.Models.ClientViewModel)ViewBag.Client;
-    var cart = (List<CartItem>)ViewBag.Cart;
-    var total = ViewBag.Total;
+
 }
 
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-            <li class="breadcrumb-item"><a href="/gio-hang">Giỏ hàng</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
-        </ol>
-    </nav>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a href="/gio-hang">Giỏ hàng</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+    </ol>
+</nav>
 <div class="container">
     <div class="row">
         <div class="col-md-4 order-md-2 mb-4">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Giỏ hàng của bạn</span>
-                <span class="badge badge-secondary badge-pill">@cart.Count()</span>
+                <span class="badge badge-secondary badge-pill">@Model.Cart.Count()</span>
             </h4>
             <ul class="list-group mb-3">
-                @foreach (var item in cart)
+                @foreach (var item in Model.Cart)
                 {
                     <li class="list-group-item d-flex justify-content-between lh-condensed">
                         <div style="width:75%">
                             <h6 class="my-0">@item.Product.Name</h6>
                             <small class="text-muted">Số lượng : @item.Quantity sản phẩm.</small>
                         </div>
-                        <span class="text-muted">@(String.Format("{0:0,0}", (item.Product.Price * item.Quantity))).đ</span>
+                        <div class="text-right">
+                            @if (item.Product.Discount.DiscountValue > 0)
+                            {
+                                <span>@(String.Format("{0:0,0}", (item.Product.Price * (100 - item.Product.Discount.DiscountValue) / 100 * item.Quantity))).đ</span>
+                                <span class="text-muted"><del>@(String.Format("{0:0,0}", (item.Product.Price * item.Quantity))).đ</del></span>
+                            }
+                            else
+                            {
+                                <span>@(String.Format("{0:0,0}", (item.Product.Price * item.Quantity))).đ</span>
+                            }
+                        </div>
                     </li>
 
                 }
@@ -39,115 +47,152 @@
                     </div>
                     <span class="text-danger">50,000.đ</span>
                 </li>
-                @*<li class="list-group-item d-flex justify-content-between bg-light">
-                    <div class="text-success">
-                        <h6 class="my-0">Promo code</h6>
-                        <small>EXAMPLECODE</small>
-                    </div>
-                    <span class="text-success">-$5</span>
-                </li>*@
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Tổng tiền</span>
-                    <strong>@(String.Format("{0:0,0}", total + 50000)).đ</strong>
-                </li>
+                @if (!string.IsNullOrEmpty(Model.PromoCode))
+                {
+                    <li class="list-group-item d-flex justify-content-between bg-light">
+                        <div class="text-success">
+                            <h6 class="my-0">Mã giảm giá</h6>
+                            <small>@Model.PromoCode</small>
+                        </div>
+                        <span class="text-success">-@(String.Format("{0:0,0}", Model.TotalPrice - Model.CodePriceBonus)).đ</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng tiền</span>
+                        <strong>@(String.Format("{0:0,0}", Model.CodePriceBonus + 50000)).đ</strong>
+                    </li>
+                }
+                else
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Tổng tiền</span>
+                        <strong>@(String.Format("{0:0,0}", Model.TotalPrice + 50000)).đ</strong>
+                    </li>
+                }
             </ul>
 
-            @*<form class="card p-2">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Promo code">
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-secondary">Redeem</button>
+            @if (string.IsNullOrEmpty(Model.PromoCode))
+            {
+                <form class="card p-2" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="input-group">
+                        <input type="text" name="promoCode" class="form-control" placeholder="Promo code">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-secondary">Redeem</button>
+                        </div>
                     </div>
-                </div>
-            </form>*@
+                    @Html.ValidationMessage("promoCode", new { @class = "text-danger" })
+                </form>
+            }
         </div>
 
         <div class="col-md-8 order-md-1">
             <h4 class="mb-3">Thông tin người nhận hàng</h4>
             <span class="text-danger">*: Các thông tin bắt buộc</span>
             <br />
-            @using (Html.BeginForm("CheckoutConfirmed","Cart"))
+            @using (Html.BeginForm("CheckoutConfirmed", "Cart"))
             {
                 @Html.AntiForgeryToken()
+                <div class="hidden-item">
+                    @Html.HiddenFor(m => m.PromoCode)
+                </div>
                 <div class="mb-3">
                     <label for="firstName">Họ và tên <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="FullName" id="firstName" placeholder="" value="@(client == null ? "" : client.FullName)" required="">                    
+                    <input type="text" class="form-control" name="OrderInfo.CustomerName" id="firstName" placeholder="" value="@(Model.OrderInfo.CustomerName ?? Model.OrderInfo.CustomerName)" required="">
                 </div>
 
                 <div class="mb-3">
                     <label for="address">Địa chỉ <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="Address" id="address" placeholder="" value="@(client == null ? "" : client.Address)" required="">                    
+                    <input type="text" class="form-control" name="OrderInfo.CustomerAddress" id="address" placeholder="" value="@(Model.OrderInfo == null ? "" : Model.OrderInfo.CustomerAddress)" required="">
                 </div>
 
                 <div class="mb-3">
                     <label for="username">Số điện thoại <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="PhoneNumber" id="username" placeholder="Số điện thoại" value="@(client == null ? "" : client.PhoneNumber)" required="">
+                    <input type="text" class="form-control" name="OrderInfo.CustomerMobile" id="username" placeholder="Số điện thoại" value="@(Model.OrderInfo == null ? "" : Model.OrderInfo.CustomerMobile)" required="">
                 </div>
 
                 <div class="mb-3">
                     <label for="email">Email <span class="text-danger">*</span></label>
-                    <input type="email" class="form-control" name="Email" id="email" value="@(client == null ? "" : client.Email)" placeholder="you@example.com" required="">                   
+                    <input type="email" class="form-control" name="OrderInfo.CustomerEmail" id="email" value="@(Model.OrderInfo == null ? "" : Model.OrderInfo.CustomerEmail)" placeholder="you@example.com" required="">
                 </div>
 
                 <hr class="mb-4">
                 @*<div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="same-address">
-                <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
-            </div>
-            <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" id="save-info">
-                <label class="custom-control-label" for="save-info">Save this information for next time</label>
-            </div>
-            <hr class="mb-4">*@
+                        <input type="checkbox" class="custom-control-input" id="same-address">
+                        <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="save-info">
+                        <label class="custom-control-label" for="save-info">Save this information for next time</label>
+                    </div>
+                    <hr class="mb-4">*@
 
                 <h4 class="mb-3">Hình thức thanh toán</h4>
 
                 <div class="d-block my-3">
                     <div class="custom-control custom-radio">
-                        <input id="credit" name="PaymentMethod" type="radio" class="custom-control-input" value="card" checked="" required="">
-                        <label class="custom-control-label" for="credit">Chuyển khoản</label>
+                        @Html.RadioButtonFor(model => model.OrderInfo.PaymentMethod, PaymentMethod.ByBankTransferInAdvance)
+                        <label for="@PaymentMethod.ByBankTransferInAdvance">Chuyển khoản</label>
+                        
+
                     </div>
                     <div class="custom-control custom-radio">
-                        <input id="debit" name="PaymentMethod" type="radio" class="custom-control-input" value="cod"  required="">
-                        <label class="custom-control-label" for="debit">COD</label>
+                        @Html.RadioButtonFor(model => model.OrderInfo.PaymentMethod, PaymentMethod.COD)
+                        <label for="@PaymentMethod.COD">COD</label>
+                        
                     </div>
                 </div>
-                @*<div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="cc-name">Name on card</label>
-                    <input type="text" class="form-control" id="cc-name" placeholder="" required="">
-                    <small class="text-muted">Full name as displayed on card</small>
-                    <div class="invalid-feedback">
-                        Name on card is required
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label for="cc-number">Credit card number</label>
-                    <input type="text" class="form-control" id="cc-number" placeholder="" required="">
-                    <div class="invalid-feedback">
-                        Credit card number is required
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label for="cc-expiration">Expiration</label>
-                        <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
-                        <div class="invalid-feedback">
-                            Expiration date required
+                <div class="@(PaymentMethod.ByBankTransferInAdvance) box">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cc-name">Name on card</label>
+                            <input type="text" class="form-control" id="cc-name" placeholder="" required="">
+                            <small class="text-muted">Full name as displayed on card</small>
+                            <div class="invalid-feedback">
+                                Name on card is required
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cc-number">Credit card number</label>
+                            <input type="text" class="form-control" id="cc-number" placeholder="" required="">
+                            <div class="invalid-feedback">
+                                Credit card number is required
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="cc-expiration">CVV</label>
-                        <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
-                        <div class="invalid-feedback">
-                            Security code required
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="cc-expiration">Expiration</label>
+                            <input type="text" class="form-control" id="cc-expiration" placeholder="" required="">
+                            <div class="invalid-feedback">
+                                Expiration date required
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="cc-expiration">CVV</label>
+                            <input type="text" class="form-control" id="cc-cvv" placeholder="" required="">
+                            <div class="invalid-feedback">
+                                Security code required
+                            </div>
                         </div>
                     </div>
-                </div>*@
+                </div>
                 <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
+                <button class="btn btn-primary btn-lg btn-block" type="submit">ĐẶT HÀNG</button>
             }
         </div>
     </div>
 </div>
+
+@section homeScript {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        (function () {
+            $('input[type="radio"]').click(function () {
+                var inputValue = $(this).attr("value");
+                var targetBox = $("." + inputValue);
+                $(".box").not(targetBox).hide();
+                $(targetBox).show();
+            });
+        })();
+    </script>
+}

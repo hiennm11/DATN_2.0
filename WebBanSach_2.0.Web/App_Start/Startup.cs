@@ -9,7 +9,9 @@ using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
+using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.DataProtection;
 using Owin;
 using WebBanSach_2._0.Web;
 using WebBanSach_2_0.Data;
@@ -30,6 +32,7 @@ namespace WebBanSach_2_0.Web.App_Start
             // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
             ConfigAutofac(app);
             ConfigureAuth(app);
+
         }
         private void ConfigAutofac(IAppBuilder app)
         {
@@ -42,14 +45,17 @@ namespace WebBanSach_2_0.Web.App_Start
             //AutoMapper
             builder.RegisterInstance(config.CreateMapper()).As<IMapper>().SingleInstance();
 
-            //builder.RegisterControllers(Assembly.GetExecutingAssembly());
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();           
             builder.RegisterType<WebBanSach_2_0DbContext>().InstancePerRequest();
 
             ////ASP.NET Identity
-            //builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
-            //builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ApplicationUserStore>().As<IUserStore<ApplicationUser>>().InstancePerRequest();
+            builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();
+            builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerRequest();
+            builder.Register<IAuthenticationManager>(c => HttpContext.Current.GetOwinContext().Authentication).InstancePerRequest();
+            builder.Register<IDataProtectionProvider>(c => app.GetDataProtectionProvider()).InstancePerRequest();
+
 
             // Repositories
             builder.RegisterAssemblyTypes(typeof(CategoryRepository).Assembly)
@@ -63,14 +69,18 @@ namespace WebBanSach_2_0.Web.App_Start
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
 
+            // REGISTER WITH OWIN
+            app.UseAutofacMiddleware(container);
+            app.UseAutofacMvc();
+
         }
 
         private void ConfigureAuth(IAppBuilder app)
         {
-            // Configure the db context, user manager and signin manager to use a single instance per request
-            app.CreatePerOwinContext(WebBanSach_2_0DbContext.Create);
-            app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
-            app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
+            //// Configure the db context, user manager and signin manager to use a single instance per request
+            //app.CreatePerOwinContext(WebBanSach_2_0DbContext.Create);
+            //app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
+            //app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
 
             // Enable the application to use a cookie to store information for the signed in user
             // and to use a cookie to temporarily store information about a user logging in with a third party login provider

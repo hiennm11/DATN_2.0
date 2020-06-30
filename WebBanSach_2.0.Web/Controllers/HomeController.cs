@@ -9,8 +9,11 @@ using System.Web.Mvc;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
 using WebBanSach_2_0.Model.Entities;
+using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
+using WebBanSach_2_0.Service;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers
@@ -18,93 +21,83 @@ namespace WebBanSach_2._0.Web.Controllers
     [HandleError]
     public class HomeController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IProductRepository _productRepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private static int pageSize = 16;
+        private readonly IClientProductService _clientProductService;
+        private readonly IClientCategoryService _clientCategoryService;
+        private readonly IClientCommentService _clientCommentService;
 
-        //private UnitOfWork _unitOfWork = new UnitOfWork(new WebBanSach_2_0.Data.WebBanSach_2_0DbContext());
-        private readonly IMapper _mapper;
-
-        public HomeController(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository, IMapper mapper)
+        public HomeController(IClientProductService clientProductService, IClientCategoryService clientCategoryService, IClientCommentService clientCommentService)
         {
-            this._unitOfWork = unitOfWork;
-            this._productRepository = productRepository;
-            this._categoryRepository = categoryRepository;
-            this._mapper = mapper;
+            this._clientProductService = clientProductService;
+            this._clientCategoryService = clientCategoryService;
+            this._clientCommentService = clientCommentService;
         }
 
         [Route("")]
         [Route("~/")]        
-        public async Task<ActionResult> Index(string cateID = null, string search = null,int page = 1)
-        {
-            //var dataTemp = await _productRepository.GetAllAsync();
-            //var newTemp = _productRepository.GetNewProductAsync();
-            //var hotTemp = _productRepository.GetHotProductAsync();
+        public async Task<ActionResult> Index(string cateID = null, string search = null, int page = 1)
+        {            
+            var response = new ClientProductListResponse()
+            {
+                NewsProducts = await _clientProductService.GetNewProducts(),
+                HotProducts = await _clientProductService.GetHotProducts(),
+                ProductList = await _clientProductService.GetAllProducts(cateID, search, pageSize, page)
+            };
 
-            //if (search != null && search != "")
-            //{
-            //    string searchc = EntityExtensions.convertToUnSign(search);
-            //    cateID = null;
-            //    dataTemp = _productRepository.GetBySearchAsync(searchc);
-            //}
-            //if (cateID != null && cateID != "")
-            //{
-            //    search = null;
-            //    dataTemp = _productRepository.GetByCategoryAsync(cateID);
-            //}
+            ViewBag.CategoryID = cateID;
+            ViewBag.SearchString = search;
 
-            //var newProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(newTemp);
-            //var hotProduct = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(hotTemp);
-
-            //var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(dataTemp);
-            //var pager = new Pager(data.Count(), page, 18);
-            //var viewModel = new IndexViewModel<ProductVM>()
-            //{
-            //    Items = data.Skip((pager.CurrentPage - 1) * pager.PageSize).Take(pager.PageSize),
-            //    Pager = pager
-            //};
-                     
-            //ViewBag.NewProduct = newProduct.Take(18).ToList();
-            //ViewBag.HotProduct = hotProduct.Take(18).ToList();
-            //ViewBag.ProductList = viewModel;
-            //ViewBag.CategoryID = cateID;
-            //ViewBag.SearchString = search;
-
-            return View();
+            return View(response);
         }
 
-        //[HandleError]
+        [HandleError]
         //[OutputCache(Duration = 3600 * 24 * 10, Location = System.Web.UI.OutputCacheLocation.Any, VaryByParam = "nameID")]
-        //public ActionResult Detail(string nameID)
-        //{
-        //    var item = _productRepository.GetProductByNameIDAsync(nameID);
-        //    var temp = _productRepository.GetByCategory(item.Category.Description);
-        //    var list = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(temp.Take(6));
-        //    var product = _mapper.Map<Product, ProductVM>(item);
-        //    var author = item.ProductAuthors.FirstOrDefault(m => m.ProductId == item.ProductId);
+        public async Task<ActionResult> Detail(string nameID)
+        {
+            var response = new ClientProductDetailResponse();
+            response.Product = await _clientProductService.GetProductByNameAlias(nameID);
+            var relateList = await _clientProductService.GetProductsByCategoryId(response.Product.CategoryId);
+            response.RelateProducts = relateList.Take(10);
+            response.Comments = await _clientCommentService.GetProductListComment(response.Product.ProductId);
 
-        //    ViewBag.Author = author.Author.Name;
-        //    ViewBag.CategoryName = item.Category.CategoryName;
-        //    ViewBag.CateNameID = item.Category.Description;
-        //    ViewBag.RelatedList = list.ToList();
+            return View(response);
+        }
 
-        //    return View(product);
-        //}
+        [HttpPost]
+        [ValidateInput(false)]
+        public async Task<ActionResult> Detail(CommentVM comment, string nameAlias)
+        {
+            var response = new ClientProductDetailResponse();
+            response.Product = await _clientProductService.GetProductByNameAlias(nameAlias);
+            var relateList = await _clientProductService.GetProductsByCategoryId(response.Product.CategoryId);
+            response.RelateProducts = relateList.OrderBy(m => m.Star).Take(10);
+
+            if (ModelState.IsValid)
+            {
+                if (await _clientCommentService.AddCommentToDB(comment) > 0)
+                {
+                    response.Comments = await _clientCommentService.GetProductListComment(response.Product.ProductId);
+                    return View(response);
+                }               
+            }
+            response.Comments = await _clientCommentService.GetProductListComment(response.Product.ProductId);
+
+            ModelState.AddModelError("Review", "Bạn chưa bình luận");
+            return View(response);
+        }
 
         #region childView
 
-        //[ChildActionOnly]
-        //[OutputCache(Duration = 3600 * 24 * 10)]
-        //public ActionResult CategoryMenu()
-        //{
-        //    return Task.Run(async () => {
-        //        var cate = await _categoryRepository.GetAllAsync();
-
-        //        var category = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryVM>>(cate);
-
-        //        return PartialView("_CateMenu", category);
-        //    }).Result;           
-        //}
+        [ChildActionOnly]
+        [OutputCache(Duration = 3600 * 24 * 10)]
+        public ActionResult CategoryMenu()
+        {
+            return Task.Run(async () =>
+            {
+                var response = await _clientCategoryService.GetAllCategory();
+                return PartialView("_CategoryMenu", response);
+            }).Result;
+        }
 
         #endregion
 

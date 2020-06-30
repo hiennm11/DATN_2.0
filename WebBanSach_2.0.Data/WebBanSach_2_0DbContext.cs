@@ -22,7 +22,9 @@ namespace WebBanSach_2_0.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Error> Errors { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<Shipper> Shippers { get; set; }
 
         public static WebBanSach_2_0DbContext Create()
         {

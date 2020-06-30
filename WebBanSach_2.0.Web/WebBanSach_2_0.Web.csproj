@@ -67,6 +67,12 @@
     <Reference Include="Autofac.Integration.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.Mvc5.5.0.0\lib\net461\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Autofac.Integration.Mvc.Owin, Version=5.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Mvc5.Owin.5.0.0\lib\net461\Autofac.Integration.Mvc.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Owin, Version=5.0.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.Owin.5.0.1\lib\net461\Autofac.Integration.Owin.dll</HintPath>
+    </Reference>
     <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
@@ -199,11 +205,15 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AuthorController.cs" />
     <Compile Include="Areas\Admin\Controllers\CategoryController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ChartController.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DiscountController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageRoleController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageUserController.cs" />
+    <Compile Include="Areas\Admin\Controllers\OrderController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProductController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Global.asax.cs">
@@ -211,6 +221,7 @@
     </Compile>
     <Compile Include="Infrastructure\AutoMapperConfiguration.cs" />
     <Compile Include="Infrastructure\CustomErrorHandler.cs" />
+    <Compile Include="Infrastructure\Extension.cs" />
     <Compile Include="Models\AccountManageVM.cs" />
     <Compile Include="Models\AccountVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -3600,7 +3611,6 @@
     <Content Include="Content\fontawesome-free\webfonts\fa-solid-900.ttf" />
     <Content Include="Content\fontawesome-free\webfonts\fa-solid-900.woff" />
     <Content Include="Content\fontawesome-free\webfonts\fa-solid-900.woff2" />
-    <Content Include="Areas\Admin\Views\ManageOrder\Index.cshtml" />
     <Content Include="Content\normalize.min.css.map" />
     <Content Include="libman.json" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
@@ -3609,6 +3619,22 @@
     <Content Include="Areas\Admin\Views\Author\Detail.cshtml" />
     <Content Include="Areas\Admin\Views\Product\EditAuthor.cshtml" />
     <Content Include="Areas\Admin\Views\Author\EditProduct.cshtml" />
+    <Content Include="Areas\Admin\Views\Discount\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Discount\Detail.cshtml" />
+    <Content Include="Areas\Admin\Views\Discount\EditDiscount.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_OrderDetail.cshtml" />
+    <Content Include="Areas\Admin\Views\Order\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_OrderTable.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_Pager.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_AjaxPager.cshtml" />
+    <Content Include="Areas\Admin\Views\Order\WaitingOrder.cshtml" />
+    <Content Include="Areas\Admin\Views\Order\CompleteOrder.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_OrderPager.cshtml" />
+    <Content Include="Areas\Admin\Views\Order\DeletedOrder.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_DeletedOrderPager.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_WaitingOrderPager.cshtml" />
+    <Content Include="Areas\Admin\Views\Shared\_CompletedOrderPager.cshtml" />
+    <Content Include="Areas\Admin\Views\Chart\Index.cshtml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -3722,7 +3748,7 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
-    <Content Include="Views\Shared\_CateMenu.cshtml" />
+    <Content Include="Views\Shared\_CategoryMenu.cshtml" />
     <Content Include="Views\Home\Detail.cshtml" />
     <Content Include="Views\Account\_Login.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
@@ -3732,6 +3758,10 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Manage\Order.cshtml" />
+    <Content Include="Views\Shared\_ProductCard.cshtml" />
+    <Content Include="Views\Cart\OrderComplete.cshtml" />
+    <Content Include="Views\Shared\_OrderDetail.cshtml" />
+    <Content Include="Views\Shared\_Pager.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

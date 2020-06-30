@@ -1,7 +1,7 @@
 ﻿@model WebBanSach_2_0.Web.Models.IndexViewModel
 @{
     ViewBag.Title = "Quản lý tài khoản";
-    var client = (WebBanSach_2_0.Web.Models.ClientViewModel)ViewBag.Client;
+    var client = (ClientViewModel)ViewBag.Client;
 }
 
 <h2>@ViewBag.Title.</h2>
@@ -33,7 +33,7 @@
         <div class="form-group">
             @Html.Label("Họ và tên", new { @class = "col-md-6 control-label" })
             <div class="col-md-11">
-                @Html.TextBox("FullName", client.FullName, new { @class = "form-control" })
+                @Html.TextBox("FullName", client.FullName, new { @class = "form-control", @required = "true" })
             </div>
         </div>
         <div class="row">
@@ -41,13 +41,13 @@
                 <div class="form-group">
                     @Html.Label("Email", new { @class = "col-md-2 control-label" })
                     <div class="col-md-10">
-                        @Html.TextBox("Email", client.Email, new { @class = "form-control" })
+                        @Html.TextBox("Email", client.Email, new { @class = "form-control", @required = "true" })
                     </div>
                 </div>
                 <div class="form-group">
                     @Html.Label("Địa chỉ", new { @class = "col-md-6 control-label" })
                     <div class="col-md-10">
-                        @Html.TextBox("Address", client.Address, new { @class = "form-control" })
+                        @Html.TextBox("Address", client.Address, new { @class = "form-control", @required = "true" })
                     </div>
                 </div>
             </div>
@@ -55,13 +55,13 @@
                 <div class="form-group">
                     @Html.Label("Điện thoại", new { @class = "col-md-6 control-label" })
                     <div class="col-md-10">
-                        @Html.TextBox("PhoneNumber", client.PhoneNumber, new { @class = "form-control" })
+                        @Html.TextBox("PhoneNumber", client.PhoneNumber, new { @class = "form-control", @required = "true" })
                     </div>
                 </div>
                 <div class="form-group">
                     @Html.Label("Ngày sinh", new { @class = "col-md-6 control-label" })
                     <div class="col-md-10">
-                        @Html.TextBox("Dob", client.Dob, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                        @Html.TextBox("Dob", client.Dob, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date", @required = "true" })
                     </div>
                 </div>
             </div>

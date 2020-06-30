@@ -1,0 +1,79 @@
+﻿@model Pagination.IndexViewModel<OrderVM>
+@{
+    ViewBag.Title = "Waiting Order";
+}
+
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Hóa đơn</li>
+</ol>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Hóa đơn đang chờ duyệt
+    </div>
+    <div class="card-body">
+        <br />
+        <div class="row">
+            <div class="col">
+                <form class="form-inline">
+                    <div class="form-group mr-2">
+                        @Html.Label("fromDate", "Từ ngày: ", new { @class = "control-label" })
+                        @Html.TextBox("fromDate", null, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                    </div>
+                    <div class="form-group mr-2">
+                        @Html.Label("toDate", "Đến ngày: ", new { @class = "control-label" })
+                        @Html.TextBox("toDate", null, "{0:yyyy-MM-dd}", new { @class = "form-control", @type = "date" })
+                    </div>
+
+                    <input type="submit" value="Lọc" class="btn btn-outline-primary mr-2" />
+                    <a href="@Url.Action("WaitingOrder")" class="btn btn-outline-dark mr-2"><i class="fas fa-retweet"></i></a>
+                </form>
+                <br />
+            </div>
+        </div>
+        @{ Html.RenderPartial("_OrderTable", Model); }
+        @{ Html.RenderPartial("_WaitingOrderPager", Model.Pager); }
+
+
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="order-detail-modal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Chi tiết hóa đơn</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-detail">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryex")
+    <script>
+            (function () {
+                $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
+                $(".btn-order-detail").off('click').on('click', function (e) {
+                    e.preventDefault();
+                    $("#order-detail-modal").modal('show');
+                });
+            })();
+    </script>
+}

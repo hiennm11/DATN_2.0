@@ -20,8 +20,12 @@ namespace WebBanSach_2_0.Model.ViewModels
         public double Star { get; set; }
         public string NameAlias { get; set; }
         public string Link { get; set; }
+        public DateTime PublicationDate { get; set; }
+        public bool IsAvailable { get; set; }
 
         public CategoryVM Category { get; set; }
         public ICollection<AuthorVM> Authors { get; set; }
+        public ICollection<CommentVM> Comments { get; set; }
+        public DiscountVM Discount { get; set; }
     }
 }

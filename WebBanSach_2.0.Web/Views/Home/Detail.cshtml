@@ -1,34 +1,14 @@
-﻿@model ProductVM
+﻿@model ClientProductDetailResponse
 @{
-    ViewBag.Title = Model.Name;
-    var relatedList = (List<ProductVM>)ViewBag.RelatedList;
-    var cate = (string)ViewBag.CategoryName;
-    var cateID = (string)ViewBag.CateNameID;
-    var author = (string)ViewBag.Author;
-    List<string> fileContents = new List<string>();
-    if(Model.Description != null)
-    {
-        //Read file description
-        System.IO.StreamReader file = new System.IO.StreamReader(Server.MapPath(Model.Description));
-        fileContents = new List<string>();
-        while (file.ReadLine() != null)
-        {
-            fileContents.Add(file.ReadLine());
-        }
-
-        file.Close();
-    }
-    
-}
-@section homeScript{
-    @Scripts.Render("~/bundles/app-js.js")
+    ViewBag.Title = Model.Product.Name;
+    var user = System.Web.HttpContext.Current.User.Identity.Name;
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a href="/san-pham/@cateID" class="cate-link" data-id="@cateID">@cate</a></li>
-        <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        <li class="breadcrumb-item"><a href="/san-pham/@Model.Product.Category.NameAlias" class="cate-link" data-id="@Model.Product.Category.NameAlias">@Model.Product.Category.CategoryName</a></li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
     </ol>
 </nav>
 <div class="detail__infor">
@@ -38,22 +18,43 @@
                 <div class="row">
                     <div class="col-md-3 col-sm-4 detail__intro-img padding-right-0">
                         <div class="detail__intro-img-wrap text-center">
-                            <img src="@Model.Image" alt="@Model.Name">
+                            <img src="@(!string.IsNullOrEmpty(Model.Product.Image) ? Model.Product.Image : "/img/noCover.jpg")" alt="@Model.Product.Name">
                         </div>
                     </div>
                     <div class="col-md-9 col-sm-8 padding-left-0">
                         <div class="detail__intro-infor">
-                            <h1 class="font-weight-normal font-size-24 font_secondary color-dark">@Model.Name</h1>
+                            <h1 class="font-weight-normal font-size-24 font_secondary color-dark">@Model.Product.Name</h1>
                             <div class="detail__intro-detail">
                                 <div class="row">
                                     <div class="detail__intro-action col-md-6 full-xs">
                                         <div class="rating">
-                                            @*<span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star"></span>
-                                            <span class="fa fa-star"></span>*@
-                                            <h4 class="text-info">@(String.Format("{0:0,0}", Model.Price)).đ</h4>
+                                            <div class="detail__intro-rate display-flex-center">
+                                                <span class="rating-box pointer">
+                                                    <i class="star-item fa fa-star"></i>
+                                                    <i class="star-item fa fa-star"></i>
+                                                    <i class="star-item fa fa-star"></i>
+                                                    <i class="star-item fa fa-star"></i>
+                                                    <i class="star-item fa fa-star"></i>
+                                                    <span style="width:50%">
+                                                        <i class="star-item fa fa-star"></i>
+                                                        <i class="star-item fa fa-star"></i>
+                                                        <i class="star-item fa fa-star"></i>
+                                                        <i class="star-item fa fa-star"></i>
+                                                        <i class="star-item fa fa-star"></i>
+                                                    </span>
+                                                </span>                                            <span>(@ViewBag.LuotDG đánh giá)</span>
+                                            </div>
+                                            @if (Model.Product.Discount.DiscountValue > 0)
+                                            {
+                                        <h4 class="text-info">
+                                            @(String.Format("{0:0,0}", Model.Product.Price * (100 - Model.Product.Discount.DiscountValue) / 100)).đ
+                                            <span class="text-muted"><del>@(String.Format("{0:0,0}", Model.Product.Price)).đ</del></span>
+                                        </h4>
+                                            }
+                                            else
+                                            {
+                                                <h4 class="text-info">@(String.Format("{0:0,0}", Model.Product.Price)).đ</h4>
+                                            }
                                         </div>
 
                                         <div class="alert alert-info" role="alert">
@@ -64,12 +65,12 @@
                                             <form action="#" method="post">
                                                 <div class="form-action">
 
-                                                    <a href="#" data-nameid="@Model.NameID" rel="nofollow" class="btn font_secondary add-to-cart" style="width: 180px; float: left; margin-right: 10px;    background-color: #1d7eb6; color: #fff;">
+                                                    <a href="#" data-nameid="@Model.Product.NameAlias" rel="nofollow" class="btn font_secondary add-to-cart" style="width: 180px; float: left; margin-right: 10px;    background-color: #1d7eb6; color: #fff;">
                                                         <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua sách
                                                     </a>
-                                                    @if (Model.Link != null && Model.Link != "")
+                                                    @if (!string.IsNullOrEmpty(Model.Product.Link))
                                                     {
-                                                        <a href="@Model.Link" target="_blank" type="button" class="btn btn-warning btn-md"><i class="fas fa-book-open" aria-hidden="true"></i> Đọc Online</a>
+                                                        <a href="@Model.Product.Link" target="_blank" type="button" class="btn btn-warning btn-md"><i class="fas fa-book-open" aria-hidden="true"></i> Đọc Online</a>
                                                     }
                                                 </div>
                                             </form>
@@ -80,11 +81,21 @@
                                             <tbody>
                                                 <tr>
                                                     <th>Tác giả</th>
-                                                    <td>@author</td>
+                                                    <td>
+                                                        @if (Model.Product.Authors.Count() > 0)
+                                                        {
+                                                            foreach (var item in Model.Product.Authors)
+                                                            {
+                                                                <div>@item.Name</div>
+                                                            }
+                                                        }
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th>Thể loại</th>
-                                                    <td><a href="/san-pham/@cateID" class="cate-link" data-id="@cateID">@cate </a></td>
+                                                    <td>
+                                                        <a href="/san-pham/@Model.Product.Category.NameAlias" class="cate-link" data-id="@Model.Product.Category.NameAlias">@Model.Product.Category.CategoryName </a>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th>Số Trang</th>
@@ -109,43 +120,74 @@
 <div class="card" id="description-card">
     <h5 class="card-header h5">Giới thiệu sách</h5>
     <div class="card-body">
-        <h5 class="card-title">@Model.Name</h5>
-        @if (fileContents != null)
-        {
-            foreach (var item in fileContents)
-            {
-                <p class="card-text">@item</p>
-            }
-        }
+        <h5 class="card-title">@Model.Product.Name</h5>
+        <p class="card-text">
+            @Html.Raw(Model.Product.Description)
+        </p>
     </div>
 </div>
 <br />
 <br />
 
-<div class="related">
-    <nav class="navbar-nav bg-transparent"><h4>Sách cùng chủ đề: </h4></nav>
-    <div class="row related-item">
-        @foreach (var item in relatedList)
+<div class="row">
+    <div class="col-md-12">
+        <nav class="navbar-nav bg-transparent"><h4>Sách cùng chủ đề: </h4></nav>
+        @if (Model.RelateProducts.Count() > 5)
         {
-            <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-                <div class="card item-card">
-                    <a href="/chi-tiet/@item.NameID"><img src="@item.Image" alt="@item.Name" style="width:100%;height:245px"></a><br />
-                    @if (item.Name.Length > 25)
-                    {
-                        <a href="/chi-tiet/@item.NameID">
-                            <h6>
-                                @item.Name.Substring(0, 25) ...
-                            </h6>
-                        </a>
-                    }
+            var list1 = Model.RelateProducts.Take(5);
+            var list2 = Model.RelateProducts.Skip(5);
 
-                    else
-                    { <a href="/chi-tiet/@item.NameID">
-                            <h6>@item.Name</h6>
-                        </a>}
+            <div id="relatedCarousel" class="carousel slide" data-interval="3000" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row">
+                            @foreach (var item in list1)
+                            {
+                                <div class="col">
+                                    @{ Html.RenderPartial("_ProductCard", item); }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="row">
+                            @foreach (var item in list2)
+                            {
+                                <div class="col">
+                                    @{ Html.RenderPartial("_ProductCard", item); }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <!--.carousel-inner-->
+                <ol class="carousel-indicators">
+                    <li data-target="#relatedCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#relatedCarousel" data-slide-to="1"></li>
+                </ol>
 
-                    <p class="price">@(String.Format("{0:0,0}", Model.Price)).đ</p>
-                    <p><a class="add-to-cart" data-nameid="@item.NameID" href="#">Add to Cart</a></p>
+                <a class="carousel-control left carousel-control-prev" href="#relatedCarousel" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control right carousel-control-next" href="#relatedCarousel" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+        }
+        else
+        {
+            <div id="relatedCarousel" class="carousel slide">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="row">
+                            @foreach (var item in Model.RelateProducts)
+                            {
+                                <div class="col">
+                                    @{ Html.RenderPartial("_ProductCard", item); }
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         }
@@ -154,29 +196,129 @@
 <br />
 <br />
 
-@*<div class="cmt-box">
-    <div class="cmt-detail">
-        <form>
-            <div class="rating-box">
-                <span>Đánh giá của bạn: </span>
-                <span class="rating">
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span>
-                    <span class="fa fa-star"></span>
-                </span>
-            </div>
-            <br />
-            <div class="cmt-box">
-                <textarea style="width: 100%;height: 150px;"></textarea>
-            </div>
-            <input class="btn btn-primary" type="submit" value="Bình luận" />
-        </form>
+<div class="container py-2">
+    <div class="row">
+        <div class="comments col-md-9" id="comments">
+            <h3 class="mb-4 font-weight-light">Bình luận</h3>
+            <!-- comment -->
+            @foreach (var comment in Model.Comments)
+            {
+                <div class="comment mb-2 row">
+                    <div class="comment-avatar col-md-1 col-sm-2 text-center pr-1">
+                        <a href=""><img class="mx-auto rounded-circle img-fluid" src="/img/noAvatar.png" alt="avatar"></a>
+                    </div>
+                    <div class="comment-content col-md-11 col-sm-10">
+                        <h6 class="small comment-meta"><a href="#">@comment.User.FullName</a> @comment.CommentDate</h6>
+                        <div class="comment-body">
+                            @Html.Raw(comment.Review)
+                            @*<a href="" class="text-right small"><i class="ion-reply"></i> Reply</a>*@
+                        </div>
+                    </div>
+                </div>
+                <br />
+            }
+            <!-- /comment -->
+        </div>
     </div>
-    <div class="cmt-list">
+    <div class="row pt-2">
+        <div class="col-12">
+            @if (string.IsNullOrEmpty(user))
+            {
+                <span class="text-danger">Bạn cần đăng nhập để bình luận.</span>
+            }
+            else
+            {
+                <form method="post" class="form-horizontal" id="commentForm" role="form">
+                    @Html.Hidden("ProductId", Model.Product.ProductId)
+                    @Html.Hidden("UserId", user)
+                    @Html.Hidden("CommentDate", DateTime.Now)
+                    @Html.Hidden("NameAlias", Model.Product.NameAlias)
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Đánh giá của bạn:</label>
+                        <span class="rating box-rating">
+                            <input type="hidden" class="rate-num" value="0" name="Rating" id="SoSao">
+                            <i class="fa fa-star" data-num="1"></i>
+                            <i class="fa fa-star" data-num="2"></i>
+                            <i class="fa fa-star" data-num="3"></i>
+                            <i class="fa fa-star" data-num="4"></i>
+                            <i class="fa fa-star" data-num="5"></i>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">Comment</label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" name="Review" id="addComment" rows="5"></textarea>
+                        </div>
+                        @Html.ValidationMessage("Review", new { @class = "text-danger" })
 
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button class="btn btn-success btn-circle text-uppercase" type="submit" id="submitComment"><span class="glyphicon glyphicon-send"></span> Gửi bình luận</button>
+                        </div>
+                    </div>
+                </form>
+            }
+        </div>
     </div>
-</div>*@
+</div>
 
+@section homeScript{
+    @Scripts.Render("~/bundles/app-js.js")
+    @Scripts.Render("~/bundles/ckeditor")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        (function () {
+            CKEDITOR.editorConfig = function (config) {
+                config.removePlugins = 'easyimage, cloudservices';
+            };
+
+            CKEDITOR.replace("addComment");
+            // Rating
+            $('.box-rating i').hover(
+                function () {
+                    var $this = $(this);
+                    var star_item = $('.box-rating').find('i');
+                    $.each(star_item, function () {
+                        if ($(this).data('num') <= $this.data('num')) {
+                            $(this).addClass('text-warning');
+                            $(this).addClass('hover');
+                        }
+                    })
+                }, function () {
+                    var star_item = $('.box-rating').find('i');
+                    $.each(star_item, function () {
+                        $(this).removeClass('hover');
+                        $(this).removeClass('text-warning');
+                    })
+                }
+            );
+
+            $('body').on('click', '.box-rating i', function () {
+                var $this = $(this);
+                $(this).parent().find('.rate-num').val($(this).data('num'));
+
+                var star_item = $('.box-rating').find('i');
+                $.each(star_item, function () {
+                    $(this).removeClass('hover, selected');
+
+                    if ($(this).data('num') <= $this.data('num')) {
+                        $(this).addClass('selected');
+                    }
+                })
+            });
+        })();
+    </script>
+    <style>
+        .selected {
+            color: orange;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            bottom: 50%;
+        }
+    </style>
+}
 

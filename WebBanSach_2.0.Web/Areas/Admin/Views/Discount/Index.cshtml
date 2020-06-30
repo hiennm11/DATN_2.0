@@ -1,0 +1,131 @@
+﻿@model Pagination.IndexViewModel<DiscountVM>
+@{
+    ViewBag.Title = "Index";
+    var pager = Model.Pager;
+}
+
+<!-- Breadcrumbs-->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index","Dashboard")">Trang chủ</a>
+    </li>
+    <li class="breadcrumb-item">Quản lý</li>
+    <li class="breadcrumb-item active">Chi tiết khuyến mãi</li>
+</ol>
+@if (!string.IsNullOrEmpty(ViewBag.StatusMessage))
+{
+    @Html.Raw(ViewBag.StatusMessage)
+}
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fas fa-table"></i>
+        Quản lý khuyễn mãi
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-8 col-md-4">
+                <a href="@Url.Action("Detail")" id="btnCreate" class="btn btn-info" role="button">Tạo mới</a>
+            </div>
+
+            <div class="col-sm-8 col-md-4">
+                @using (Html.BeginForm("Index", "Discount", FormMethod.Get))
+                {
+                    <div class="input-group mb-3">
+                        <input type="text" name="search" class="form-control" value="@ViewBag.SearchString">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Chương trình KM</th>
+                        <th>Loại giảm giá</th>
+                        <th>Mã giảm giá</th>
+                        <th>Giảm</th>                        
+                        <th></th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Chương trình KM</th>
+                        <th>Loại giảm giá</th>
+                        <th>Mã giảm giá</th>
+                        <th>Giảm</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+                <tbody id="dataTableBody">
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.DiscountName</td>
+                            <td>@Extension.GetEnumDisplayName(item.DiscountType)</td>
+                            <td>@item.DiscountCode</td>
+                            <td>@item.DiscountValue %</td>                            
+                            <td>
+                                @if (item.DiscountId != 1)
+                                {
+                                    <a href="@Url.Action("Detail", new { item.DiscountId })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.DiscountId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                                    <a href="@Url.Action("EditDiscount", new { @discountId = item.DiscountId })" class="btn btn-outline"><i class="fas fa-book"></i></a>
+                                    <button class="btn btn-outline-light open-delete-modal" data-id="@item.DiscountId" data-name="@item.DiscountName">
+                                        <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="row">
+                @{ Html.RenderPartial("_Pager", Model.Pager); }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("DeleteConfirmed", "Discount"))
+            {
+                <div class="modal-body" id="modal-body">
+
+                    @Html.AntiForgeryToken()
+                    <input data-val="true" type="number" name="id" id="modelID" value="0" hidden />
+                    <p><h4>Bạn có muốn xóa <span class="text-danger" id="modelName"></span> ?</h4></p>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger" id="deleteDetail">Xóa</button>
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function () {
+            $("#content-wrapper").off('click', '.open-delete-modal').on('click', '.open-delete-modal', function () {
+                $("#deleteModal").modal('show');
+                $("#modelID").val($(this).data("id"));
+                $("#modelName").html($(this).data("name"));
+            });
+        })();
+    </script>
+}

@@ -15,9 +15,11 @@ namespace WebBanSach_2_0.Model.ViewModels
         public string CustomerMobile { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string CreatedBy { get; set; }
-        public string PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public bool PaymentStatus { get; set; }
         public OrderStatus Status { get; set; }
+
+        public DiscountVM Discount { get; set; }
     }
 
     public class OrderDetailVM
@@ -25,5 +27,8 @@ namespace WebBanSach_2_0.Model.ViewModels
         public string OrderId { get; set; }
         public string ProductId { get; set; }
         public int Quantity { get; set; }
+
+        public OrderVM Orders { get; set; }
+        public ProductVM Product { get; set; }
     }
 }
