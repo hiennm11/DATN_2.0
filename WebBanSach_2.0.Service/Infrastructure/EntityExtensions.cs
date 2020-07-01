@@ -58,19 +58,25 @@ namespace WebBanSach_2_0.Service.Infrastructure
             return htmlMessage;
         }
 
+        public static IEnumerable<DateTime> GetRevenue(DateTime now)
+        {
+            return Enumerable.Range(0, 6)
+                              .Select(i => now.AddMonths(i - 6));
+                              //.Select(date => date.ToString("MM/yyyy"));
+        }
+
         public static List<DateTime> GetWeekDate(DateTime now)
         {
-            DateTime reference = DateTime.Now;
             Calendar calendar = CultureInfo.CurrentCulture.Calendar;
 
             int weekOfYear = calendar.GetWeekOfYear(now, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-            var firstDate = FirstDateOfWeek(reference.Year, weekOfYear);
+            var firstDate = FirstDateOfWeek(now.Year, weekOfYear);
             var week = Enumerable.Range(0, 7).Select(d => firstDate.AddDays(d)).ToList();
 
             return week;
         }
 
-        public static DateTime FirstDateOfWeek(int year, int weekOfYear)
+        private static DateTime FirstDateOfWeek(int year, int weekOfYear)
         {
             DateTime jan1 = new DateTime(year, 1, 1);
             int daysOffset = Convert.ToInt32(CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek) - Convert.ToInt32(jan1.DayOfWeek);

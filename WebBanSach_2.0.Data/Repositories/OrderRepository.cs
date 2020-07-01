@@ -20,7 +20,7 @@ namespace WebBanSach_2_0.Data.Repositories
         Task<IEnumerable<Order>> GetByDateDecending();
         Task<Order> GetByOrderIdAsync(int id);
         Task<IEnumerable<Order>> GetListByOrderDateAsync(DateTime date);
-
+        Task<IEnumerable<Order>> GetListByMonthAsync(DateTime date);
         Task<IEnumerable<Order>> GetOrdersByUserEmailAsync(string email);
         int GetFilterRow();
     }
@@ -101,9 +101,19 @@ namespace WebBanSach_2_0.Data.Repositories
             return _filterRow;
         }
 
+        public async Task<IEnumerable<Order>> GetListByMonthAsync(DateTime date)
+        {
+            return await _dbContext.Orders.Where(m => m.CreatedDate.Value.Month == date.Month && 
+                                                      m.CreatedDate.Value.Year == date.Year)
+                                          .Include(m => m.Discount).ToListAsync();
+        }
+
         public async Task<IEnumerable<Order>> GetListByOrderDateAsync(DateTime date)
         {
-            return await _dbContext.Orders.Where(m => m.CreatedDate.Value.Date.Equals(date.Date)).ToListAsync();
+            return await _dbContext.Orders.Where(m => m.CreatedDate.Value.Day == date.Day && 
+                                                      m.CreatedDate.Value.Month == date.Month && 
+                                                      m.CreatedDate.Value.Year == date.Year)
+                                          .Include(m => m.Discount).ToListAsync();
         }
 
         public async Task<IEnumerable<Order>> GetListOrder(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page = 1, int pageSize = 10)

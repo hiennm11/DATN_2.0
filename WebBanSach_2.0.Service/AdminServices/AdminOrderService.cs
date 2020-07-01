@@ -10,6 +10,7 @@ using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Enums;
+using WebBanSach_2_0.Service.Infrastructure;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
@@ -24,6 +25,8 @@ namespace WebBanSach_2_0.Service.AdminServices
         Task<ClientOrderDetailResponse> GetOrderDetailCartView(int id);
         Task<AdminChartResponse> GetChartResponse();
         Task<double> GetDayEarning(DateTime date);
+        Task<double> GetMonthEarning(DateTime date);
+
     }
 
     public class AdminOrderService : IAdminOrderService
@@ -31,13 +34,18 @@ namespace WebBanSach_2_0.Service.AdminServices
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IIdentityRoleRepository _identityRoleRepository;
+        private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IMapper _mapper;
 
-        public AdminOrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper)
+        public AdminOrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository,
+                                 IIdentityRoleRepository identityRoleRepository, IApplicationUserRepository applicationUserRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._orderRepository = orderRepository;
             this._orderDetailRepository = orderDetailRepository;
+            this._identityRoleRepository = identityRoleRepository;
+            this._applicationUserRepository = applicationUserRepository;
             this._mapper = mapper;
         }
 
@@ -66,9 +74,45 @@ namespace WebBanSach_2_0.Service.AdminServices
             return await _unitOfWork.SaveAsync();
         }
 
-        public Task<AdminChartResponse> GetChartResponse()
+        public async Task<AdminChartResponse> GetChartResponse()
         {
-            throw new NotImplementedException();
+            var week = EntityExtensions.GetWeekDate(DateTime.Now);
+            var months = EntityExtensions.GetRevenue(DateTime.Now);
+            var roles = await _identityRoleRepository.GetListRoles();
+
+            var areaLabels = new List<string>();
+            var areaData = new List<double>();
+            var barLabels = new List<string>();
+            var barData = new List<double>();
+            var pieLabels = new List<string>();
+            var pieData = new List<double>();
+
+            foreach (var item in week)
+            {
+                var price = await GetDayEarning(item);
+                areaLabels.Add("'" + item.Date.Day + "/" + item.Date.Month + "'");
+                areaData.Add(price);
+            }
+
+            foreach (var item in months)
+            {
+                var price = await GetMonthEarning(item);
+                barLabels.Add("'Tháng " + item.Date.Month + "'");
+                barData.Add(price);
+            }
+
+            var emp = _applicationUserRepository.CountEmp();
+
+            foreach (var item in roles)
+            {
+                var user = await _applicationUserRepository.GetListUserByRole(item);
+                pieLabels.Add("'" + item.Name + "'");
+                pieData.Add(Math.Round((double)user.Count() / emp * 100));
+            }
+
+            return new AdminChartResponse { AreaChart = new AreaChart { Date = areaLabels, DateEarning = areaData }, 
+                                            BarChart = new BarChart { Date = barLabels, DateEarning = barData },
+                                            PieChart = new PieChart { Roles = pieLabels, Percentage = pieData } };
         }
 
         public async Task<IndexViewModel<OrderVM>> GetDataAsync(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page, OrderTypeRequest orderType)
@@ -109,7 +153,20 @@ namespace WebBanSach_2_0.Service.AdminServices
                 detail.Add(new ClientOrderDetailResponse(list.ToList(), item));
             }
 
-            return detail.Sum(m => m.TotalPrice + 50000);
+            return detail.Sum(m => m.TotalPrice + 50000 - m.BonusPrice);
+        }
+
+        public async Task<double> GetMonthEarning(DateTime date)
+        {
+            var detail = new List<ClientOrderDetailResponse>();
+            var orders = _mapper.Map<IEnumerable<OrderVM>>(await _orderRepository.GetListByMonthAsync(date));
+            foreach (var item in orders)
+            {
+                var list = _mapper.Map<IEnumerable<OrderDetailVM>>(await _orderDetailRepository.GetDetailByOrderId(item.OrderId));
+                detail.Add(new ClientOrderDetailResponse(list.ToList(), item));
+            }
+
+            return detail.Sum(m => m.TotalPrice + 50000 - m.BonusPrice);
         }
 
         public async Task<IEnumerable<OrderVM>> GetOrder(string userEmail)
