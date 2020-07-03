@@ -21,7 +21,7 @@ namespace WebBanSach_2_0.Data.Repositories
         Task<Order> GetByOrderIdAsync(int id);
         Task<IEnumerable<Order>> GetListByOrderDateAsync(DateTime date);
         Task<IEnumerable<Order>> GetListByMonthAsync(DateTime date);
-        Task<IEnumerable<Order>> GetOrdersByUserEmailAsync(string email);
+        Task<IEnumerable<Order>> GetOrdersByUserAsync(string email);
         int GetFilterRow();
     }
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
@@ -145,9 +145,9 @@ namespace WebBanSach_2_0.Data.Repositories
             return await data.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersByUserEmailAsync(string email)
+        public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string email)
         {
-            var result = _dbContext.Orders.Where(m => m.CustomerEmail == email).Include(m => m.Discount);
+            var result = _dbContext.Orders.Where(m => m.User.UserName == email).Include(m => m.Discount);
             return await result.ToListAsync();
         }
 

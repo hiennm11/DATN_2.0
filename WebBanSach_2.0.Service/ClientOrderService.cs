@@ -15,7 +15,7 @@ namespace WebBanSach_2_0.Service
 {
     public interface IClientOrderService
     {
-        Task<int> PlaceOrder(ShoppingCart carts, OrderVM order);
+        Task<int> PlaceOrder(ShoppingCart carts, OrderVM order, string userEmail);
         Task<IEnumerable<OrderVM>> GetOrder(string userEmail);
         Task<ClientOrderDetailResponse> GetOrderDetailCartView(int id);
     }
@@ -27,22 +27,24 @@ namespace WebBanSach_2_0.Service
         private readonly IDiscountRepository _discountRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly IMapper _mapper;
 
         public ClientOrderService(IUnitOfWork unitOfWork, IProductRepository productRepository, IDiscountRepository discountRepository
-                , IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IMapper mapper)
+                , IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IApplicationUserRepository applicationUserRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._productRepository = productRepository;
             this._discountRepository = discountRepository;
             this._orderRepository = orderRepository;
             this._orderDetailRepository = orderDetailRepository;
+            this._applicationUserRepository = applicationUserRepository;
             this._mapper = mapper;
         }
 
         public async Task<IEnumerable<OrderVM>> GetOrder(string userEmail)
         {
-            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(await _orderRepository.GetOrdersByUserEmailAsync(userEmail));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(await _orderRepository.GetOrdersByUserAsync(userEmail));
         }
 
         public async Task<ClientOrderDetailResponse> GetOrderDetailCartView(int id)
@@ -53,18 +55,31 @@ namespace WebBanSach_2_0.Service
             return new ClientOrderDetailResponse(list.ToList(), order);          
         }
 
-        public async Task<int> PlaceOrder(ShoppingCart carts, OrderVM order)
+        public async Task<int> PlaceOrder(ShoppingCart carts, OrderVM order, string userEmail)
         {
+            
             var orderToAdd = _mapper.Map<OrderVM, Order>(order);
             orderToAdd.PaymentStatus = false;
             orderToAdd.CreatedDate = DateTime.Now;
             orderToAdd.CreatedBy = "admin";
             orderToAdd.Status = OrderStatus.Waiting;
 
+            if (!string.IsNullOrEmpty(userEmail))
+            {
+                var user = _applicationUserRepository.GetUserByUserName(userEmail);
+                orderToAdd.User = user;
+            }
+
             if (!string.IsNullOrEmpty(carts.CartPromoCode))
             {
                 var discount = await _discountRepository.GetDiscountByPromoCode(carts.CartPromoCode);
                 orderToAdd.Discount = discount;
+            }
+            else
+            {
+                var discount = await _discountRepository.GetDiscountById(1);
+                orderToAdd.Discount = discount;
+
             }
 
             await _orderRepository.AddAsync(orderToAdd);

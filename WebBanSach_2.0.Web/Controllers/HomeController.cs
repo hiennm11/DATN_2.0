@@ -89,7 +89,7 @@ namespace WebBanSach_2._0.Web.Controllers
         #region childView
 
         [ChildActionOnly]
-        [OutputCache(Duration = 3600 * 24 * 10)]
+        //[OutputCache(Duration = 3600 * 24 * 10)]
         public ActionResult CategoryMenu()
         {
             return Task.Run(async () =>

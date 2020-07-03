@@ -1,8 +1,31 @@
 ﻿@model IEnumerable<CategoryVM>
-<div class="dropdown-menu scrollable-menu" role="menu">
-    <a class="dropdown-item" href="/">Tất cả</a>
-    @foreach (var item in Model)
-    {
-        <a class="dropdown-item cate-item" href="@Url.Action("Index", new { @cateID = item.NameAlias })">@item.CategoryName</a>
-    }
-</div>
+@{
+    var parent = Model.Where(m => m.ParentId == null);
+}
+<li class="nav-item dropdown menu-dropdown col">
+    <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+        Thể loại sách
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        @foreach (var item in parent)
+        {
+            var sub = Model.Where(m => m.ParentId.HasValue && m.ParentId.Equals(item.CategoryId));
+            if (sub.Count() == 0)
+            {
+                <li><a class="dropdown-item" href="@Url.Action("Index", new { @cateID = item.NameAlias })">@item.CategoryName</a></li>
+            }
+            else
+            {
+                <li class="dropdown-submenu">
+                    <a class="dropdown-item dropdown-toggle" href="@Url.Action("Index", new { @cateID = item.NameAlias })">@item.CategoryName</a>
+                    <ul class="dropdown-menu">
+                        @foreach (var cate in sub)
+                        {
+                            <li><a class="dropdown-item" href="@Url.Action("Index", new { @cateID = cate.NameAlias })">@cate.CategoryName</a></li>
+                        }
+                    </ul>
+                </li>
+            }
+        }      
+    </ul>
+</li>

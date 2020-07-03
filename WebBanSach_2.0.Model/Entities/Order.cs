@@ -35,6 +35,6 @@ namespace WebBanSach_2_0.Model.Entities
         public IEnumerable<OrderDetail> OrderDetails { get; set; }
         public Shipper Shipper { get; set; }
         public Discount Discount { get; set; }
-
+        public ApplicationUser User { get; set; }
     }
 }

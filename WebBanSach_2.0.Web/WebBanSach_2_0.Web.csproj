@@ -238,6 +238,7 @@
     <Content Include="Areas\Admin\Content\js\authord-admin.js" />
     <Content Include="Areas\Admin\Content\js\authors-admin.js" />
     <Content Include="Areas\Admin\Content\js\cate-admin.js" />
+    <Content Include="Areas\Admin\Content\js\charts.js" />
     <Content Include="Areas\Admin\Content\js\demo\chart-area-demo.js" />
     <Content Include="Areas\Admin\Content\js\demo\chart-bar-demo.js" />
     <Content Include="Areas\Admin\Content\js\demo\chart-pie-demo.js" />

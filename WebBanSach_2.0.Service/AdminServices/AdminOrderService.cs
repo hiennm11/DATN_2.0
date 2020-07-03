@@ -171,7 +171,7 @@ namespace WebBanSach_2_0.Service.AdminServices
 
         public async Task<IEnumerable<OrderVM>> GetOrder(string userEmail)
         {
-            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(await _orderRepository.GetOrdersByUserEmailAsync(userEmail));
+            return _mapper.Map<IEnumerable<Order>, IEnumerable<OrderVM>>(await _orderRepository.GetOrdersByUserAsync(userEmail));
         }
 
         public async Task<IEnumerable<OrderVM>> GetOrderByDateDecending()

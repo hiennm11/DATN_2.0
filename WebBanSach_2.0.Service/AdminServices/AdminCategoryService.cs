@@ -89,5 +89,10 @@ namespace WebBanSach_2_0.Service.AdminServices
 
             return await _unitOfWork.SaveAsync();
         }
+
+        public async Task<IEnumerable<CategoryVM>> GetCategoriesListAsync()
+        {
+            return _mapper.Map<IEnumerable<CategoryVM>>(await _categoryRepository.GetAllAsync());
+        }
     }
 }

@@ -83,7 +83,19 @@ namespace WebBanSach_2_0.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", model);
+                var userId = User.Identity.GetUserId();
+                var client = await UserManager.FindByIdAsync(userId);
+                var clientModel = new ClientViewModel
+                {
+                    Address = client.Address,
+                    Email = client.Email,
+                    FullName = client.FullName,
+                    PhoneNumber = client.PhoneNumber,
+                    Dob = client.Dob
+                };
+
+                ViewBag.Client = clientModel;
+                return View("Index", ManageMessageId.Error);
             }
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
@@ -192,7 +204,7 @@ namespace WebBanSach_2_0.Web.Controllers
         public async Task<ActionResult> Order()
         {
             var user =  UserManager.FindById(User.Identity.GetUserId());
-            var response = await _clientOrderService.GetOrder(user.Email);
+            var response = await _clientOrderService.GetOrder(user.UserName);
             return View(response);
         }
 

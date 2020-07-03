@@ -7,6 +7,7 @@
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
+    using System.Runtime.InteropServices;
     using WebBanSach_2_0.Model.Entities;
     using WebBanSach_2_0.Model.Enums;
 
@@ -131,7 +132,7 @@
             }
 
             //Add Account
-            string[] roles = new string[5] { "admin", "user", "mod", "employee", "shipper" };
+            string[] roles = new string[4] { "user", "mod", "employee", "shipper" };
             Random random = new Random();
             List<ApplicationUser> users = new List<ApplicationUser>();
             for(int i = 0; i < 100; i++)
@@ -150,7 +151,7 @@
                 clientsRole.RoleId = roles[random.Next(roles.Length)];
                 clientsRole.UserId = clients.Id;
 
-                userToInsert.Roles.Add(role);
+                clients.Roles.Add(clientsRole);
                 userManager.Create(clients, "client@123");
                 
                 if(clientsRole.RoleId == "user")
@@ -163,7 +164,7 @@
             //Add Order
             string[] orderroles = new string[3] { "admin", "mod", "employee" };
             var productList = context.Products.ToList();
-
+            Random rd = new Random();
             for (int i = 0; i < 200; i++)
             {
                 var userRd = users[random.Next(users.Count())];
@@ -175,7 +176,7 @@
                     CustomerEmail = userRd.Email,
                     PaymentMethod = (PaymentMethod)random.Next(4),
                     PaymentStatus = false,
-                    CreatedDate = DateTime.Now,
+                    CreatedDate = new DateTime(DateTime.Now.Year, rd.Next(3, 7), rd.Next(1, 31)),
                     CreatedBy = orderroles[random.Next(orderroles.Length)],
                     Status = (OrderStatus)random.Next(10),
                     Discount = ZeroDiscount,

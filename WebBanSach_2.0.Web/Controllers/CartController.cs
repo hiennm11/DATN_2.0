@@ -77,13 +77,13 @@ namespace WebBanSach_2_0.Service.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CheckoutConfirmed(ClientCartResponse order)
+        public async Task<ActionResult> CheckoutConfirmed(ClientCartResponse order, string user = null)
         {
             if (ModelState.IsValid)
             {
                 var shoppingCart = (ShoppingCart)Session[cartSession];
                 var orderToAdd = order.OrderInfo;
-                if (await _clientOrderService.PlaceOrder(shoppingCart, orderToAdd) > 0)
+                if (await _clientOrderService.PlaceOrder(shoppingCart, orderToAdd, user) > 0)
                 {
                     Session.Remove(cartSession);
                     return RedirectToAction("OrderComplete");

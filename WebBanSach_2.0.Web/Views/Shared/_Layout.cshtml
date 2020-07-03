@@ -31,12 +31,9 @@
                     <li class="nav-item col">
                         <a class="nav-link" href="/">Trang chủ</a>
                     </li>
-                    <li class="nav-item dropdown menu-dropdown col">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                            Thể loại sách
-                        </a>
-                        @{Html.RenderAction("CategoryMenu", "Home");}
-                    </li>
+                    
+                    @{Html.RenderAction("CategoryMenu", "Home");}
+
                     <li class="nav-item dropdown menu-dropdown col">
                         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
                             Thông tin

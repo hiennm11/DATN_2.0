@@ -1,6 +1,7 @@
 ﻿@model ClientCartResponse
 @{
     ViewBag.Title = "Checkout";
+    var user = System.Web.HttpContext.Current.User.Identity.Name;
 
 }
 
@@ -94,6 +95,7 @@
                 @Html.AntiForgeryToken()
                 <div class="hidden-item">
                     @Html.HiddenFor(m => m.PromoCode)
+                    @Html.Hidden("user", user)
                 </div>
                 <div class="mb-3">
                     <label for="firstName">Họ và tên <span class="text-danger">*</span></label>
