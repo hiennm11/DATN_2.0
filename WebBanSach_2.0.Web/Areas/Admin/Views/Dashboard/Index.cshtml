@@ -1,6 +1,20 @@
-﻿@model IEnumerable<OrderVM>
+﻿@model AdminDashboardResponse
 @{
     ViewBag.Title = "Index";
+    var areaLabels = string.Join(",", Model.Charts.AreaChart.Date);
+    var areaData = string.Join(",", Model.Charts.AreaChart.DateEarning);
+    var maxAreaData = Model.Charts.AreaChart.DateEarning.Max();
+
+    var barLabels = string.Join(",", Model.Charts.BarChart.Date);
+    var barData = string.Join(",", Model.Charts.BarChart.DateEarning);
+    var maxBarData = Model.Charts.BarChart.DateEarning.Max();
+
+    var pieLabels = string.Join(",", Model.Charts.PieChart.Roles);
+    var pieData = string.Join(",", Model.Charts.PieChart.Percentage);
+
+    var monthlyEarnings = string.Format("{0:0,0}", Model.MonthlyEarnings);
+    var annualEarnings = string.Format("{0:0,0}", Model.AnnualEarnings);
+
 }
 <!-- Breadcrumbs-->
 <ol class="breadcrumb">
@@ -10,8 +24,8 @@
     <li class="breadcrumb-item active">Tổng quan</li>
 </ol>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+    <h1 class="h3 mb-0 text-gray-800">Tổng quan</h1>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Xuất báo cáo</a>
 </div>
 <!-- Icon Cards-->
 <div class="row">
@@ -22,8 +36,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Earnings (Monthly)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Doanh thu (Tháng)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(monthlyEarnings).đ</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -39,8 +53,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Earnings (Annual)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Doanh thu(6 tháng)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@(annualEarnings).đ</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -56,14 +70,14 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks</div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hoàn thành(đơn)</div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@(100 - Model.OrderPercentage)%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(100 - Model.OrderPercentage)%" aria-valuenow="@(100 - Model.OrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                         </div>
@@ -82,8 +96,8 @@
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Đơn đang chờ</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.WaitingOrderCount</div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -101,7 +115,7 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Doanh thu tuần này</h6>
                 <div class="dropdown no-arrow">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -129,6 +143,20 @@
     <div class="col-xl-4 col-lg-5">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Nhân sự</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-pie pt-4">
+                    <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <canvas id="myPieChart" width="301" height="253" class="chartjs-render-monitor" style="display: block; width: 301px; height: 253px;"></canvas>
+                </div>
+                <hr>
+            </div>
+        </div>
+        @*<div class="card shadow mb-4">
+             Card Header - Dropdown
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
                 <div class="dropdown no-arrow">
@@ -144,7 +172,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Card Body -->
+             Card Body
             <div class="card-body">
                 <div class="chart-pie pt-4 pb-2">
                     <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
@@ -162,7 +190,7 @@
                     </span>
                 </div>
             </div>
-        </div>
+        </div>*@
     </div>
 </div>
 
@@ -174,158 +202,102 @@
         <!-- Project Card Example -->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Projects</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Thống kê đơn hàng</h6>
             </div>
             <div class="card-body">
-                <h4 class="small font-weight-bold">Server Migration <span class="float-right">20%</span></h4>
+                <h4 class="small font-weight-bold">Đơn đang chờ <span class="float-right">@(Model.WaitingOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: @(Model.WaitingOrderPercentage)%" aria-valuenow="@(Model.WaitingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <h4 class="small font-weight-bold">Sales Tracking <span class="float-right">40%</span></h4>
+                <h4 class="small font-weight-bold">Đơn trước khi giao <span class="float-right">@(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: @(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)%" aria-valuenow="@(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <h4 class="small font-weight-bold">Customer Database <span class="float-right">60%</span></h4>
+                <h4 class="small font-weight-bold">Đơn đang giao <span class="float-right">@(Model.ShippingOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" style="width: @(Model.ShippingOrderPercentage)%" aria-valuenow="@(Model.ShippingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <h4 class="small font-weight-bold">Payout Details <span class="float-right">80%</span></h4>
+                <h4 class="small font-weight-bold">Đơn đã giao <span class="float-right">@(Model.DeliveriedOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-info" role="progressbar" style="width: @(Model.DeliveriedOrderPercentage)%" aria-valuenow="@(Model.DeliveriedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <h4 class="small font-weight-bold">Account Setup <span class="float-right">Complete!</span></h4>
+                <h4 class="small font-weight-bold">Đơn đã hoàn thành <span class="float-right">@(Model.CompletedOrderPercentage)%</span></h4>
                 <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.CompletedOrderPercentage)%" aria-valuenow="@(Model.CompletedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-        </div>       
+        </div>
     </div>
 
     <div class="col-lg-6 mb-4">
 
-        <!-- Illustrations -->
-        <!-- Color System -->
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-primary text-white shadow">
-                    <div class="card-body">
-                        Primary
-                        <div class="text-white-50 small">#4e73df</div>
-                    </div>
-                </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Doanh thu 6 tháng</h6>
             </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-success text-white shadow">
-                    <div class="card-body">
-                        Success
-                        <div class="text-white-50 small">#1cc88a</div>
-                    </div>
+            <div class="card-body">
+                <div class="chart-bar">
+                    <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                    <canvas id="myBarChart" width="668" height="320" class="chartjs-render-monitor" style="display: block; width: 668px; height: 320px;"></canvas>
                 </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-info text-white shadow">
-                    <div class="card-body">
-                        Info
-                        <div class="text-white-50 small">#36b9cc</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-warning text-white shadow">
-                    <div class="card-body">
-                        Warning
-                        <div class="text-white-50 small">#f6c23e</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-danger text-white shadow">
-                    <div class="card-body">
-                        Danger
-                        <div class="text-white-50 small">#e74a3b</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-secondary text-white shadow">
-                    <div class="card-body">
-                        Secondary
-                        <div class="text-white-50 small">#858796</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-light text-black shadow">
-                    <div class="card-body">
-                        Light
-                        <div class="text-black-50 small">#f8f9fc</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card bg-dark text-white shadow">
-                    <div class="card-body">
-                        Dark
-                        <div class="text-white-50 small">#5a5c69</div>
-                    </div>
-                </div>
+                <hr>
             </div>
         </div>
     </div>
 </div>
 
 <!-- DataTables Example -->
-<div class="card mb-3">
-    <div class="card-header">
-        <i class="fas fa-table"></i>
-        Đơn hàng mới nhất
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>Khách hàng</th>
-                        <th>Địa chỉ</th>
-                        <th>SĐT</th>
-                        <th>Ngày đặt</th>
-                        <th>Hình thức</th>
-                        <th>Trạng thái</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.CustomerName</td>
-                            <td>@item.CustomerAddress</td>
-                            <td>@item.CustomerMobile</td>
-                            <td>@item.CreatedDate</td>
-                            <td>@Extension.GetEnumDisplayName(item.PaymentMethod)</td>
-                            <td class="item-status">
-                                @Extension.GetEnumDisplayName(item.Status)
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.OrderId">
-                                    <i class="fas fa-check-circle"></i>
-                                </button>
-
-                                @Ajax.ActionLink(" ", "GetOrderDetailPartial", new { @id = item.OrderId }
-                                            , new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "modal-detail" }
-                                            , new { @class = "btn btn-outline-primary btn-order-detail btn-sm" })
-                                <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.OrderId">
-                                    <i class="fas fa-times-circle"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+@*<div class="card mb-3">
+        <div class="card-header">
+            <i class="fas fa-table"></i>
+            Đơn hàng mới nhất
         </div>
-    </div>
-    @*<div class="card-footer small text-muted">Updated @orderList.Select(m => m.CreatedDate.ToString()).First()</div>*@
-</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Khách hàng</th>
+                            <th>Địa chỉ</th>
+                            <th>SĐT</th>
+                            <th>Ngày đặt</th>
+                            <th>Hình thức</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.CustomerName</td>
+                                <td>@item.CustomerAddress</td>
+                                <td>@item.CustomerMobile</td>
+                                <td>@item.CreatedDate</td>
+                                <td>@Extension.GetEnumDisplayName(item.PaymentMethod)</td>
+                                <td class="item-status">
+                                    @Extension.GetEnumDisplayName(item.Status)
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.OrderId">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+
+                                    @Ajax.ActionLink(" ", "GetOrderDetailPartial", new { @id = item.OrderId }
+                                                , new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "modal-detail" }
+                                                , new { @class = "btn btn-outline-primary btn-order-detail btn-sm" })
+                                    <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.OrderId">
+                                        <i class="fas fa-times-circle"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer small text-muted">Updated @orderList.Select(m => m.CreatedDate.ToString()).First()</div>
+    </div>*@
 <!-- /.container-fluid -->
 <!-- The Modal -->
 <div class="modal fade" id="order-detail-modal">
@@ -350,12 +322,14 @@
 
 
 @section scripts {
-    @Scripts.Render("~/bundles/jqueryex")
-    <script src="~/Areas/Admin/Content/js/demo/chart-area-demo.js"></script>
-    <script src="~/Areas/Admin/Content/js/demo/chart-pie-demo.js"></script>
+    <script src="~/Areas/Admin/Content/js/charts.js"></script>
 
     <script>
+
         (function () {
+            renderAreaChart([@Html.Raw(areaLabels)], [@areaData],@maxAreaData);
+            renderBarChart([@Html.Raw(barLabels)], [@barData],@maxBarData);
+            renderPieChart([@Html.Raw(pieLabels)], [@pieData]);
             $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
             $(".btn-order-detail").off('click').on('click', function (e) {
                 e.preventDefault();

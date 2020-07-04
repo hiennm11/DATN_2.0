@@ -16,7 +16,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/Dashboard
         public async Task<ActionResult> Index()
         {
-            var response = await _adminOrderService.GetOrderByDateDecending();
+            var response = await _adminOrderService.GetDashboardResponse();
 
             return View(response);
         }

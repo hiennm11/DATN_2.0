@@ -34,7 +34,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         public async Task<ActionResult> Detail(int categoryId = 0)
         {
             var response = categoryId == 0 ? new CategoryVM() : await _categoryService.GetDataByIDAsync(categoryId);
-            ViewBag.Categories = await _categoryService.GetCategoriesListAsync();
+            ViewBag.Categories = await _categoryService.GetCategoriesListAsync(); 
             return View(response);
         }
 

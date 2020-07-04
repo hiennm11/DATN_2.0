@@ -22,6 +22,7 @@ namespace WebBanSach_2_0.Data.Repositories
         Task<IEnumerable<Order>> GetListByOrderDateAsync(DateTime date);
         Task<IEnumerable<Order>> GetListByMonthAsync(DateTime date);
         Task<IEnumerable<Order>> GetOrdersByUserAsync(string email);
+        Task<IEnumerable<Order>> GetDashboardListOrder();
         int GetFilterRow();
     }
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
@@ -64,6 +65,14 @@ namespace WebBanSach_2_0.Data.Repositories
             _filterRow = data.Count();
 
             return await data.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetDashboardListOrder()
+        {
+            return await _dbContext.Orders.Where(m => m.Status == OrderStatus.Waiting || m.Status == OrderStatus.InProgress ||
+                                                 m.Status == OrderStatus.Shipping || m.Status == OrderStatus.Deliveried ||
+                                                 m.Status == OrderStatus.Completed || m.Status == OrderStatus.Completed)
+                                                .ToListAsync();
         }
 
         public async Task<IEnumerable<Order>> GetDeletedOrder(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page = 1, int pageSize = 10)

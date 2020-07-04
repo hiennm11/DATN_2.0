@@ -2,7 +2,8 @@
 
 @{
     ViewBag.Title = "Detail";
-    var cate = new SelectList(ViewBag.Categories, "CategoryId", "CategoryName");
+    var categories = (IEnumerable<CategoryVM>)ViewBag.Categories;
+    var cate = new SelectList(categories.Where(m => m.CategoryId != Model.CategoryId), "CategoryId", "CategoryName");
 
 }
 

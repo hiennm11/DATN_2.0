@@ -24,6 +24,7 @@ namespace WebBanSach_2_0.Service.AdminServices
         Task<IEnumerable<OrderVM>> GetOrderByDateDecending();
         Task<ClientOrderDetailResponse> GetOrderDetailCartView(int id);
         Task<AdminChartResponse> GetChartResponse();
+        Task<AdminDashboardResponse> GetDashboardResponse();
         Task<double> GetDayEarning(DateTime date);
         Task<double> GetMonthEarning(DateTime date);
 
@@ -113,6 +114,41 @@ namespace WebBanSach_2_0.Service.AdminServices
             return new AdminChartResponse { AreaChart = new AreaChart { Date = areaLabels, DateEarning = areaData }, 
                                             BarChart = new BarChart { Date = barLabels, DateEarning = barData },
                                             PieChart = new PieChart { Roles = pieLabels, Percentage = pieData } };
+        }
+
+        public async Task<AdminDashboardResponse> GetDashboardResponse()
+        {
+            var orders = await _orderRepository.GetDashboardListOrder();
+            var orderCount = orders.Count();
+            var waitingOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Waiting).Count() / orderCount * 100);
+            var acceptedOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Accepted).Count() / orderCount * 100);
+            var inProgressOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.InProgress).Count() / orderCount * 100);
+            var shippingOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Shipping).Count() / orderCount * 100);
+            var deliveredOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Deliveried).Count() / orderCount * 100);
+            var completedOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Completed).Count() / orderCount * 100);
+
+            var orderPercentage = Math.Round(orderCount - completedOrders / orderCount * 100);
+            var months = EntityExtensions.GetRevenue(DateTime.Now);
+            double annual = 0;
+            foreach (var item in months)
+            {
+                annual += await GetMonthEarning(item);
+            }
+
+            return new AdminDashboardResponse
+            {
+                Charts = await GetChartResponse(),
+                MonthlyEarnings = await GetMonthEarning(DateTime.Now),
+                AnnualEarnings = annual,
+                OrderPercentage = orderPercentage,
+                WaitingOrderPercentage = waitingOrders,
+                InProgressOrderPercentage = inProgressOrders,
+                ShippingOrderPercentage = shippingOrders,
+                DeliveriedOrderPercentage = deliveredOrders,
+                CompletedOrderPercentage = completedOrders,
+                AcceptedOrderPercentage = acceptedOrders,
+                WaitingOrderCount = orders.Where(m => m.Status == OrderStatus.Waiting).Count()
+            };
         }
 
         public async Task<IndexViewModel<OrderVM>> GetDataAsync(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page, OrderTypeRequest orderType)
