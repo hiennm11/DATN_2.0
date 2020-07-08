@@ -61,16 +61,8 @@ namespace WebBanSach_2._0.Web
                 "~/Areas/Admin/Content/js/sb-admin.min.js",
                 "~/Areas/Admin/Content/vendor/jquery/jquery-ui.js",
                 "~/Areas/Admin/Content/js/adminApp.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/cate-admin").Include(               
-                "~/Areas/Admin/Content/js/cate-admin.js"));
-            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/product-admin").Include(              
-                "~/Areas/Admin/Content/js/product-admin.js"));
-            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/authord-admin").Include(
-                "~/Areas/Admin/Content/js/authord-admin.js"));
-            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/authors-admin").Include(
-                "~/Areas/Admin/Content/js/authors-admin.js"));
-            bundles.Add(new ScriptBundle("~/bundles/admin/extensions/order-admin").Include(
+           
+            bundles.Add(new ScriptBundle("~/bundles/admin/order-admin").Include(
                 "~/Areas/Admin/Content/js/order-admin.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/app-js.js").Include(

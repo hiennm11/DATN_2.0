@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using iTextSharp.text.pdf;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
@@ -27,7 +30,7 @@ namespace WebBanSach_2_0.Service.AdminServices
         Task<AdminDashboardResponse> GetDashboardResponse();
         Task<double> GetDayEarning(DateTime date);
         Task<double> GetMonthEarning(DateTime date);
-
+        string SaveReportFile(int orderId, string reportPath, string filePath, string agent);
     }
 
     public class AdminOrderService : IAdminOrderService
@@ -221,6 +224,57 @@ namespace WebBanSach_2_0.Service.AdminServices
             var order = _mapper.Map<OrderVM>(await _orderRepository.GetByOrderIdAsync(id));
 
             return new ClientOrderDetailResponse(list.ToList(), order);
+        }
+
+        public string SaveReportFile(int orderId, string reportPath, string filePath, string agent)
+        {
+            //Report
+            ReportViewer reportViewer = new ReportViewer();
+            reportViewer.ProcessingMode = ProcessingMode.Local;
+            reportViewer.LocalReport.ReportPath = reportPath;
+
+            //DataSource
+            ReportDataSource OrderDS = new ReportDataSource("OrderDS", _orderRepository.GetOrderStoreProcedure(orderId));
+            ReportDataSource OrderDetailDS = new ReportDataSource("OrderDetailDS", _orderRepository.GetOrderDetailStoreProcedure(orderId));
+
+            reportViewer.LocalReport.DataSources.Clear();
+            reportViewer.LocalReport.DataSources.Add(OrderDS);
+            reportViewer.LocalReport.DataSources.Add(OrderDetailDS);
+
+            //Report parameter
+            ReportParameter param = new ReportParameter("orderId", orderId.ToString());
+            reportViewer.LocalReport.SetParameters(param);
+
+            //Byte
+            Warning[] warnings;
+            string[] streamids;
+            string mimeType, encoding, filenameExtension;
+
+            byte[] bytes = reportViewer.LocalReport.Render("Pdf", null, out mimeType, out encoding, out filenameExtension, out streamids, out warnings);
+
+            //File
+            string FileName = "Test_" + DateTime.Now.Ticks.ToString() + ".pdf";
+            string FilePath = filePath + FileName;
+
+            //create and set PdfReader
+            PdfReader reader = new PdfReader(bytes);
+            FileStream output = new FileStream(FilePath, FileMode.Create);
+
+            //create and set PdfStamper
+            PdfStamper pdfStamper = new PdfStamper(reader, output, '0', true);
+
+            if (agent.Contains("Firefox"))
+                pdfStamper.JavaScript = "var res = app.loaded('var pp = this.getPrintParams();pp.interactive = pp.constants.interactionLevel.full;this.print(pp);');";
+            else
+                pdfStamper.JavaScript = "var res = app.setTimeOut('var pp = this.getPrintParams();pp.interactive = pp.constants.interactionLevel.full;this.print(pp);', 200);";
+
+
+            pdfStamper.FormFlattening = false;
+            pdfStamper.Close();
+            reader.Close();
+
+            //return file path
+            return @"TempFiles/" + FileName;
         }
     }
 }

@@ -42,7 +42,9 @@
 
     </div>
 </div>
-
+<div id="divPDF">
+    <div id="printerDiv"><iframe id="frmPDF" style="position: absolute; top: -1000px;"></iframe></div>
+</div>
 <!-- The Modal -->
 <div class="modal fade" id="order-detail-modal">
     <div class="modal-dialog modal-lg">
@@ -67,13 +69,6 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/jqueryex")
-    <script>
-            (function () {
-                $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
-                $(".btn-order-detail").off('click').on('click', function (e) {
-                    e.preventDefault();
-                    $("#order-detail-modal").modal('show');
-                });
-            })();
-    </script>
+    @Scripts.Render("~/bundles/admin/order-admin")
+
 }

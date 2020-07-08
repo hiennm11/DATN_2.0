@@ -25,7 +25,7 @@
                         @Extension.GetEnumDisplayName(item.Status)
                     </td>
                     <td>
-                        @if (item.Status != OrderStatus.Completed && item.Status != OrderStatus.Declined 
+                        @if (item.Status != OrderStatus.Completed && item.Status != OrderStatus.Declined
                             && item.Status != OrderStatus.Deleted && item.Status != OrderStatus.Cancelled)
                         {
                             using (Html.BeginForm("ChangeOrderStatus", "Order", new { @id = item.OrderId }, FormMethod.Post, new { @class = "d-inline" }))
@@ -39,6 +39,7 @@
                         @Ajax.ActionLink(" ", "GetOrderDetailPartial", new { @id = item.OrderId }
                              , new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "modal-detail" }
                              , new { @class = "btn btn-outline-primary btn-order-detail btn-sm" })
+                        <button class="btn btn-outline-secondary btn-sm" onclick="exportToPDF(@item.OrderId)"><i class="fas fa-print"></i></button>
                         @if (item.Status != OrderStatus.Declined && item.Status != OrderStatus.Deleted && item.Status != OrderStatus.Cancelled)
                         {
                             using (Html.BeginForm("DeleteOrder", "Order", new { @id = item.OrderId }, FormMethod.Post, new { @class = "d-inline" }))
@@ -49,7 +50,7 @@
                                 </button>
                             }
                         }
-                        
+
                     </td>
                 </tr>
             }

@@ -17,7 +17,7 @@
 <div class="card mb-3">
     <div class="card-header">
         <i class="fas fa-table"></i>
-       Hóa đơn chưa hoàn thành
+        Hóa đơn chưa hoàn thành
     </div>
     <div class="card-body">
         <br />
@@ -47,7 +47,9 @@
 
     </div>
 </div>
-
+<div id="divPDF">
+    <div id="printerDiv"><iframe id="frmPDF" style="position: absolute; top: -1000px;"></iframe></div>
+</div>
 <!-- The Modal -->
 <div class="modal fade" id="order-detail-modal">
     <div class="modal-dialog modal-lg">
@@ -72,19 +74,5 @@
 
 @section scripts {
     @Scripts.Render("~/bundles/jqueryex")
-    <script>
-        (function () {
-            $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
-            $(".btn-order-detail").off('click').on('click', function (e) {
-                e.preventDefault();
-                $("#order-detail-modal").modal('show');
-            });
-            $(".btn-reload").off('click').on('click', function (e) {
-                e.preventDefault();
-                $("#fromDate").val('');
-                $("#toDate").val('');
-                $("#orderStatus").val(1);
-            });
-        })();
-    </script>
+    @Scripts.Render("~/bundles/admin/order-admin")
 }

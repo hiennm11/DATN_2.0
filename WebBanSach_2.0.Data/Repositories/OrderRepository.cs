@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.Enums;
+using WebBanSach_2_0.Model.ReportModels;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
@@ -23,6 +26,9 @@ namespace WebBanSach_2_0.Data.Repositories
         Task<IEnumerable<Order>> GetListByMonthAsync(DateTime date);
         Task<IEnumerable<Order>> GetOrdersByUserAsync(string email);
         Task<IEnumerable<Order>> GetDashboardListOrder();
+        DbRawSqlQuery<OrderRM> GetOrderStoreProcedure(int orderId);
+        DbRawSqlQuery<OrderDetailRM> GetOrderDetailStoreProcedure(int orderId);
+
         int GetFilterRow();
     }
     public class OrderRepository : GenericRepository<Order>, IOrderRepository
@@ -154,10 +160,20 @@ namespace WebBanSach_2_0.Data.Repositories
             return await data.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
+        public DbRawSqlQuery<OrderDetailRM> GetOrderDetailStoreProcedure(int orderId)
+        {
+            return _dbContext.Database.SqlQuery<OrderDetailRM>("SelectAllProductInOrder @OrderId", new SqlParameter("@OrderId", orderId));
+        }
+
         public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string email)
         {
             var result = _dbContext.Orders.Where(m => m.User.UserName == email).Include(m => m.Discount);
             return await result.ToListAsync();
+        }
+
+        public DbRawSqlQuery<OrderRM> GetOrderStoreProcedure(int orderId)
+        {
+            return _dbContext.Database.SqlQuery<OrderRM>("SelectOrder @OrderId", new SqlParameter("@OrderId", orderId));
         }
 
         public async Task<IEnumerable<Order>> GetUnDoneOrder(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page = 1, int pageSize = 10)

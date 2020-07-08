@@ -74,6 +74,8 @@
     <Compile Include="Enums\PaymentMethod.cs" />
     <Compile Include="Enums\StatusMessageId.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportModels\OrderDetailRM.cs" />
+    <Compile Include="ReportModels\OrderRM.cs" />
     <Compile Include="ResponseModels\AdminChartResponse.cs" />
     <Compile Include="ResponseModels\AdminDashboardResponse.cs" />
     <Compile Include="ResponseModels\AdminProductDetailResponse.cs" />

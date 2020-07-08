@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Service.AdminServices;
@@ -101,6 +98,21 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 return RedirectToAction("DeletedOrder", new { @status = StatusMessageId.DeleteSuccess });
             }
             return RedirectToAction("Index");
+        }
+
+        public ActionResult ExportOrder()
+        {
+            return View();
+        }
+
+        public ActionResult ExportToPDF(int orderId)
+        {
+            string reportPath = Server.MapPath(@"~\Reports\Report1.rdlc");
+            string filePath = HttpContext.Server.MapPath(@"~\TempFiles\");
+            string agent = HttpContext.Request.Headers["User-Agent"].ToString();
+
+            var FilePathReturn = _adminOrderService.SaveReportFile(orderId, reportPath, filePath, agent);
+            return Content(FilePathReturn);
         }
 
         private SelectList selectsStatus(int cond)

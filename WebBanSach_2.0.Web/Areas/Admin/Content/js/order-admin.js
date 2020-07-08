@@ -1,42 +1,30 @@
-﻿$(document).ready(function () {
-    //Initially load pagenumber=1  
-    
-    $(".btn-order-completed").off('click').on('click', function () {
-        var id = $(this).data("id");
-        var td = $(this).closest("tr").find(".item-status");    
-        UpdateStatus(id, 2)
-        td.html("<span class='text-success'>Đã hoàn thành</span>");     
+﻿(function () {
+    $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
+    $(".btn-order-detail").off('click').on('click', function (e) {
+        e.preventDefault();
+        $("#order-detail-modal").modal('show');
     });
-    $(".btn-order-canceled").off('click').on('click', function () {
-        var id = $(this).data("id");
-        var td = $(this).closest("tr").find(".item-status");
-        UpdateStatus(id, 0)
-        td.html("<span class='text-danger'>Đã hủy</span>");
-        
-    });
-});
-
-function UpdateStatus(id, status) {
+})();
+function exportToPDF(id, root) {
     $.ajax({
-        url: "/ManageOrder/UpdateStatus",
-        type: "post",
-        dataType: "json",
-        data: { id: id, orderStatus: status },
-        success: function (response) {
-            if (response.status == true) {
-                return true;
-            }
+        url: 'ExportToPDF',
+        data: { orderId: id },
+        type: 'GET',
+        contentType: 'application/json; charset=utf-8',
+        success: function (result) {
+
+            $('#frmPDF').attr('src', '/' + result);
+
+            setTimeout(function () {
+                frame = document.getElementById("frmPDF");
+                framedoc = frame.contentWindow;
+                framedoc.focus();
+                framedoc.print();
+            }, 1000);
+        },
+        error: function (xhr, status, err) {
+            alert(err);
         }
     });
-}
-
-function GetDetail(id) {
-    $.ajax({
-        url: "/ManageOrder/UpdateStatus",
-        type: "get",
-        data: { id: id, orderStatus: status },
-        success: function (response) {
-                $(".detail").replaceWith(response)
-        }
-    });
+    return false;
 }
