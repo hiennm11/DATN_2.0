@@ -238,6 +238,7 @@
     <Compile Include="Areas\Admin\Controllers\ManageRoleController.cs" />
     <Compile Include="Areas\Admin\Controllers\ManageUserController.cs" />
     <Compile Include="Areas\Admin\Controllers\OrderController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ProductAdderController.cs" />
     <Compile Include="Areas\Admin\Controllers\ProductController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -3669,6 +3670,8 @@
     <Content Include="InvoiceReportDS.xsc">
       <DependentUpon>InvoiceReportDS.xsd</DependentUpon>
     </Content>
+    <Content Include="Areas\Admin\Views\ProductAdder\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\ProductAdder\Create.cshtml" />
     <None Include="InvoiceReportDS.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>InvoiceReportDS.Designer.cs</LastGenOutput>

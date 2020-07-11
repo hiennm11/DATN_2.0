@@ -125,10 +125,14 @@
             for(int i = 0; i < 30; i++)
             {
                 var product = new Product { ProductId = i, CategoryId = 1, CreateDate = DateTime.Now, PublicationDate = DateTime.Now, 
-                    CreateBy = "admin", Name = "Book " + i, NameAlias = "book-" + i, Price = 10000, IsAvailable = true, Status = true };
+                    CreateBy = "admin", Name = "Book " + i, NameAlias = "book-" + i, Price = 10000, Status = true };
                 product.Discount = ZeroDiscount;
                 product.Authors = new List<Author> { undefinedAuthor };
                 context.Products.Add(product);
+                context.SaveChanges();
+
+                var rank = new ProductRank { ProductId = product.ProductId, Name = product.Name, CategoryId = product.CategoryId, Rate = 0, Sold = 0 };
+                context.ProductRanks.Add(rank);
             }
 
             //Add Account

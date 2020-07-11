@@ -18,6 +18,8 @@ namespace WebBanSach_2_0.Model.Entities
         public string DiscountCode { get; set; }
         public double DiscountValue { get; set; }
         public DiscountType DiscountType { get; set; }
+        public string DiscountCover { get; set; }
+        public string DiscountNameAlias { get; set; }
 
         public ICollection<Product> Products { get; set; }
         public ICollection<ApplicationUser> Users { get; set; }

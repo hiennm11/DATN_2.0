@@ -16,12 +16,12 @@ namespace WebBanSach_2_0.Model.ViewModels
         public string Description { get; set; }
         public string Image { get; set; }
         public double Price { get; set; }
-        public int Purchase { get; set; }
-        public double Star { get; set; }
+        public int AvailableQuantity { get; set; }        
         public string NameAlias { get; set; }
         public string Link { get; set; }
+
+        [Required(ErrorMessage = "Your product need a pub date.")]
         public DateTime PublicationDate { get; set; }
-        public bool IsAvailable { get; set; }
 
         public CategoryVM Category { get; set; }
         public ICollection<AuthorVM> Authors { get; set; }

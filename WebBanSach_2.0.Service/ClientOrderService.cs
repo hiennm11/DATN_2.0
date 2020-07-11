@@ -28,10 +28,12 @@ namespace WebBanSach_2_0.Service
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IProductRankRepository _productRankRepository;
         private readonly IMapper _mapper;
 
-        public ClientOrderService(IUnitOfWork unitOfWork, IProductRepository productRepository, IDiscountRepository discountRepository
-                , IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, IApplicationUserRepository applicationUserRepository, IMapper mapper)
+        public ClientOrderService(IUnitOfWork unitOfWork, IProductRepository productRepository, IDiscountRepository discountRepository, 
+                                  IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository, 
+                                  IApplicationUserRepository applicationUserRepository, IProductRankRepository productRankRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._productRepository = productRepository;
@@ -39,6 +41,7 @@ namespace WebBanSach_2_0.Service
             this._orderRepository = orderRepository;
             this._orderDetailRepository = orderDetailRepository;
             this._applicationUserRepository = applicationUserRepository;
+            this._productRankRepository = productRankRepository;
             this._mapper = mapper;
         }
 
@@ -86,12 +89,25 @@ namespace WebBanSach_2_0.Service
 
             foreach(var item in carts.Cart)
             {
-                var orderDetail = new OrderDetail() { OrderId = orderToAdd.OrderId, ProductId = item.Product.ProductId, Quantity = item.Quantity };                
-                await _orderDetailRepository.AddAsync(orderDetail);
+                var product = await _productRepository.GetSingleByIDAsync(item.Product.ProductId);
+                if(product.AvailableQuantity >= item.Quantity)
+                {
+                    var orderDetail = new OrderDetail() { OrderId = orderToAdd.OrderId, ProductId = item.Product.ProductId, Quantity = item.Quantity };
+                    await _orderDetailRepository.AddAsync(orderDetail);
 
-                var product = await _productRepository.GetProductByNameIDAsync(item.Product.NameAlias);
-                product.Purchase += 1;
-                await _productRepository.UpdateAsync(product);
+                    //Update product sold
+                    var rank = await _productRankRepository.GetSingleByIDAsync(item.Product.ProductId);
+                    rank.Sold += item.Quantity;
+                    await _productRankRepository.UpdateAsync(rank);
+
+                    product.AvailableQuantity -= item.Quantity;
+                    await _productRepository.UpdateAsync(product);
+                }
+                else
+                {
+                    return 0;
+                }
+                
             }
             
             return await _unitOfWork.SaveAsync();

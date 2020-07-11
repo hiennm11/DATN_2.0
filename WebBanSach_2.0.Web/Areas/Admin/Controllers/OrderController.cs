@@ -100,18 +100,14 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult ExportOrder()
-        {
-            return View();
-        }
-
         public ActionResult ExportToPDF(int orderId)
         {
+            string fileName = "Order_" + orderId + "_" + DateTime.Now.Ticks.ToString() + ".pdf";
             string reportPath = Server.MapPath(@"~\Reports\Report1.rdlc");
             string filePath = HttpContext.Server.MapPath(@"~\TempFiles\");
             string agent = HttpContext.Request.Headers["User-Agent"].ToString();
 
-            var FilePathReturn = _adminOrderService.SaveReportFile(orderId, reportPath, filePath, agent);
+            var FilePathReturn = _adminOrderService.SaveReportFile(orderId, fileName, reportPath, filePath, agent);
             return Content(FilePathReturn);
         }
 

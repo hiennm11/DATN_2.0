@@ -34,12 +34,7 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
         // GET: Admin/Product
         [Route("Product")]
         public async Task<ActionResult> Index(StatusMessageId? status, int page = 1, string search = null, int categoryId = 0)
-        {
-            //ViewBag.StatusMessage = status == StatusMessageId.AddSuccess ? "Đã tạo thành công bản ghi." :
-            //    status == StatusMessageId.UpdateSuccess ? "Đã cập nhật thành công bản ghi." :
-            //    status == StatusMessageId.DeleteSuccess ? "Đã xóa thành công bản ghi." :
-            //    status == StatusMessageId.Error ? "Đã có lỗi xảy ra." : "";
-            
+        {           
             ViewBag.StatusMessage = status != null ? EntityExtensions.HtmlStatusMessage(status) : "";
 
             var response = new AdminListProductResponse()

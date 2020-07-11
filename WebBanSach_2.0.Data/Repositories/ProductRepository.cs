@@ -13,6 +13,7 @@ namespace WebBanSach_2_0.Data.Repositories
     {
         Product GetProductByNameID(string nameId);
         Task<Product> GetProductByNameIDAsync(string nameId);
+        Task<Product> GetProductByAdderAsync(ProductAdder productAdder, string alias);
         Task<IEnumerable<Product>> GetByCategoryAsync(string cate);
         Task<IEnumerable<Product>> GetBySearchAsync(string search);
         Task<IEnumerable<Product>> GetByCategoryPagingAsync(string cate, int page, int pageSize);
@@ -89,6 +90,12 @@ namespace WebBanSach_2_0.Data.Repositories
         {
             var list = _dbContext.Products.Where(m => m.NameAlias.ToLower().Contains(search.ToLower())).OrderBy(c => c.Name);
             return await list.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        }
+
+        public Task<Product> GetProductByAdderAsync(ProductAdder productAdder, string alias)
+        {
+            return _dbContext.Products.FirstOrDefaultAsync(m => m.ProductId == productAdder.ProductId && 
+                                                           m.NameAlias == alias && m.CategoryId == productAdder.CategoryId);
         }
     }
 }

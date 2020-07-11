@@ -54,8 +54,7 @@
                         <th>Thể loại</th>
                         <th>Hình ảnh</th>
                         <th>Giá bán</th>
-                        <th>Lượt mua</th>
-                        <th>Tình trạng</th>
+                        <th>Tồn kho</th>
                         <th>Trạng thái</th>
                         <th></th>
                     </tr>
@@ -66,8 +65,7 @@
                         <th>Thể loại</th>
                         <th>Hình ảnh</th>
                         <th>Giá bán</th>
-                        <th>Lượt mua</th>
-                        <th>Tình trạng</th>
+                        <th>Tồn kho</th>
                         <th>Trạng thái</th>
                         <th></th>
                     </tr>
@@ -75,44 +73,32 @@
                 <tbody id="dataTableBody">
                     @foreach (var item in Model.Products.Items)
                     {
-                    <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Category.CategoryName</td>
-                        <td><img src="@(!string.IsNullOrEmpty(item.Image) ? item.Image : "/img/noCover.jpg")" style="height:100px; width:90px;border: solid 1px" /></td>
-                        <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
-                        <td>@item.Purchase</td>
-                        <td>
-                            <h5>
-                                @if (item.IsAvailable == true)
-                                {
-                                    <span class="badge badge-success">Còn hàng</span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger">Hết hàng</span>
-                                }
-                            </h5>
-                        </td>
-                        <td>
-                            <h5>
-                                @if (item.Status == true)
-                                {
-                                    <span class="badge badge-success">Active</span>
-                                }
-                                else
-                                {
-                                    <span class="badge badge-danger">InActive</span>
-                                }
-                            </h5>
-                        </td>
-                        <td>
-                            <a href="@Url.Action("Detail", new { @productId = item.NameAlias })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
-                            <a href="@Url.Action("EditAuthor", new { @productId = item.NameAlias })" class="btn btn-outline"><i class="fas fa-user-plus"></i></a>
-                            <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
-                                <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Category.CategoryName</td>
+                            <td><img src="@(!string.IsNullOrEmpty(item.Image) ? item.Image : "/img/noCover.jpg")" style="height:100px; width:90px;border: solid 1px" /></td>
+                            <td>@(String.Format("{0:0,0}", item.Price)).đ</td>
+                            <td>@item.AvailableQuantity</td>
+                            <td>
+                                <h5>
+                                    @if (item.Status == true)
+                                    {
+                                        <span class="badge badge-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">InActive</span>
+                                    }
+                                </h5>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Detail", new { @productId = item.NameAlias })" class="btn btn-outline btn-edit" data-page="0" data-id="@item.ProductId"><i class="fas fa-pencil-alt" style="color: blue"></i></a>
+                                <a href="@Url.Action("EditAuthor", new { @productId = item.NameAlias })" class="btn btn-outline"><i class="fas fa-user-plus"></i></a>
+                                <button class="btn btn-outline-light open-delete-modal" data-id="@item.ProductId" data-name="@item.Name">
+                                    <i class="fas fa-fw fa-trash-alt" style="color: red"></i>
+                                </button>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>

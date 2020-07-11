@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="Repositories\ApplicationUserRepository.cs" />
     <Compile Include="Repositories\AuthorDetailRepository.cs" />
+    <Compile Include="Repositories\ProductAdderRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\CommentRepository.cs" />
     <Compile Include="Repositories\DiscountRepository.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Repositories\IdentityRoleRepository.cs" />
     <Compile Include="Repositories\OrderDetailRepository.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
+    <Compile Include="Repositories\ProductRankRepository.cs" />
     <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="WebBanSach_2_0DbContext.cs" />
   </ItemGroup>

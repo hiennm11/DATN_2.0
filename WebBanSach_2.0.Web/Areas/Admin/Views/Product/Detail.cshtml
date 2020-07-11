@@ -33,15 +33,7 @@
             <div class="form-horizontal">
                 <div class="hidden-input">
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @Html.HiddenFor(model => model.Product.ProductId)
-                    @Html.HiddenFor(model => model.Product.Purchase)
-                    @Html.HiddenFor(model => model.Product.Star)
-                    @Html.HiddenFor(model => model.Product.UpdateBy)
-                    @Html.HiddenFor(model => model.Product.UpdatedDate)
-                    @Html.HiddenFor(model => model.Product.CreateBy)
-                    @Html.HiddenFor(model => model.Product.CreateDate)
-                    @Html.HiddenFor(model => model.Product.Image)
-                    @Html.HiddenFor(model => model.Product.PublicationDate)
+                    @Html.HiddenFor(model => model.Product.ProductId)                    
                     @Html.HiddenFor(model => model.Product.UniqueStringKey)
                 </div>
 
@@ -72,6 +64,14 @@
                         </div>
 
                         <div class="form-group">
+                            @Html.Label("Publish Date", htmlAttributes: new { @class = "control-label col-md-5" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.Product.PublicationDate, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                                @Html.ValidationMessageFor(model => model.Product.PublicationDate, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             @Html.Label("Link đọc online", htmlAttributes: new { @class = "control-label col-md-5" })
                             <div class="col-md-10">
                                 @Html.EditorFor(model => model.Product.Link, new { htmlAttributes = new { @class = "form-control" } })
@@ -80,7 +80,7 @@
                         </div>
 
                         <div class="form-group row">
-                            
+
                             <div class="col">
                                 @Html.Label("Trạng thái", htmlAttributes: new { @class = "control-label col-md-5" })
                                 <div class="checkbox col">
@@ -88,14 +88,7 @@
                                     @Html.ValidationMessageFor(model => model.Product.Status, "", new { @class = "text-danger" })
                                 </div>
                             </div>
-                            
-                            <div class="col">
-                                @Html.Label("Tình trạng", htmlAttributes: new { @class = "control-label col-md-5" })
-                                <div class="checkbox col">
-                                    @Html.EditorFor(model => model.Product.IsAvailable)
-                                    @Html.ValidationMessageFor(model => model.Product.IsAvailable, "", new { @class = "text-danger" })
-                                </div>
-                            </div>
+
                         </div>
 
                     </div>

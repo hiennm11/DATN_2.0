@@ -70,7 +70,8 @@ namespace WebBanSach_2._0.Web.Controllers
             var response = new ClientProductDetailResponse();
             response.Product = await _clientProductService.GetProductByNameAlias(nameAlias);
             var relateList = await _clientProductService.GetProductsByCategoryId(response.Product.CategoryId);
-            response.RelateProducts = relateList.OrderBy(m => m.Star).Take(10);
+            //Orderby Rating
+            response.RelateProducts = relateList.Take(10);
 
             if (ModelState.IsValid)
             {

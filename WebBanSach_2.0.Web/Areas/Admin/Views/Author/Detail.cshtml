@@ -33,11 +33,7 @@
             <div class="form-horizontal">
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 @Html.HiddenFor(model => model.AuthorId)
-                @Html.HiddenFor(model => model.UniqueStringKey)
-                @Html.HiddenFor(model => model.UpdateBy)
-                @Html.HiddenFor(model => model.UpdatedDate)
-                @Html.HiddenFor(model => model.CreateBy)
-                @Html.HiddenFor(model => model.CreateDate)
+                @Html.HiddenFor(model => model.UniqueStringKey)                
 
                 <div class="form-group">
                     @Html.Label("Tên tác giả", htmlAttributes: new { @class = "control-label col-md-2" })

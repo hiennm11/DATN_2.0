@@ -30,7 +30,7 @@ namespace WebBanSach_2_0.Service.AdminServices
         Task<AdminDashboardResponse> GetDashboardResponse();
         Task<double> GetDayEarning(DateTime date);
         Task<double> GetMonthEarning(DateTime date);
-        string SaveReportFile(int orderId, string reportPath, string filePath, string agent);
+        string SaveReportFile(int orderId, string fileName, string reportPath, string filePath, string agent);
     }
 
     public class AdminOrderService : IAdminOrderService
@@ -40,16 +40,19 @@ namespace WebBanSach_2_0.Service.AdminServices
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IIdentityRoleRepository _identityRoleRepository;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly IProductRankRepository _productRankRepository;
         private readonly IMapper _mapper;
 
         public AdminOrderService(IUnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderDetailRepository orderDetailRepository,
-                                 IIdentityRoleRepository identityRoleRepository, IApplicationUserRepository applicationUserRepository, IMapper mapper)
+                                 IIdentityRoleRepository identityRoleRepository, IApplicationUserRepository applicationUserRepository, 
+                                 IProductRankRepository productRankRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._orderRepository = orderRepository;
             this._orderDetailRepository = orderDetailRepository;
             this._identityRoleRepository = identityRoleRepository;
             this._applicationUserRepository = applicationUserRepository;
+            this._productRankRepository = productRankRepository;
             this._mapper = mapper;
         }
 
@@ -121,6 +124,8 @@ namespace WebBanSach_2_0.Service.AdminServices
 
         public async Task<AdminDashboardResponse> GetDashboardResponse()
         {
+            var ranks = _mapper.Map<IEnumerable<ProductRankVM>>(await _productRankRepository.GetAllAsync());
+
             var orders = await _orderRepository.GetDashboardListOrder();
             var orderCount = orders.Count();
             var waitingOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Waiting).Count() / orderCount * 100);
@@ -130,7 +135,6 @@ namespace WebBanSach_2_0.Service.AdminServices
             var deliveredOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Deliveried).Count() / orderCount * 100);
             var completedOrders = Math.Round((double)orders.Where(m => m.Status == OrderStatus.Completed).Count() / orderCount * 100);
 
-            var orderPercentage = Math.Round(orderCount - completedOrders / orderCount * 100);
             var months = EntityExtensions.GetRevenue(DateTime.Now);
             double annual = 0;
             foreach (var item in months)
@@ -141,9 +145,10 @@ namespace WebBanSach_2_0.Service.AdminServices
             return new AdminDashboardResponse
             {
                 Charts = await GetChartResponse(),
+                ProductRanks = ranks.Where(m => m.Rate > 0 || m.Sold > 0).Take(10).ToList(),
                 MonthlyEarnings = await GetMonthEarning(DateTime.Now),
                 AnnualEarnings = annual,
-                OrderPercentage = orderPercentage,
+                OrderPercentage = completedOrders,
                 WaitingOrderPercentage = waitingOrders,
                 InProgressOrderPercentage = inProgressOrders,
                 ShippingOrderPercentage = shippingOrders,
@@ -186,7 +191,7 @@ namespace WebBanSach_2_0.Service.AdminServices
         {
             var detail = new List<ClientOrderDetailResponse>();
             var orders = _mapper.Map<IEnumerable<OrderVM>>(await _orderRepository.GetListByOrderDateAsync(date));
-            foreach(var item in orders)
+            foreach(var item in orders.Where(m => m.Status == OrderStatus.Completed))
             {
                 var list = _mapper.Map<IEnumerable<OrderDetailVM>>(await _orderDetailRepository.GetDetailByOrderId(item.OrderId));
                 detail.Add(new ClientOrderDetailResponse(list.ToList(), item));
@@ -199,7 +204,7 @@ namespace WebBanSach_2_0.Service.AdminServices
         {
             var detail = new List<ClientOrderDetailResponse>();
             var orders = _mapper.Map<IEnumerable<OrderVM>>(await _orderRepository.GetListByMonthAsync(date));
-            foreach (var item in orders)
+            foreach (var item in orders.Where(m => m.Status == OrderStatus.Completed))
             {
                 var list = _mapper.Map<IEnumerable<OrderDetailVM>>(await _orderDetailRepository.GetDetailByOrderId(item.OrderId));
                 detail.Add(new ClientOrderDetailResponse(list.ToList(), item));
@@ -226,7 +231,7 @@ namespace WebBanSach_2_0.Service.AdminServices
             return new ClientOrderDetailResponse(list.ToList(), order);
         }
 
-        public string SaveReportFile(int orderId, string reportPath, string filePath, string agent)
+        public string SaveReportFile(int orderId, string fileName, string reportPath, string filePath, string agent)
         {
             //Report
             ReportViewer reportViewer = new ReportViewer();
@@ -253,8 +258,7 @@ namespace WebBanSach_2_0.Service.AdminServices
             byte[] bytes = reportViewer.LocalReport.Render("Pdf", null, out mimeType, out encoding, out filenameExtension, out streamids, out warnings);
 
             //File
-            string FileName = "Test_" + DateTime.Now.Ticks.ToString() + ".pdf";
-            string FilePath = filePath + FileName;
+            string FilePath = filePath + fileName;
 
             //create and set PdfReader
             PdfReader reader = new PdfReader(bytes);
@@ -274,7 +278,7 @@ namespace WebBanSach_2_0.Service.AdminServices
             reader.Close();
 
             //return file path
-            return @"TempFiles/" + FileName;
+            return @"TempFiles/" + fileName;
         }
     }
 }

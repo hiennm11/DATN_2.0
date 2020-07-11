@@ -25,6 +25,8 @@ namespace WebBanSach_2_0.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<Shipper> Shippers { get; set; }
+        public DbSet<ProductRank> ProductRanks { get; set; }
+        public DbSet<ProductAdder> ProductAdders { get; set; }
 
         public static WebBanSach_2_0DbContext Create()
         {

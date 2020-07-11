@@ -1,17 +1,9 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories;
-using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
-using WebBanSach_2_0.Service.Infrastructure;
-using WebBanSach_2_0.Web.Models;
 
 namespace WebBanSach_2_0.Service.Controllers
 {

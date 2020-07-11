@@ -73,11 +73,11 @@
                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hoàn thành(đơn)</div>
                         <div class="row no-gutters align-items-center">
                             <div class="col-auto">
-                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@(100 - Model.OrderPercentage)%</div>
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">@(Model.OrderPercentage)%</div>
                             </div>
                             <div class="col">
                                 <div class="progress progress-sm mr-2">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: @(100 - Model.OrderPercentage)%" aria-valuenow="@(100 - Model.OrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: @String.Concat((Model.OrderPercentage),"%")" aria-valuenow="@(100 - Model.OrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                                 </div>
                             </div>
                         </div>
@@ -207,23 +207,23 @@
             <div class="card-body">
                 <h4 class="small font-weight-bold">Đơn đang chờ <span class="float-right">@(Model.WaitingOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-danger" role="progressbar" style="width: @(Model.WaitingOrderPercentage)%" aria-valuenow="@(Model.WaitingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: @String.Concat(Model.WaitingOrderPercentage,"%")" aria-valuenow="@(Model.WaitingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <h4 class="small font-weight-bold">Đơn trước khi giao <span class="float-right">@(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)%</span></h4>
+                <h4 class="small font-weight-bold">Đơn trước khi giao <span class="float-right">@String.Concat((Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage), "%") </span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: @(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)%" aria-valuenow="@(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: @String.Concat((Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage),"%")" aria-valuenow="@(Model.AcceptedOrderPercentage + Model.InProgressOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Đơn đang giao <span class="float-right">@(Model.ShippingOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar" role="progressbar" style="width: @(Model.ShippingOrderPercentage)%" aria-valuenow="@(Model.ShippingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar" role="progressbar" style="width: @String.Concat((Model.OrderPercentage),"%")" aria-valuenow="@(Model.ShippingOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Đơn đã giao <span class="float-right">@(Model.DeliveriedOrderPercentage)%</span></h4>
                 <div class="progress mb-4">
-                    <div class="progress-bar bg-info" role="progressbar" style="width: @(Model.DeliveriedOrderPercentage)%" aria-valuenow="@(Model.DeliveriedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-info" role="progressbar" style="width: @String.Concat((Model.OrderPercentage),"%")" aria-valuenow="@(Model.DeliveriedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
                 <h4 class="small font-weight-bold">Đơn đã hoàn thành <span class="float-right">@(Model.CompletedOrderPercentage)%</span></h4>
                 <div class="progress">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: @(Model.CompletedOrderPercentage)%" aria-valuenow="@(Model.CompletedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="progress-bar bg-success" role="progressbar" style="width: @String.Concat((Model.OrderPercentage),"%")" aria-valuenow="@(Model.CompletedOrderPercentage)" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
         </div>

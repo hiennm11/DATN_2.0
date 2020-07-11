@@ -16,17 +16,8 @@ namespace WebBanSach_2_0.Web.Infrastructure
             CreateMap<Comment, CommentVM>().ReverseMap();
             CreateMap<Discount, DiscountVM>().ReverseMap();
             CreateMap<Shipper, ShipperVM>().ReverseMap();
-
-        }
-
-        //public static MapperConfiguration config = new MapperConfiguration(cfg => {
-        //    cfg.CreateMap<Category, CategoryVM>();
-        //    cfg.CreateMap<Product, ProductVM>();
-        //    cfg.CreateMap<AuthorDetail, AuthorDetailVM>();
-        //    cfg.CreateMap<Order, OrderVM>();
-        //    cfg.CreateMap<OrderDetail, OrderDetailVM>();
-        //});
-
-        //public static IMapper map = new Mapper(config);
+            CreateMap<ProductAdder, ProductAdderVM>().ReverseMap();
+            CreateMap<ProductRank, ProductRankVM>().ReverseMap();
+        }       
     }
 }

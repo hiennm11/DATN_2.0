@@ -39,11 +39,18 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
-                                <td>@item.Id</td>
-                                <td>@item.Name</td>
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            @*@if (item.Id == "admin" || item.Id == "user")
+                            {
+
+                            }
+                            else
+                            {
                                 <td>@Html.ActionLink("Xóa", "Delete", new { id = item.Id })</td>
-                            </tr>
+                            }*@
+                        </tr>
                         }
                     </tbody>
                 </table>

@@ -3,6 +3,12 @@
     ViewBag.Title = "Giỏ hàng";
 
     var user = System.Web.HttpContext.Current.User.Identity.Name;
+
+    List<CartItem> list = null;
+    if(Model.Cart != null)
+    {
+        list = Model.Cart.Where(m => m.Product.AvailableQuantity < m.Quantity).ToList();
+    }
 }
 
 <nav aria-label="breadcrumb">
@@ -35,7 +41,7 @@
                                 <tr>
                                     <td><img src="@(!string.IsNullOrEmpty(item.Product.Image) ? item.Product.Image : "/img/noCover.jpg")" style="width:100px;height:auto" /> </td>
                                     <td>@item.Product.Name</td>
-                                    <td>@(item.Product.IsAvailable == true ? "Còn hàng" : "Hết hàng")</td>
+                                    <td>@(item.Product.AvailableQuantity > 0 ? "Còn hàng" : "Hết hàng")</td>
                                     <td><input class="form-control cart-item-quantity" type="number" data-nameid="@item.Product.NameAlias" value="@item.Quantity" min="1" /></td>
                                     <td class="text-right" id="item-total">
                                         @if (item.Product.Discount.DiscountValue > 0)
@@ -96,7 +102,7 @@
                     <a class="btn btn-block btn-secondary" href="/">Tiếp tục mua sắm</a>
                 </div>
                 <div class="col-sm-12 col-md-6 text-right">
-                    @if (Model.Cart != null && Model.Cart.Count() > 0)
+                    @if (Model.Cart != null && Model.Cart.Count() > 0 && list.Count() == 0)
                     {
                         <a class="btn btn-lg btn-block btn-success text-uppercase" href="@Url.Action("Checkout", new { @user = user })">ĐẶT HÀNG</a>
                     }

@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
@@ -21,17 +19,18 @@ namespace WebBanSach_2_0.Service
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IApplicationUserRepository _applicationUserRepository;
-        private readonly IProductRepository _productRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly IProductRankRepository _productRankRepository;
         private readonly IMapper _mapper;
 
         public ClientCommentService(IUnitOfWork unitOfWork, IApplicationUserRepository applicationUserRepository,
-                                    IProductRepository productRepository,ICommentRepository commentRepository, IMapper mapper)
+                                    ICommentRepository commentRepository,IProductRankRepository productRankRepository, 
+                                    IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._applicationUserRepository = applicationUserRepository;
-            this._productRepository = productRepository;
             this._commentRepository = commentRepository;
+            this._productRankRepository = productRankRepository;
             this._mapper = mapper;
         }
 
@@ -45,9 +44,10 @@ namespace WebBanSach_2_0.Service
             if(comment.Rating > 0)
             {
                 var listCmt = await _commentRepository.GetListCommentByProductId(comment.ProductId);
-                var product = await _productRepository.GetSingleByIDAsync(comment.ProductId);
-                product.Star = listCmt.Average(m => m.Rating);
-                await _productRepository.UpdateAsync(product);
+                //update product rating
+                var rank = await _productRankRepository.GetSingleByIDAsync(comment.ProductId);
+                rank.Rate = listCmt.Average(m => m.Rating);
+                await _productRankRepository.UpdateAsync(rank);
             }
             return await _unitOfWork.SaveAsync();
         }

@@ -20,16 +20,19 @@ namespace WebBanSach_2_0.Service.AdminServices
         private readonly ICategoryRepository _categoryRepository;
         private readonly IDiscountRepository _discountRepository;
         private readonly IAuthorDetailRepository _authorDetailRepository;
+        private readonly IProductRankRepository _productRankRepository;
         private readonly IMapper _mapper;
 
         public AdminProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, ICategoryRepository categoryRepository
-                                  ,IDiscountRepository discountRepository, IAuthorDetailRepository authorDetailRepository, IMapper mapper)
+                                  , IDiscountRepository discountRepository, IAuthorDetailRepository authorDetailRepository
+                                  , IProductRankRepository productRankRepository, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _discountRepository = discountRepository;
             _authorDetailRepository = authorDetailRepository;
+            _productRankRepository = productRankRepository;
             _mapper = mapper;
         }
 
@@ -70,25 +73,38 @@ namespace WebBanSach_2_0.Service.AdminServices
         public async Task<int> SaveDataAsync(ProductVM viewModel)
         {
             var entity = _mapper.Map<ProductVM, Product>(viewModel);
+            if (viewModel.PublicationDate == DateTime.MinValue)
+            {
+                entity.PublicationDate = DateTime.Now;
+            }
+            //Update product rating
+            var rank = new ProductRank
+            {
+                ProductId = entity.ProductId,
+                Name = entity.Name,
+                CategoryId = entity.CategoryId,
+                Rate = 0,
+                Sold = 0
+            };
 
             if (viewModel.ProductId == 0)
             {
                 entity.CreateBy = "admin"; entity.UpdateBy = "admin";
-                entity.Purchase = 0; entity.Star = 0;
                 entity.CreateDate = DateTime.Now;
-                entity.UpdatedDate = DateTime.Now;
-                entity.PublicationDate = DateTime.Now;
-                entity.UniqueStringKey = Guid.NewGuid();
+                entity.UpdatedDate = DateTime.Now;                
+                entity.UniqueStringKey = Guid.NewGuid();               
 
                 var zeroDiscount = await _discountRepository.GetSingleByIDAsync(1);
                 entity.Discount = zeroDiscount;
 
-                await _productRepository.AddAsync(entity);
+                await _productRepository.AddAsync(entity);                
+                await _productRankRepository.AddAsync(rank);
             }
             else
             {
                 entity.UpdatedDate = DateTime.Now;
                 await _productRepository.UpdateAsync(entity);
+                await _productRankRepository.UpdateAsync(rank);
             }
 
             return await _unitOfWork.SaveAsync();

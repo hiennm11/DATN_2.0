@@ -68,6 +68,8 @@
     <Compile Include="Entities\Order.cs" />
     <Compile Include="Entities\OrderDetail.cs" />
     <Compile Include="Entities\Product.cs" />
+    <Compile Include="Entities\ProductAdder.cs" />
+    <Compile Include="Entities\ProductRank.cs" />
     <Compile Include="Entities\Shipper.cs" />
     <Compile Include="Enums\DiscountType.cs" />
     <Compile Include="Enums\OrderStatus.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="ViewModels\DiscountVM.cs" />
     <Compile Include="ViewModels\OrderVM.cs" />
     <Compile Include="ViewModels\Pagination.cs" />
+    <Compile Include="ViewModels\ProductAdderVM.cs" />
+    <Compile Include="ViewModels\ProductRankVM.cs" />
     <Compile Include="ViewModels\ProductVM.cs" />
     <Compile Include="ViewModels\ShipperVM.cs" />
     <Compile Include="ViewModels\ShoppingCart.cs" />
