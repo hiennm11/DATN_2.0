@@ -10,7 +10,7 @@
     </li>
     <li class="breadcrumb-item">Quản lý</li>
     <li class="breadcrumb-item">Khuyến mãi</li>
-    @if (Model.DiscountId== 0)
+    @if (Model.DiscountId == 0)
     {
         <li class="breadcrumb-item active">Tạo mới</li>
     }
@@ -26,55 +26,74 @@
         @(Model.DiscountId== 0 ? ("Tạo mới") : ("Chỉnh sửa"))
     </div>
     <div class="card-body">
-        @using (Html.BeginForm())
-        {
+        <form method="post" enctype="multipart/form-data">
+
             @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.DiscountCover)
 
-        <div class="form-horizontal">
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.HiddenFor(model => model.DiscountId)
-
-            <div class="form-group">
-                @Html.Label("Loại khuyến mãi", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownListFor(model => model.DiscountType,(IEnumerable<SelectListItem>)ViewBag.DiscountType, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.DiscountType, "", new { @class = "text-danger" })
+            <div class="form-horizontal">
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.DiscountId)
+                <div class="form-group">
+                    <div class="col-md-10">
+                        <img id="productImg" src="@(!string.IsNullOrEmpty(Model.DiscountCover) ? Model.DiscountCover : "/img/default-banner.jpg")" style="border:solid 0.1px;height:400px;width:800px" />
+                    </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            @Html.Label("Loại khuyến mãi", htmlAttributes: new { @class = "control-label col" })
+                            <div class="col-md-10">
+                                @Html.DropDownListFor(model => model.DiscountType, (IEnumerable<SelectListItem>)ViewBag.DiscountType, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.DiscountType, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
 
-            <div class="form-group">
-                @Html.Label("Tên khuyến mãi", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.DiscountName, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.DiscountName, "", new { @class = "text-danger" })
+                        <div class="form-group">
+                            @Html.Label("Tên khuyến mãi", htmlAttributes: new { @class = "control-label col" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.DiscountName, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.DiscountName, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            @Html.Label("Mã giảm giá", htmlAttributes: new { @class = "control-label col" })
+                            <div class="col-md-10">
+                                <div class="checkbox">
+                                    @Html.EditorFor(model => model.DiscountCode, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.DiscountCode, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.Label("Giảm(%)", htmlAttributes: new { @class = "control-label col" })
+                            <div class="col-md-10">
+                                @Html.EditorFor(model => model.DiscountValue, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.DiscountValue, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-            </div>
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <div class="col-md-10">
+                            <input type="file" id="file" name="file" class="form-control-file border" accept="image/*">
+                        </div>
 
-            <div class="form-group">
-                @Html.Label("Mã giảm giá", htmlAttributes: new { @class = "control-label col-md-5" })
-                <div class="col-md-10">
-                    <div class="checkbox">
-                        @Html.EditorFor(model => model.DiscountCode, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.DiscountCode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-success" />
                     </div>
                 </div>
             </div>
-
-            <div class="form-group">
-                @Html.Label("Giảm(%)", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.DiscountValue, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.DiscountValue, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-success" />
-                </div>
-            </div>
-        </div>
-        }
+        </form>
 
         <div>
             @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
@@ -83,6 +102,24 @@
 </div>
 
 @section scripts {
-    @Scripts.Render("~/bundles/jqueryval")    
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        (function () {
+            $("#file").change(function () {
+                readURL(this);
+            });
+        })();
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#productImg').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 }
 

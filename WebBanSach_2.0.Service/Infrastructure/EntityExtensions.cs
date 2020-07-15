@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -19,6 +20,16 @@ namespace WebBanSach_2_0.Service.Infrastructure
             Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
             string temp = s.Normalize(NormalizationForm.FormD);
             return regex.Replace(temp, String.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D').Replace(" ","-").ToLower();
+        }
+
+        public static string SaveImage(HttpPostedFileBase file, string fileName, string filePath)
+        {            
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            file.SaveAs(filePath);
+            return String.Concat("/img/", fileName);
         }
         
         public static string HtmlStatusMessage(StatusMessageId? status)
@@ -89,6 +100,7 @@ namespace WebBanSach_2_0.Service.Infrastructure
             }
             return firstWeekDay.AddDays(weekOfYear * 7);
         }
+
 
     }
 }

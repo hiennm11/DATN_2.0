@@ -145,7 +145,7 @@ namespace WebBanSach_2_0.Service.AdminServices
             return new AdminDashboardResponse
             {
                 Charts = await GetChartResponse(),
-                ProductRanks = ranks.Where(m => m.Rate > 0 || m.Sold > 0).Take(10).ToList(),
+                ProductRanks = ranks.Where(m => m.Rate > 0 || m.Sold > 0).OrderBy(m => m.Sold + m.Rate).Take(10).ToList(),
                 MonthlyEarnings = await GetMonthEarning(DateTime.Now),
                 AnnualEarnings = annual,
                 OrderPercentage = completedOrders,

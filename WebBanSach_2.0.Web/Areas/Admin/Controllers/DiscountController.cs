@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -40,10 +41,18 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Detail(DiscountVM viewModel)
+        public async Task<ActionResult> Detail(DiscountVM viewModel, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
+                viewModel.DiscountNameAlias = EntityExtensions.ConvertToUnSign(viewModel.DiscountName);
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    string pic = "discount_" + (int)viewModel.DiscountType + "_" + viewModel.DiscountNameAlias + Path.GetExtension(file.FileName);
+                    string path = Path.Combine(Server.MapPath("/img/"), pic);
+                    viewModel.DiscountCover = EntityExtensions.SaveImage(file, pic, path);
+                }
                 if(await _adminDiscountService.SaveDataAsync(viewModel) > 0)
                 {
                     return RedirectToAction("Index", new { status = StatusMessageId.UpdateSuccess });

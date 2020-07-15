@@ -233,93 +233,38 @@
 
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Doanh thu 6 tháng</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Sản phẩm bán chạy</h6>
             </div>
             <div class="card-body">
-                <div class="chart-bar">
-                    <div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                    <canvas id="myBarChart" width="668" height="320" class="chartjs-render-monitor" style="display: block; width: 668px; height: 320px;"></canvas>
-                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Tác phẩm</th>
+                            <th scope="col">Đánh giá</th>
+                            <th scope="col">Bán ra</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in Model.ProductRanks)
+                            {
+                                <tr>
+                                    <th scope="row">@i</th>
+                                    <td>@item.Name</td>
+                                    <td>@item.Rate</td>
+                                    <td>@item.Sold</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
                 <hr>
             </div>
         </div>
     </div>
 </div>
-
-<!-- DataTables Example -->
-@*<div class="card mb-3">
-        <div class="card-header">
-            <i class="fas fa-table"></i>
-            Đơn hàng mới nhất
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Khách hàng</th>
-                            <th>Địa chỉ</th>
-                            <th>SĐT</th>
-                            <th>Ngày đặt</th>
-                            <th>Hình thức</th>
-                            <th>Trạng thái</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td>@item.CustomerName</td>
-                                <td>@item.CustomerAddress</td>
-                                <td>@item.CustomerMobile</td>
-                                <td>@item.CreatedDate</td>
-                                <td>@Extension.GetEnumDisplayName(item.PaymentMethod)</td>
-                                <td class="item-status">
-                                    @Extension.GetEnumDisplayName(item.Status)
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-success btn-order-completed btn-sm" data-status="2" data-id="@item.OrderId">
-                                        <i class="fas fa-check-circle"></i>
-                                    </button>
-
-                                    @Ajax.ActionLink(" ", "GetOrderDetailPartial", new { @id = item.OrderId }
-                                                , new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "modal-detail" }
-                                                , new { @class = "btn btn-outline-primary btn-order-detail btn-sm" })
-                                    <button type="button" class="btn btn-outline-danger btn-order-canceled btn-sm" data-status="0" data-id="@item.OrderId">
-                                        <i class="fas fa-times-circle"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card-footer small text-muted">Updated @orderList.Select(m => m.CreatedDate.ToString()).First()</div>
-    </div>*@
-<!-- /.container-fluid -->
-<!-- The Modal -->
-<div class="modal fade" id="order-detail-modal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Chi tiết hóa đơn</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body" id="modal-detail">
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
 
 @section scripts {
     <script src="~/Areas/Admin/Content/js/charts.js"></script>
@@ -328,13 +273,8 @@
 
         (function () {
             renderAreaChart([@Html.Raw(areaLabels)], [@areaData],@maxAreaData);
-            renderBarChart([@Html.Raw(barLabels)], [@barData],@maxBarData);
-            renderPieChart([@Html.Raw(pieLabels)], [@pieData]);
-            $(".btn-order-detail").prepend("<i class='fas fa-info-circle'></i>")
-            $(".btn-order-detail").off('click').on('click', function (e) {
-                e.preventDefault();
-                $("#order-detail-modal").modal('show');
-            });
+            @*renderBarChart([@Html.Raw(barLabels)], [@barData],@maxBarData);*@
+            renderPieChart([@Html.Raw(pieLabels)], [@pieData]);            
         })();
     </script>
 }

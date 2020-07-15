@@ -87,8 +87,11 @@ namespace WebBanSach_2_0.Service.AdminServices
         public async Task<int> SaveDataAsync(DiscountVM viewModel)
         {
             var entity = _mapper.Map<Discount>(viewModel);
-            entity.DiscountCode = entity.DiscountCode.ToUpper();
-            if(viewModel.DiscountId == 0)
+            if (!string.IsNullOrEmpty(entity.DiscountCode))
+            {
+                entity.DiscountCode = entity.DiscountCode.ToUpper();
+            }
+            if (viewModel.DiscountId == 0)
             {
                await  _discountRepository.AddAsync(entity);
             }

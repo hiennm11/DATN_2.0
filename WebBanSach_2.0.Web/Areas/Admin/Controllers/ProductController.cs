@@ -69,14 +69,9 @@ namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
                 product.NameAlias = EntityExtensions.ConvertToUnSign(product.Name);
                 if (file != null && file.ContentLength > 0)
                 {
-                    string pic = product.NameAlias + Path.GetExtension(file.FileName);
-                    string path = Path.Combine(Server.MapPath("/img/" + product.CategoryId), pic);
-                    if (System.IO.File.Exists(path))
-                    {
-                        System.IO.File.Delete(path);                        
-                    }
-                    file.SaveAs(path);
-                    product.Image = String.Concat("/img/", product.CategoryId, "/", pic);
+                    string pic = "book_" + product.CategoryId + "_" + product.NameAlias + Path.GetExtension(file.FileName);
+                    string path = Path.Combine(Server.MapPath("/img/"), pic);
+                    product.Image = EntityExtensions.SaveImage(file, pic, path);
                 }
                 if(await _productService.SaveDataAsync(product) > 0)
                 {
