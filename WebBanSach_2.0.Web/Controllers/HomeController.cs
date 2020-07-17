@@ -1,20 +1,10 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories;
-using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ResponseModels;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service;
-using WebBanSach_2_0.Service.Infrastructure;
 using WebBanSach_2_0.Service.Interfaces;
-using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2._0.Web.Controllers
 {
@@ -36,13 +26,8 @@ namespace WebBanSach_2._0.Web.Controllers
         [Route("")]
         [Route("~/")]        
         public async Task<ActionResult> Index(string cateID = null, string search = null, int page = 1)
-        {            
-            var response = new ClientProductListResponse()
-            {
-                NewsProducts = await _clientProductService.GetNewProducts(),
-                HotProducts = await _clientProductService.GetHotProducts(),
-                ProductList = await _clientProductService.GetAllProducts(cateID, search, pageSize, page)
-            };
+        {
+            var response = await _clientProductService.GetAllProducts(cateID, search, pageSize, page);
 
             ViewBag.CategoryID = cateID;
             ViewBag.SearchString = search;
@@ -90,6 +75,16 @@ namespace WebBanSach_2._0.Web.Controllers
         #region childView
 
         [ChildActionOnly]
+        public ActionResult HomeCarousel()
+        {
+            return Task.Run(async () =>
+            {
+                var response = await _clientProductService.GetProductsDiscounts();
+                return PartialView("_HomeCarousel", response);
+            }).Result;
+        }
+
+        [ChildActionOnly]
         //[OutputCache(Duration = 3600 * 24 * 10)]
         public ActionResult CategoryMenu()
         {
@@ -97,6 +92,26 @@ namespace WebBanSach_2._0.Web.Controllers
             {
                 var response = await _clientCategoryService.GetAllCategory();
                 return PartialView("_CategoryMenu", response);
+            }).Result;
+        }
+
+        [ChildActionOnly]
+        public ActionResult HotProducts()
+        {
+            return Task.Run(async () =>
+            {
+                var response = await _clientProductService.GetHotProducts();
+                return PartialView("_HotProducts", response);
+            }).Result;
+        }
+
+        [ChildActionOnly]
+        public ActionResult NewProducts()
+        {
+            return Task.Run(async () =>
+            {
+                var response = await _clientProductService.GetHotProducts();
+                return PartialView("_NewProducts", response);
             }).Result;
         }
 

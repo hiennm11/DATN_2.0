@@ -3820,6 +3820,9 @@
     <Content Include="Views\Cart\OrderComplete.cshtml" />
     <Content Include="Views\Shared\_OrderDetail.cshtml" />
     <Content Include="Views\Shared\_Pager.cshtml" />
+    <Content Include="Views\Shared\_NewProducts.cshtml" />
+    <Content Include="Views\Shared\_HotProducts.cshtml" />
+    <Content Include="Views\Shared\_HomeCarousel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

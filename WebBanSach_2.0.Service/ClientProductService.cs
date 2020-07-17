@@ -16,12 +16,15 @@ namespace WebBanSach_2_0.Service
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
+        private readonly IDiscountRepository _discountRepository;
         private readonly IMapper _mapper;
 
-        public ClientProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, IMapper mapper)
+        public ClientProductService(IUnitOfWork unitOfWork, IProductRepository productRepository, 
+                                    IDiscountRepository discountRepository, IMapper mapper)
         {
             this._unitOfWork = unitOfWork;
             this._productRepository = productRepository;
+            this._discountRepository = discountRepository;
             this._mapper = mapper;
         }
 
@@ -68,6 +71,11 @@ namespace WebBanSach_2_0.Service
         public async Task<IEnumerable<ProductVM>> GetProductsByCategoryId(int id)
         {
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductVM>>(await _productRepository.GetByCategoryIdAsync(id));
+        }
+
+        public async Task<IEnumerable<DiscountVM>> GetProductsDiscounts()
+        {
+            return _mapper.Map<IEnumerable<DiscountVM>>(await _discountRepository.GetProductDiscount());
         }
     }
 }

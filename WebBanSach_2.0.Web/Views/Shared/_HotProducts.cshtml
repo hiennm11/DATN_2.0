@@ -1,0 +1,9 @@
+﻿@model IEnumerable<ProductVM>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            @{ Html.RenderPartial("_ProductCard", item); }
+        </div>
+    }
+</div>

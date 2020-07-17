@@ -42,7 +42,7 @@
                                     <td><img src="@(!string.IsNullOrEmpty(item.Product.Image) ? item.Product.Image : "/img/noCover.jpg")" style="width:100px;height:auto" /> </td>
                                     <td>@item.Product.Name</td>
                                     <td>@(item.Product.AvailableQuantity > 0 ? "Còn hàng" : "Hết hàng")</td>
-                                    <td><input class="form-control cart-item-quantity" type="number" data-nameid="@item.Product.NameAlias" value="@item.Quantity" min="1" /></td>
+                                    <td><input class="form-control cart-item-quantity" type="number" data-nameid="@item.Product.NameAlias" value="@item.Quantity" min="1" max="@item.Product.AvailableQuantity" /></td>
                                     <td class="text-right" id="item-total">
                                         @if (item.Product.Discount.DiscountValue > 0)
                                         {

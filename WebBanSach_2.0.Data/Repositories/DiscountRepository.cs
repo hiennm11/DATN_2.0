@@ -11,6 +11,7 @@ namespace WebBanSach_2_0.Data.Repositories
 {
     public interface IDiscountRepository : IRepository<Discount>
     {
+        Task<IEnumerable<Discount>> GetProductDiscount();
         Task<Discount> GetDiscountById(int id, string[] includes = null);
         Task<Discount> GetDiscountByPromoCode(string code);
     }
@@ -43,6 +44,11 @@ namespace WebBanSach_2_0.Data.Repositories
                 return null;
             }
             return model;
+        }
+
+        public async Task<IEnumerable<Discount>> GetProductDiscount()
+        {
+            return await _dbContext.Discounts.Where(m => m.DiscountType == Model.Enums.DiscountType.Product).ToListAsync();
         }
     }
 }

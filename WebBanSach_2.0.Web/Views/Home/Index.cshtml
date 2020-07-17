@@ -1,4 +1,4 @@
-﻿@model ClientProductListResponse
+﻿@model Pagination.IndexViewModel<ProductVM>
 @{
     ViewBag.Title = "Trang chủ";
 }
@@ -33,7 +33,7 @@
         <br />
         <div id="data-box">
             <div class="row">
-                @foreach (var item in Model.ProductList.Items)
+                @foreach (var item in Model.Items)
                 {
                     <div class="col-md-3">
                         @{ Html.RenderPartial("_ProductCard", item); }
@@ -42,29 +42,15 @@
             </div>
         </div>
         <br /><br />
-        @{ Html.RenderPartial("_Pager", Model.ProductList.Pager); }
+        @{ Html.RenderPartial("_Pager", Model.Pager); }
     </div>
     <div id="menu1" class="container tab-pane fade">
         <br>
-        <div class="row">
-            @foreach (var item in Model.NewsProducts)
-            {
-                <div class="col-md-3">
-                    @{ Html.RenderPartial("_ProductCard", item); }
-                </div>
-            }
-        </div>
+        @{ Html.RenderAction("NewProducts", "Home"); }
     </div>
     <div id="menu2" class="container tab-pane fade">
         <br>
-        <div class="row">
-            @foreach (var item in Model.HotProducts)
-            {
-                <div class="col-md-3">
-                    @{ Html.RenderPartial("_ProductCard", item); }
-                </div>
-            }
-        </div>
+        @{ Html.RenderAction("HotProducts", "Home"); }
     </div>
 </div>
 <a id="back2Top" title="Back to top" href="#">&#10148;</a>

@@ -15,5 +15,6 @@ namespace WebBanSach_2_0.Service.Interfaces
         Task<IEnumerable<ProductVM>> GetHotProducts();
         Task<IEnumerable<ProductVM>> GetNewProducts();
         Task<ProductVM> GetProductByNameAlias(string id);
+        Task<IEnumerable<DiscountVM>> GetProductsDiscounts();
     }
 }

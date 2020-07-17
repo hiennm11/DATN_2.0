@@ -10,24 +10,24 @@
     <ul class="pagination" id="paged">
         @if (Model.CurrentPage > 1)
         {
-            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = 1 })">First</a></li>
-            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = Model.CurrentPage - 1 })"> Previous</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = 1 })">First</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = Model.CurrentPage - 1 })"> Previous</a></li>
         }
         @for (int i = Model.StartPage; i <= Model.EndPage; i++)
         {
             if (i == Model.CurrentPage)
             {
-                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
+                <li class="page-item active"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = @i })">@i</a></li>
             }
             else
             {
-                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = @i })">@i</a></li>
+                <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = @i })">@i</a></li>
             }
         }
         @if (Model.CurrentPage < Model.TotalPages)
         {
-            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = Model.CurrentPage + 1 })"> Next</a></li>
-            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @search = ViewBag.SearchString, @page = Model.TotalPages })"> Last</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = Model.CurrentPage + 1 })"> Next</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("Index",new { @categoryId = ViewBag.CategoryID, @search = ViewBag.SearchString, @page = Model.TotalPages })"> Last</a></li>
         }
     </ul>
 </div>
