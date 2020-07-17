@@ -1,19 +1,13 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IIdentityRoleRepository : IRepository<IdentityRole>
-    {
-        Task<IEnumerable<IdentityRole>> GetListRoles();
-        void Delete(string id);
-    }
     class IdentityRoleRepository : GenericRepository<IdentityRole>, IIdentityRoleRepository
     {
         public IdentityRoleRepository(WebBanSach_2_0DbContext dbContext) : base(dbContext)

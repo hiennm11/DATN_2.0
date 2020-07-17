@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Model.ResponseModels;

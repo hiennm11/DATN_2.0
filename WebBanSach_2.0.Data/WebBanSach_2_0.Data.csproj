@@ -69,6 +69,16 @@
     </Compile>
     <Compile Include="Repositories\ApplicationUserRepository.cs" />
     <Compile Include="Repositories\AuthorDetailRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IAuthorDetailRepository.cs" />
+    <Compile Include="Repositories\Interfaces\ICategoryRepository.cs" />
+    <Compile Include="Repositories\Interfaces\ICommentRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IDiscountRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IIdentityRoleRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IApplicationUserRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IProductRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IOrderDetailRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IOrderRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IProductAdderRepository.cs" />
     <Compile Include="Repositories\ProductAdderRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Repositories\CommentRepository.cs" />

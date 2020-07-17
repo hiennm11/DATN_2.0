@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
@@ -48,7 +48,7 @@ namespace WebBanSach_2_0.Service
 
             return new IndexViewModel<ProductVM>()
             {
-                Items = data,
+                Items = data.Where(m => m.Status == true),
                 Pager = pager
             };
         }

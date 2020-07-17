@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface ICategoryRepository : IRepository<Category>
-    {
-        Task Delete(int id);
-        Task<IEnumerable<Category>> GetBySearchAsync(string search);
-        Task<IEnumerable<Category>> GetTrueCategoriesAsync();
-
-    }
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
         public CategoryRepository(WebBanSach_2_0DbContext dbContext) : base(dbContext)

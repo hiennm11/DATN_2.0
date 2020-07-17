@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IDiscountRepository : IRepository<Discount>
-    {
-        Task<IEnumerable<Discount>> GetProductDiscount();
-        Task<Discount> GetDiscountById(int id, string[] includes = null);
-        Task<Discount> GetDiscountByPromoCode(string code);
-    }
 
     public class DiscountRepository : GenericRepository<Discount>, IDiscountRepository
     {

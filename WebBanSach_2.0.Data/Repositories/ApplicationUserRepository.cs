@@ -1,22 +1,14 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IApplicationUserRepository : IRepository<ApplicationUser> 
-    {
-        void Delete(string id);
-        ApplicationUser GetUserByUserName(string name);
-        Task<IEnumerable<ApplicationUser>> GetListUserByRole(IdentityRole role);
-        int CountEmp();
-    }
     public class ApplicationUserRepository : GenericRepository<ApplicationUser>, IApplicationUserRepository
     {
         public ApplicationUserRepository(WebBanSach_2_0DbContext dbContext) : base(dbContext)

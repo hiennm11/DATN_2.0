@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IAuthorDetailRepository : IRepository<Author>
-    {
-        Task Delete(int id);
-        Task<Author> GetAuthorById(int id);
-        Task<IEnumerable<Author>> GetBySearchAsync(string nameID);
-    }
     public class AuthorDetailRepository : GenericRepository<Author>, IAuthorDetailRepository
     {
         public AuthorDetailRepository(WebBanSach_2_0DbContext dbContext) : base(dbContext)

@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 
 namespace WebBanSach_2_0.Data.Repositories
 {
-    public interface IProductRepository : IRepository<Product>
-    {
-        Product GetProductByNameID(string nameId);
-        Task<Product> GetProductByNameIDAsync(string nameId);
-        Task<Product> GetProductByAdderAsync(ProductAdder productAdder, string alias);
-        Task<IEnumerable<Product>> GetByCategoryAsync(string cate);
-        Task<IEnumerable<Product>> GetBySearchAsync(string search);
-        Task<IEnumerable<Product>> GetByCategoryPagingAsync(string cate, int page, int pageSize);
-        Task<IEnumerable<Product>> GetBySearchPagingAsync(string search, int page, int pageSize);
-        Task<IEnumerable<Product>> GetNewProductAsync();
-        Task<IEnumerable<Product>> GetHotProductAsync();
-        Task<IEnumerable<Product>> GetByCategoryIdAsync(int cate);
-        Task DeleteAsync(int id);
-    }
     public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         public ProductRepository(WebBanSach_2_0DbContext dbContext) : base(dbContext)
@@ -55,7 +40,7 @@ namespace WebBanSach_2_0.Data.Repositories
         public async Task<IEnumerable<Product>> GetByCategoryAsync(string cate)
         {
             var list = _dbContext.Products.Where(c => c.Category.NameAlias.Equals(cate)).OrderBy(c => c.Name);
-            return await list.ToListAsync();
+            return await list.Where(m => m.Status == true).ToListAsync();
         }
         public async Task<IEnumerable<Product>> GetByCategoryIdAsync(int cate)
         {
@@ -65,13 +50,14 @@ namespace WebBanSach_2_0.Data.Repositories
 
         public async Task<IEnumerable<Product>> GetNewProductAsync()
         {
-            var list = _dbContext.Products.OrderBy(c => c.CreateDate).Include(n => n.Discount).Take(16);
+            var list = _dbContext.Products.Where(m => m.Status == true).OrderBy(c => c.UpdatedDate).Include(n => n.Discount).Take(16);
             return await list.ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetHotProductAsync()
         {
-            var list = _dbContext.Products.OrderBy(c => c.UpdatedDate).Include(n => n.Discount).Take(16);
+            var lst = _dbContext.ProductRanks.ToList();
+            var list = _dbContext.Products.Where(m => m.Status == true).OrderBy(c => c.UpdatedDate).Include(n => n.Discount).Take(16);
             return await list.ToListAsync();
         }
 
@@ -83,13 +69,13 @@ namespace WebBanSach_2_0.Data.Repositories
         public async Task<IEnumerable<Product>> GetByCategoryPagingAsync(string cate, int page, int pageSize)
         {
             var list = _dbContext.Products.Where(c => c.Category.NameAlias == cate).OrderBy(c => c.Name);
-            return await list.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await list.Where(m => m.Status == true).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public async Task<IEnumerable<Product>> GetBySearchPagingAsync(string search, int page, int pageSize)
         {
             var list = _dbContext.Products.Where(m => m.NameAlias.ToLower().Contains(search.ToLower())).OrderBy(c => c.Name);
-            return await list.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            return await list.Where(m => m.Status == true).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         }
 
         public Task<Product> GetProductByAdderAsync(ProductAdder productAdder, string alias)
