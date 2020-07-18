@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
+using WebBanSach_2_0.Data.Interfaces;
 using WebBanSach_2_0.Data.Repositories;
-using WebBanSach_2_0.Data.Repositories.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
@@ -93,7 +93,8 @@ namespace WebBanSach_2_0.Service.AdminServices
                 entity.CreateBy = "admin"; entity.UpdateBy = "admin";
                 entity.CreateDate = DateTime.Now;
                 entity.UpdatedDate = DateTime.Now;                
-                entity.UniqueStringKey = Guid.NewGuid();               
+                entity.UniqueStringKey = Guid.NewGuid();
+                entity.Authors = new List<Author>() { await _authorDetailRepository.GetAuthorById(1) };
 
                 var zeroDiscount = await _discountRepository.GetSingleByIDAsync(1);
                 entity.Discount = zeroDiscount;

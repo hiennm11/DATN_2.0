@@ -3,9 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using WebBanSach_2_0.Model.Enums;
-using WebBanSach_2_0.Service.AdminServices;
 using WebBanSach_2_0.Service.Enums;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using WebBanSach_2_0.Web.Infrastructure;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers

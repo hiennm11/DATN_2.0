@@ -12,7 +12,7 @@ namespace WebBanSach_2_0.Data
 {
     public class WebBanSach_2_0DbContext : IdentityDbContext<ApplicationUser>
     {
-        public WebBanSach_2_0DbContext() : base("BookStoreDBtest")
+        public WebBanSach_2_0DbContext() : base("BookStoreDB")
         {
             ////Database.SetInitializer(new MigrateDatabaseToLatestVersion<WebBanSach_2_0DbContext, Configuration>());
         }

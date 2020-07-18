@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories.Interfaces;
+using WebBanSach_2_0.Data.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.Enums;
 using WebBanSach_2_0.Model.ReportModels;
@@ -144,7 +144,7 @@ namespace WebBanSach_2_0.Data.Repositories
 
         public DbRawSqlQuery<OrderDetailRM> GetOrderDetailStoreProcedure(int orderId)
         {
-            return _dbContext.Database.SqlQuery<OrderDetailRM>("SelectAllProductInOrder @OrderId", new SqlParameter("@OrderId", orderId));
+            return _dbContext.Database.SqlQuery<OrderDetailRM>("dbo.SelectAllProductInOrder @OrderId", new SqlParameter("@OrderId", orderId));
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByUserAsync(string email)
@@ -155,7 +155,7 @@ namespace WebBanSach_2_0.Data.Repositories
 
         public DbRawSqlQuery<OrderRM> GetOrderStoreProcedure(int orderId)
         {
-            return _dbContext.Database.SqlQuery<OrderRM>("SelectOrder @OrderId", new SqlParameter("@OrderId", orderId));
+            return _dbContext.Database.SqlQuery<OrderRM>("dbo.SelectOrder @OrderId", new SqlParameter("@OrderId", orderId));
         }
 
         public async Task<IEnumerable<Order>> GetUnDoneOrder(DateTime? fromDate, DateTime? toDate, int? orderStatus, int page = 1, int pageSize = 10)

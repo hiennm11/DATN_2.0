@@ -1,27 +1,16 @@
 ﻿using AutoMapper;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories.Interfaces;
+using WebBanSach_2_0.Data.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
 {
-    public interface IAdminDiscountService
-    {
-        Task<int> AddProductToDiscount(int discountId, int[] productId);
-        Task<int> DeleteProductFromDiscount(int discountId, int productId);
-        Task<IndexViewModel<DiscountVM>> GetDataAsync(string search, int pageSize, int page);
-        Task<DiscountVM> GetDataByIDAsync(int id);
-        Task<int> SaveDataAsync(DiscountVM viewModel);
-        Task<int> DeleteDataAsync(int id);
-    }
-
     public class AdminDiscountService : IAdminDiscountService
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -91,6 +91,9 @@
     <Compile Include="AdminServices\AdminOrderService.cs" />
     <Compile Include="AdminServices\AdminProductAdderService.cs" />
     <Compile Include="AdminServices\AdminProductService.cs" />
+    <Compile Include="Interfaces\IAdminDiscountService.cs" />
+    <Compile Include="Interfaces\IAdminOrderService.cs" />
+    <Compile Include="Interfaces\IAdminProductAdderService.cs" />
     <Compile Include="ClientCartService.cs" />
     <Compile Include="ClientCategoryService.cs" />
     <Compile Include="ClientCommentService.cs" />

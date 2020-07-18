@@ -6,7 +6,7 @@ using WebBanSach_2_0.Data.Infrastructure;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ReportModels;
 
-namespace WebBanSach_2_0.Data.Repositories.Interfaces
+namespace WebBanSach_2_0.Data.Interfaces
 {
     public interface IOrderRepository : IRepository<Order>
     {

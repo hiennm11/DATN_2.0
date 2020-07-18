@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using WebBanSach_2_0.Data;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories.Interfaces;
+using WebBanSach_2_0.Data.Interfaces;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {

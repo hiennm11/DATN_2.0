@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WebBanSach_2_0.Service.AdminServices;
+using WebBanSach_2_0.Service.Interfaces;
 
 namespace WebBanSach_2_0.Web.Areas.Admin.Controllers
 {

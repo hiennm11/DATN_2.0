@@ -2,25 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using WebBanSach_2_0.Data.Infrastructure;
-using WebBanSach_2_0.Data.Repositories.Interfaces;
+using WebBanSach_2_0.Data.Interfaces;
 using WebBanSach_2_0.Model.Entities;
 using WebBanSach_2_0.Model.ViewModels;
 using WebBanSach_2_0.Service.Infrastructure;
+using WebBanSach_2_0.Service.Interfaces;
 using static WebBanSach_2_0.Model.ViewModels.Pagination;
 
 namespace WebBanSach_2_0.Service.AdminServices
 {
-    public interface IAdminProductAdderService
-    {
-        Task<IndexViewModel<ProductAdderVM>> GetDataAsync(int page, int pageSize, int? categoryId, string search = null);
-        Task<ProductAdderVM> GetDataByIDAsync(int id);
-        Task<int> SaveDataAsync(ProductAdderVM viewModel);
-
-    }
-
     public class AdminProductAdderService : IAdminProductAdderService
     {
         private readonly IUnitOfWork _unitOfWork;

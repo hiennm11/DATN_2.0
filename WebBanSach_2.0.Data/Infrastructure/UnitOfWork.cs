@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using WebBanSach_2_0.Data.Repositories;
 
 namespace WebBanSach_2_0.Data.Infrastructure
 {

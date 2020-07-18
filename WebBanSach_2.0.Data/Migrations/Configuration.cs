@@ -4,10 +4,8 @@
     using Microsoft.AspNet.Identity.EntityFramework;
     using System;
     using System.Collections.Generic;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
-    using System.Runtime.InteropServices;
     using WebBanSach_2_0.Model.Entities;
     using WebBanSach_2_0.Model.Enums;
 
@@ -15,7 +13,7 @@
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(WebBanSach_2_0DbContext context)
@@ -119,83 +117,109 @@
             context.Discounts.Add(ZeroDiscount);
 
             #endregion
-          
+
             //Seed Mock Data
-            //Add Product
-            for(int i = 0; i < 30; i++)
+
+
+        }
+
+        private void SeedMockData(WebBanSach_2_0DbContext context, bool isTrue)
+        {
+            if (isTrue)
             {
-                var product = new Product { ProductId = i, CategoryId = 1, CreateDate = DateTime.Now, PublicationDate = DateTime.Now, 
-                    CreateBy = "admin", Name = "Book " + i, NameAlias = "book-" + i, Price = 10000, Status = true };
-                product.Discount = ZeroDiscount;
-                product.Authors = new List<Author> { undefinedAuthor };
-                context.Products.Add(product);
-                context.SaveChanges();
+                var userStore = new UserStore<ApplicationUser>(context);
+                var userManager = new UserManager<ApplicationUser>(userStore);
+                var ZeroDiscount = context.Discounts.FirstOrDefault(m => m.DiscountId == 1);
+                var undefinedAuthor = context.Authors.FirstOrDefault(m => m.AuthorId == 1);
 
-                var rank = new ProductRank { ProductId = product.ProductId, Name = product.Name, CategoryId = product.CategoryId, Rate = 0, Sold = 0 };
-                context.ProductRanks.Add(rank);
-            }
 
-            //Add Account
-            string[] roles = new string[4] { "user", "mod", "employee", "shipper" };
-            Random random = new Random();
-            List<ApplicationUser> users = new List<ApplicationUser>();
-            for(int i = 0; i < 100; i++)
-            {
-                var clients = new ApplicationUser
+                //Seed Mock Data
+                //Add Product
+                for (int i = 0; i < 30; i++)
                 {
-                    UserName = "client" + i + "@abc.xyz",
-                    PhoneNumber = "12345678911",
-                    Email = "client" + i + "@abc.xyz",
-                    Address = "test",
-                    FullName = "client" + i,
-                    Dob = DateTime.Now, 
-                };
+                    var product = new Product
+                    {
+                        ProductId = i,
+                        CategoryId = 1,
+                        CreateDate = DateTime.Now,
+                        PublicationDate = DateTime.Now,
+                        CreateBy = "admin",
+                        Name = "Book " + i,
+                        NameAlias = "book-" + i,
+                        Price = 10000,
+                        Status = true
+                    };
+                    product.Discount = ZeroDiscount;
+                    product.Authors = new List<Author> { undefinedAuthor };
+                    context.Products.Add(product);
+                    context.SaveChanges();
 
-                var clientsRole = new IdentityUserRole();
-                clientsRole.RoleId = roles[random.Next(roles.Length)];
-                clientsRole.UserId = clients.Id;
-
-                clients.Roles.Add(clientsRole);
-                userManager.Create(clients, "client@123");
-                
-                if(clientsRole.RoleId == "user")
-                {
-                    users.Add(clients);
+                    var rank = new ProductRank { ProductId = product.ProductId, Name = product.Name, CategoryId = product.CategoryId, Rate = 0, Sold = 0 };
+                    context.ProductRanks.Add(rank);
                 }
-               
-            }
 
-            //Add Order
-            string[] orderroles = new string[3] { "admin", "mod", "employee" };
-            var productList = context.Products.ToList();
-            Random rd = new Random();
-            for (int i = 0; i < 200; i++)
-            {
-                var userRd = users[random.Next(users.Count())];
-                var order = new Order
+                //Add Account
+                string[] roles = new string[4] { "user", "mod", "employee", "shipper" };
+                Random random = new Random();
+                List<ApplicationUser> users = new List<ApplicationUser>();
+                for (int i = 0; i < 100; i++)
                 {
-                    CustomerName = userRd.FullName,
-                    CustomerAddress = userRd.Address,
-                    CustomerMobile = userRd.PhoneNumber,
-                    CustomerEmail = userRd.Email,
-                    PaymentMethod = (PaymentMethod)random.Next(4),
-                    PaymentStatus = false,
-                    CreatedDate = new DateTime(DateTime.Now.Year, rd.Next(3, 7), rd.Next(1, 31)),
-                    CreatedBy = orderroles[random.Next(orderroles.Length)],
-                    Status = (OrderStatus)random.Next(10),
-                    Discount = ZeroDiscount,
-                   
-                };
-               
-                context.Orders.Add(order);
-                context.SaveChanges();
-            }
+                    var clients = new ApplicationUser
+                    {
+                        UserName = "client" + i + "@abc.xyz",
+                        PhoneNumber = "12345678911",
+                        Email = "client" + i + "@abc.xyz",
+                        Address = "test",
+                        FullName = "client" + i,
+                        Dob = DateTime.Now,
+                    };
 
-            for(int i = 1; i <= context.Orders.Count(); i++)
-            {
-                context.OrderDetails.Add(new OrderDetail { OrderId = i, ProductId = productList[random.Next(productList.Count())].ProductId, Quantity = 1 });
-            }
+                    var clientsRole = new IdentityUserRole();
+                    clientsRole.RoleId = roles[random.Next(roles.Length)];
+                    clientsRole.UserId = clients.Id;
 
+                    clients.Roles.Add(clientsRole);
+                    userManager.Create(clients, "client@123");
+
+                    if (clientsRole.RoleId == "user")
+                    {
+                        users.Add(clients);
+                    }
+
+                }
+
+                //Add Order
+                string[] orderroles = new string[3] { "admin", "mod", "employee" };
+                var productList = context.Products.ToList();
+                Random rd = new Random();
+                for (int i = 0; i < 200; i++)
+                {
+                    var userRd = users[random.Next(users.Count())];
+                    var order = new Order
+                    {
+                        CustomerName = userRd.FullName,
+                        CustomerAddress = userRd.Address,
+                        CustomerMobile = userRd.PhoneNumber,
+                        CustomerEmail = userRd.Email,
+                        PaymentMethod = (PaymentMethod)random.Next(4),
+                        PaymentStatus = false,
+                        CreatedDate = new DateTime(DateTime.Now.Year, rd.Next(3, 7), rd.Next(1, 31)),
+                        CreatedBy = orderroles[random.Next(orderroles.Length)],
+                        Status = (OrderStatus)random.Next(10),
+                        Discount = ZeroDiscount,
+
+                    };
+
+                    context.Orders.Add(order);
+                    context.SaveChanges();
+                }
+
+                for (int i = 1; i <= context.Orders.Count(); i++)
+                {
+                    context.OrderDetails.Add(new OrderDetail { OrderId = i, ProductId = productList[random.Next(productList.Count())].ProductId, Quantity = 1 });
+                }
+
+            }
         }
     }
 }
